@@ -60,6 +60,9 @@ contract GTT is ERC20, Ownable, Pausable {
     // start coins
     uint256 public constant startCoins = 200000 * 10**18;
 
+    // mapping for allowed addresses
+    mapping(address=>bool) public isAllowedMinting;
+
     /**
      * @dev Constructing the contract minting 200000 coin to the contract address and setting name, symbol
     */
@@ -88,6 +91,15 @@ contract GTT is ERC20, Ownable, Pausable {
     }
 
     /**
+     * @dev modifier to detect if address is allowed minting
+    */
+
+    modifier WhenAllowedMinting() {
+        require(isAllowedMinting[msg.sender], "GTT: address does not have mint access");
+        _;
+    }
+
+    /**
      * @dev burns coins on burn wallet ballance
      * @param count count of coins
     */
@@ -109,6 +121,22 @@ contract GTT is ERC20, Ownable, Pausable {
             require(accounts[i] != address(0), "GTT: zero address included");
             _transfer(address(this), accounts[i], counts[i]);
         }
+    }
+
+    /**
+     * @dev setting allowed list
+     * @param addresses array of counts of coins
+     * @param allowed True/False bool for enable minting or not
+    */
+    
+    function setAllowed(address[] calldata addresses, bool allowed) external onlyOwner {
+        for (uint256 i = 0; i < addresses.length; ++i) {
+            isAllowedMinting[addresses[i]] = allowed;
+        }
+    }
+
+    function mint(uint256 amount_) external WhenAllowedMinting {
+        _mint(msg.sender, amount_);
     }
 
     /**

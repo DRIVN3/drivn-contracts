@@ -6,6 +6,7 @@ const {
   const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
   const { expect } = require("chai");
 let bigInt = require("big-integer");
+const exp = require("constants");
 
 const startGTTCoins = bigInt("200000000000000000000000");
   
@@ -109,5 +110,40 @@ describe("Test Burn", function () {
 
         expect(await GTT.balanceOf(burnWallet.address)).to.be.equal(0)
         expect(await GTT.totalSupply()).to.be.equal(startGTTCoins.minus(150).toString())
+    });
+});
+
+describe("Test Setting Allowed addresses", function () {
+    it("Should be false at starting", async function () {
+        const { GTT, firstAccount } = await loadFixture(deployGTT);
+        expect(await GTT.isAllowedMinting(firstAccount.address)).to.be.equal(false);        
+    });
+    it("Should be true after setting", async function () {
+        const { GTT, firstAccount } = await loadFixture(deployGTT);
+        await GTT.setAllowed([firstAccount.address], true);
+        expect(await GTT.isAllowedMinting(firstAccount.address)).to.be.equal(true);        
+    });
+    it("Should fail if caller is not owner", async function () {
+        const { GTT, firstAccount } = await loadFixture(deployGTT);
+
+        await expect(GTT.connect(firstAccount).setAllowed([firstAccount.address], true))
+            .to.be.revertedWith("Ownable: caller is not the owner");        
+    });
+});
+
+describe("Test Mint", function () {
+    it("Should revert when address does not have minting address", async function () {
+        const { GTT } = await loadFixture(deployGTT);
+        await expect(GTT.mint(100)).to.be.revertedWith("GTT: address does not have mint access");        
+    });
+
+    it("Should enable minting after setting allowed", async function () {
+        const { GTT, firstAccount } = await loadFixture(deployGTT);
+        await GTT.setAllowed([firstAccount.address], true);
+
+        const toMint = 100;
+
+        await GTT.connect(firstAccount).mint(toMint);
+        expect(await GTT.balanceOf(firstAccount.address)).to.be.equal(toMint)
     });
 });
