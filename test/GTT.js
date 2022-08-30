@@ -133,17 +133,16 @@ describe("Test Setting Allowed addresses", function () {
 
 describe("Test Mint", function () {
     it("Should revert when address does not have minting address", async function () {
-        const { GTT } = await loadFixture(deployGTT);
-        await expect(GTT.mint(100)).to.be.revertedWith("GTT: address does not have mint access");        
+        const { GTT, owner } = await loadFixture(deployGTT);
+        await expect(GTT.mint(owner.address, 100)).to.be.revertedWith("GTT: address does not have mint access");        
     });
 
     it("Should enable minting after setting allowed", async function () {
-        const { GTT, firstAccount } = await loadFixture(deployGTT);
-        await GTT.setAllowed([firstAccount.address], true);
+        const { GTT, owner, firstAccount } = await loadFixture(deployGTT);
+        await GTT.setAllowed([owner.address], true);
 
         const toMint = 100;
-
-        await GTT.connect(firstAccount).mint(toMint);
+        await GTT.connect(owner).mint(firstAccount.address, toMint);
         expect(await GTT.balanceOf(firstAccount.address)).to.be.equal(toMint)
     });
 });

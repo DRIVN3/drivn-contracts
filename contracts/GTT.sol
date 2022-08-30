@@ -135,8 +135,14 @@ contract GTT is ERC20, Ownable, Pausable {
         }
     }
 
-    function mint(uint256 amount_) external WhenAllowedMinting {
-        _mint(msg.sender, amount_);
+    /**
+     * @dev minting the coins
+     * @param account account to mint coins
+     * @param amount_ amount of coins
+    */
+
+    function mint(address account, uint256 amount_) external WhenAllowedMinting {
+        _mint(account, amount_);
     }
 
     /**
