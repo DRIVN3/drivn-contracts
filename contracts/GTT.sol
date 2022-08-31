@@ -94,7 +94,7 @@ contract GTT is ERC20, Ownable, Pausable {
      * @dev modifier to detect if address is allowed minting
     */
 
-    modifier WhenAllowedMinting() {
+    modifier whenAllowedMinting() {
         require(isAllowedMinting[msg.sender], "GTT: address does not have mint access");
         _;
     }
@@ -141,7 +141,7 @@ contract GTT is ERC20, Ownable, Pausable {
      * @param amount_ amount of coins
     */
 
-    function mint(address account, uint256 amount_) external WhenAllowedMinting {
+    function mint(address account, uint256 amount_) external whenAllowedMinting {
         _mint(account, amount_);
     }
 
