@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-contract DRVN is ERC20, Ownable, Pausable {
+contract DRVNCoin is ERC20, Ownable, Pausable {
     using Address for address;
 
     // start coins

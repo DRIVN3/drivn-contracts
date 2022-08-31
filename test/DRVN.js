@@ -18,7 +18,7 @@ async function deployDRVN() {
     const [owner, firstAccount, secondAccount] = await ethers.getSigners();
 
     // deploy DRVN
-    let DRVN = await ethers.getContractFactory("DRVN");
+    let DRVN = await ethers.getContractFactory("DRVNCoin");
     let name = "test";
     let symbol = "testing";
     DRVN = await DRVN.deploy(name, symbol);
