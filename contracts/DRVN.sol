@@ -40,7 +40,6 @@ contract DRVNCoin is ERC20, Ownable, Pausable {
         supplyData["Ecosystem / Treasury"] = 1000000000 * 10 ** decimals();
         supplyData["Dex Liquidity"] = 375000000 * 10 ** decimals();
         supplyData["Holdback"] = 500000000 * 10 ** decimals();
-        supplyData["Holdback"] = 500000000 * 10 ** decimals();
     }
 
 

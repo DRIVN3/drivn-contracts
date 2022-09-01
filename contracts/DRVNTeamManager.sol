@@ -63,5 +63,4 @@ contract DRVNTeamManager is Ownable {
         drvnCoin.transfer(teamWallet, amount);
         teamReleased += amount;
     }
-
 }
