@@ -59,7 +59,6 @@ contract EarnNFT is ERC721, Ownable {
         nftTypePower[Type.EPIC] = 4 * powerMultiplier();
     }
 
-
     /**
      * @dev buying the token
     */
@@ -78,7 +77,6 @@ contract EarnNFT is ERC721, Ownable {
             nftTypePower[Type.COMMON] // max power
         );
     }
-
 
     /**
      * @dev merging two nft
@@ -112,8 +110,6 @@ contract EarnNFT is ERC721, Ownable {
         _burn(tokenId1);
         _burn(tokenId2);
     }
-
-
 
     /**
      * @dev Set the base URI
