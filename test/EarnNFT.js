@@ -177,7 +177,7 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
             await earnNFT.connect(firstAccount).merge(6, 7);
 
-            await expect(earnNFT.connect(firstAccount).merge(5, 8)).to.be.revertedWith("EarnNFT: Merge Power is too high");
+            await expect(earnNFT.connect(firstAccount).merge(5, 8)).to.be.revertedWith("EarnNFT: Power is too high");
         });
 
     });

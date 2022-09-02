@@ -6,25 +6,25 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+// enum for electic vehicle
+enum EVehicle { CAR, BYCICLE, SCOOTER }
+
+// enum for NFT type
+enum Type { COMMON, UNCOMMON, RARE, EPIC }
+
+// struct NFT information
+struct NFTInformation {
+    Type nftType;
+    uint256 lastUsage;
+    uint256 powerLeft;
+    uint256 maxPower;
+}
+
 contract EarnNFT is ERC721, Ownable {
     using Counters for Counters.Counter;
 
     // token counter
     Counters.Counter private _tokenIdCounter;
-
-    // enum for electic vehicle
-    enum EVehicle { CAR, BYCICLE, SCOOTER }
-
-    // enum for NFT type
-    enum Type { COMMON, UNCOMMON, RARE, EPIC }
-
-    // struct NFT information
-    struct NFTInformation {
-        Type nftType;
-        uint256 lastUsage;
-        uint256 powerLeft;
-        uint256 maxPower;
-    }
 
     // mapping for nft information
     mapping(uint256=>NFTInformation) public nftInfo;
@@ -68,6 +68,9 @@ contract EarnNFT is ERC721, Ownable {
 
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
+
+        require(tokenId < maxSupply, "EarnNFT: can't mint, max supply reached");
+        
         _mint(msg.sender, tokenId);
 
         nftInfo[tokenId] = NFTInformation(
@@ -141,7 +144,7 @@ contract EarnNFT is ERC721, Ownable {
     */
 
     function getTypeByPower(uint256 power) public pure returns (Type) {
-        require(power <= 4 * powerMultiplier(), "EarnNFT: Merge Power is too high");
+        require(power <= 4 * powerMultiplier(), "EarnNFT: Power is too high");
         if (power == 1 * powerMultiplier())
             return Type.COMMON;  
         if (power == 2 * powerMultiplier()) 
