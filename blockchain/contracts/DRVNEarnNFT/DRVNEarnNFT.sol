@@ -95,6 +95,7 @@ contract EarnNFT is ERC721, Ownable {
 
     /**
      * @dev buying the token
+     * @param vehicle vehicle type
     */
 
     function mint(EType vehicle) external payable {
