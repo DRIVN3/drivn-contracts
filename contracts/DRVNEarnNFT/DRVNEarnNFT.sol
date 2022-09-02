@@ -108,8 +108,6 @@ contract EarnNFT is ERC721, Ownable {
         );
 
         // burning mergin tokens
-        delete nftInfo[tokenId1];
-        delete nftInfo[tokenId2];
         _burn(tokenId1);
         _burn(tokenId2);
     }
