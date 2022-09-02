@@ -7,15 +7,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 // enum for electic vehicle
-enum EVehicle { CAR, BICYCLE, SCOOTER }
+enum EType { CAR, BICYCLE, SCOOTER }
 
 // enum for NFT type
-enum Type { COMMON, UNCOMMON, RARE, EPIC }
+enum Level { COMMON, UNCOMMON, RARE, EPIC }
 
 // struct NFT information
 struct NFTInformation {
-    Type nftType;
-    EVehicle vehicle;
+    Level nftType;
+    EType vehicle;
     uint256 lastUsage;
     uint256 powerLeft;
     uint256 maxPower;
@@ -28,12 +28,12 @@ contract EarnNFT is ERC721, Ownable {
     /**
      * @dev Emitted when mint method is called
      */
-    event Mint(EVehicle vehicle);
+    event Mint(address indexed sender, EType indexed vehicle, uint256 indexed tokenId);
 
     /**
      * @dev Emitted when merge method is called
      */
-    event Merge(uint256 tokenId1, uint256 tokenId2);
+    event Merge(address indexed sender, uint256 indexed tokenId1, uint256 indexed tokenId2);
 
     // token counter
     Counters.Counter private _tokenIdCounter;
@@ -51,7 +51,7 @@ contract EarnNFT is ERC721, Ownable {
     mapping(uint256=>NFTInformation) public nftInfo;
 
     // mapping for nft information
-    mapping(Type=>uint256) public nftTypePower;
+    mapping(Level=>uint256) public nftTypePower;
 
     // max car possible supply
     uint256 public constant maxCarSupply = 7000;
@@ -87,33 +87,33 @@ contract EarnNFT is ERC721, Ownable {
         setBaseURI(baseURI);
 
         // define powers
-        nftTypePower[Type.COMMON] = 1 * powerMultiplier();
-        nftTypePower[Type.UNCOMMON] = 2 * powerMultiplier();
-        nftTypePower[Type.RARE] = 3 * powerMultiplier();
-        nftTypePower[Type.EPIC] = 4 * powerMultiplier();
+        nftTypePower[Level.COMMON] = 1 * powerMultiplier();
+        nftTypePower[Level.UNCOMMON] = 2 * powerMultiplier();
+        nftTypePower[Level.RARE] = 3 * powerMultiplier();
+        nftTypePower[Level.EPIC] = 4 * powerMultiplier();
     }
 
     /**
      * @dev buying the token
     */
 
-    function mint(EVehicle vehicle) external payable {
+    function mint(EType vehicle) external payable {
 
-        if (vehicle == EVehicle.CAR) {
+        if (vehicle == EType.CAR) {
             _carCounter.increment();
             uint256 carCount = _carCounter.current();
             require(commonTokenCarPrice == msg.value, "EarnNFT: not enough money");
             require(carCount <= maxCarSupply, "EarnNFT: can't mint, max car supply reached");
         }
         
-        if (vehicle == EVehicle.BICYCLE) {
+        if (vehicle == EType.BICYCLE) {
             _bicycleCounter.increment();
             uint256 _bicycleCount = _bicycleCounter.current();
             require(commonTokenBicyclePrice == msg.value, "EarnNFT: not enough money");
             require(_bicycleCount <= maxBicycleSupply, "EarnNFT: can't mint, max bicycle supply reached");
         }
 
-        if (vehicle == EVehicle.SCOOTER) {
+        if (vehicle == EType.SCOOTER) {
             _scooterCounter.increment();
             uint256 _scooterCount = _scooterCounter.current();
             require(commonTokenScooterPrice == msg.value, "EarnNFT: not enough money");
@@ -125,14 +125,14 @@ contract EarnNFT is ERC721, Ownable {
         _mint(msg.sender, tokenId);
 
         nftInfo[tokenId] = NFTInformation(
-            Type.COMMON, // nft type is common
+            Level.COMMON, // nft type is common
             vehicle, // EVehile
             0, // last usage
-            nftTypePower[Type.COMMON], // powerLeft
-            nftTypePower[Type.COMMON] // max power
+            nftTypePower[Level.COMMON], // powerLeft
+            nftTypePower[Level.COMMON] // max power
         );
 
-        emit Mint(vehicle);
+        emit Mint(msg.sender, vehicle, tokenId);
     }
 
     /**
@@ -146,10 +146,10 @@ contract EarnNFT is ERC721, Ownable {
                     && ownerOf(tokenId2) == msg.sender, 
                     "EarnNFT: sender is not the owner of the tokens");
         require(nftInfo[tokenId1].vehicle == nftInfo[tokenId2].vehicle, 
-            "EarnNFT: type of EVehicle does not match");
+            "EarnNFT: EType of nft does not match");
 
         uint256 newPower = nftInfo[tokenId1].maxPower + nftInfo[tokenId2].maxPower;
-        Type nftType = getTypeByPower(newPower);    
+        Level nftType = getLevelByPower(newPower);    
 
         // adding the token
         _tokenIdCounter.increment();
@@ -168,7 +168,7 @@ contract EarnNFT is ERC721, Ownable {
         _burn(tokenId1);
         _burn(tokenId2);
 
-        emit Merge(tokenId1, tokenId2);
+        emit Merge(msg.sender, tokenId1, tokenId2);
     }
 
     /**
@@ -200,16 +200,16 @@ contract EarnNFT is ERC721, Ownable {
         @dev pure function for returning type by power
     */
 
-    function getTypeByPower(uint256 power) public pure returns (Type) {
+    function getLevelByPower(uint256 power) public pure returns (Level) {
         require(power <= 4 * powerMultiplier(), "EarnNFT: Power is too high");
         if (power == 1 * powerMultiplier())
-            return Type.COMMON;  
+            return Level.COMMON;  
         if (power == 2 * powerMultiplier()) 
-            return Type.UNCOMMON;
+            return Level.UNCOMMON;
         if (power == 3 * powerMultiplier())
-            return Type.RARE;
+            return Level.RARE;
         if (power == 4 * powerMultiplier())
-            return Type.EPIC;
+            return Level.EPIC;
     }
 
 }

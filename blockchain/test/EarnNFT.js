@@ -37,9 +37,9 @@ describe("EarnNFt", function () {
                 expect(await earnNFT.powerMultiplier()).to.be.equal(3600);
             });
 
-            it("Checking getTypeByPower", async function () {
+            it("Checking getLevelByPower", async function () {
                 const { earnNFT } = await loadFixture(getContracts);
-                expect(await earnNFT.getTypeByPower(await earnNFT.powerMultiplier())).to.be.equal(COMMON);
+                expect(await earnNFT.getLevelByPower(await earnNFT.powerMultiplier())).to.be.equal(COMMON);
             });
         });
     });
@@ -107,6 +107,16 @@ describe("EarnNFt", function () {
             await expect(earnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')}))
                 .to.be.revertedWith("EarnNFT: can't mint, max bicycle supply reached");
         });
+
+        it("should fail after minting 2001 scooter", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
+            
+            for (let k = 0; k < 2000; ++ k)
+                await earnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')});
+
+            await expect(earnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')}))
+                .to.be.revertedWith("EarnNFT: can't mint, max scooter supply reached");
+        });
     });
 
     describe("test EarnNft merging", function () {
@@ -125,7 +135,7 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
             await earnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')});
 
-            await expect(earnNFT.connect(firstAccount).merge(1, 2)).to.be.revertedWith("EarnNFT: type of EVehicle does not match");
+            await expect(earnNFT.connect(firstAccount).merge(1, 2)).to.be.revertedWith("EarnNFT: EType of nft does not match");
         });
 
         it("Should merge two common token", async function () {
