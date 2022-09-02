@@ -23,6 +23,8 @@ struct NFTInformation {
 
 contract EarnNFT is ERC721, Ownable {
 
+    using Counters for Counters.Counter;
+
     /**
      * @dev Emitted when mint method is called
      */
@@ -32,8 +34,6 @@ contract EarnNFT is ERC721, Ownable {
      * @dev Emitted when merge method is called
      */
     event Merge(uint256 tokenId1, uint256 tokenId2);
-
-    using Counters for Counters.Counter;
 
     // token counter
     Counters.Counter private _tokenIdCounter;
