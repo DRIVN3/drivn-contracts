@@ -98,7 +98,7 @@ describe("EarnNFt", function () {
             expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
         });
 
-        it("mint 1000 bicycle NFT", async function () {
+        it("should fail after minting 1001 bicycle", async function () {
             const { earnNFT, firstAccount } = await loadFixture(getContracts);
             
             for (let k = 0; k < 1000; ++ k)
