@@ -54,13 +54,13 @@ contract EarnNFT is ERC721, Ownable {
     mapping(Type=>uint256) public nftTypePower;
 
     // max car possible supply
-    uint256 public constant maxCarSupply = 10000;
+    uint256 public constant maxCarSupply = 7000;
 
     // max bicycle possible supply
-    uint256 public constant maxBicycleSupply = 10000;
+    uint256 public constant maxBicycleSupply = 1000;
 
     // max scooter possible supply
-    uint256 public constant maxScooterSupply = 10000;
+    uint256 public constant maxScooterSupply = 2000;
 
     // base token URI
     string internal _baseTokenURI;
@@ -103,21 +103,21 @@ contract EarnNFT is ERC721, Ownable {
             _carCounter.increment();
             uint256 carCount = _carCounter.current();
             require(commonTokenCarPrice == msg.value, "EarnNFT: not enough money");
-            require(carCount < maxCarSupply, "EarnNFT: can't mint, max car supply reached");
+            require(carCount <= maxCarSupply, "EarnNFT: can't mint, max car supply reached");
         }
         
         if (vehicle == EVehicle.BICYCLE) {
             _bicycleCounter.increment();
             uint256 _bicycleCount = _bicycleCounter.current();
             require(commonTokenBicyclePrice == msg.value, "EarnNFT: not enough money");
-            require(_bicycleCount < maxBicycleSupply, "EarnNFT: can't mint, max bicycle supply reached");
+            require(_bicycleCount <= maxBicycleSupply, "EarnNFT: can't mint, max bicycle supply reached");
         }
 
         if (vehicle == EVehicle.SCOOTER) {
             _scooterCounter.increment();
             uint256 _scooterCount = _scooterCounter.current();
             require(commonTokenScooterPrice == msg.value, "EarnNFT: not enough money");
-            require(_scooterCount < maxScooterSupply, "EarnNFT: can't mint, max scooter supply reached");
+            require(_scooterCount <= maxScooterSupply, "EarnNFT: can't mint, max scooter supply reached");
         }
 
         _tokenIdCounter.increment();

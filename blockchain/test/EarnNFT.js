@@ -97,6 +97,16 @@ describe("EarnNFt", function () {
             expect(nftInfo.powerLeft).to.be.equal(COMMONPOWER * multiplier);
             expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
         });
+
+        it("mint 1000 bicycle NFT", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
+            
+            for (let k = 0; k < 1000; ++ k)
+                await earnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')});
+
+            await expect(earnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')}))
+                .to.be.revertedWith("EarnNFT: can't mint, max bicycle supply reached");
+        });
     });
 
     describe("test EarnNft merging", function () {
