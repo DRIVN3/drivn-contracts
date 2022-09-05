@@ -5,6 +5,7 @@ pragma solidity 0.8.15;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "../GTT.sol";
 
 // enum for electic vehicle
 enum EType { CAR, BICYCLE, SCOOTER }
@@ -54,6 +55,9 @@ contract EarnNFT is ERC721, Ownable {
     // mapping for nft information
     mapping(Level=>uint256) public nftTypePower;
 
+    // mapping for nft earning gap
+    mapping(EType=>uint256) public vehicleGTTGap;
+
     // max car possible supply
     uint256 public constant maxCarSupply = 7000;
 
@@ -78,6 +82,15 @@ contract EarnNFT is ERC721, Ownable {
     // mapping for allowed addresses
     mapping(address=>bool) public isAllowed;
 
+    // mapping for nft-vehicle movement
+    mapping(uint256 => uint256) public nftPowerUsed;
+
+    // mapping for GTT claimed
+    mapping(uint256 => uint256) public nftPowerClaimed;
+
+    // mapping for nft-vehicle movement
+    GTT public gttCoin;
+
     /**
      * @dev Sets main dependencies and constants
      * @param name_ 721A nft name
@@ -85,15 +98,25 @@ contract EarnNFT is ERC721, Ownable {
      * @param baseURI baseUri for mint
     */
 
-    constructor(string memory name_, string memory symbol_, string memory baseURI) 
+    constructor(string memory name_, 
+    string memory symbol_, 
+    string memory baseURI, 
+    address gttAddress_) 
     ERC721(name_, symbol_){
         setBaseURI(baseURI);
+
+        gttCoin = GTT(gttAddress_);
 
         // define powers
         nftTypePower[Level.COMMON] = 1 * powerMultiplier();
         nftTypePower[Level.UNCOMMON] = 2 * powerMultiplier();
         nftTypePower[Level.RARE] = 3 * powerMultiplier();
         nftTypePower[Level.EPIC] = 4 * powerMultiplier();
+
+        // define nft GTT earning gap
+        vehicleGTTGap[EType.CAR] = 4 * 10 ** gttCoin.decimals();
+        vehicleGTTGap[EType.SCOOTER] = 9 * 10 ** gttCoin.decimals() / 2;
+        vehicleGTTGap[EType.BICYCLE] = 5 * 10 ** gttCoin.decimals();
     }
 
 
@@ -222,7 +245,7 @@ contract EarnNFT is ERC721, Ownable {
     */
 
     function powerMultiplier() public pure returns (uint256) {
-        return 3600;
+        return 900;
     }
 
     /**
@@ -250,7 +273,7 @@ contract EarnNFT is ERC721, Ownable {
     */
 
     function tieVehicle(address vehicleOwner, uint256 tokenId, uint256 vehicleId, EType vehicleType) external whenAlloed {
-        require(ownerOf(tokenId) == vehicleOwner, "EarnNFT: sender is not the owner of the token");
+        require(ownerOf(tokenId) == vehicleOwner, "EarnNFT: vehicleOwner is not the owner of the token");
         require(nftInfo[tokenId].vehicleId == 0, "EarnNFT: untie vehicle first, to do this action");
         require(nftInfo[tokenId].vehicle == vehicleType, "EarnNFT: vehicle type does not match the nft type");
 
@@ -265,4 +288,51 @@ contract EarnNFT is ERC721, Ownable {
     function untieVehicle(uint256 tokenId) external whenAlloed {
         nftInfo[tokenId].vehicleId = 0;
     }
+
+    /**
+     * @dev calculates power left for given token id
+     * @param tokenId nft token id
+    */
+
+    function calculatePower(uint256 tokenId) public view returns (uint256) {
+        uint256 maxPower = nftInfo[tokenId].maxPower;
+        uint256 replenishPower = nftInfo[tokenId].powerLeft + (block.timestamp - nftInfo[tokenId].lastUsage) * maxPower / 86400000;
+        replenishPower =  replenishPower <= maxPower ? replenishPower : maxPower;
+        return replenishPower;
+    }
+    
+    /**
+     * @dev updates the vehicle traffic
+     * @param vehicleId id of vehicle
+     * @param tokenId nft token id
+    */ 
+
+    function moveNft(uint256 tokenId, uint256 vehicleId, uint256 durationSeconds) external {
+        require(nftInfo[tokenId].vehicleId == vehicleId, "EarnNFT: vehicleId is not tied on this nft");
+
+        uint256 currentPower = calculatePower(tokenId);
+        require(currentPower >= durationSeconds, "EarnNFT: durationSeconds exceeds current power's limit");
+
+        currentPower = currentPower - durationSeconds;
+        nftInfo[tokenId].powerLeft = currentPower;
+        nftInfo[tokenId].lastUsage = block.timestamp;
+
+        nftPowerUsed[tokenId] += durationSeconds;
+    }
+
+    /**
+     * @dev generating GTT
+     * @param tokenId nft token id
+    */ 
+
+    function generateGTT(uint256 tokenId) external {
+        require(ownerOf(tokenId) == msg.sender, "EarnNFT: sender is not the owner of the token");
+
+        uint256 earningGap = vehicleGTTGap[nftInfo[tokenId].vehicle];
+        uint256 earned = (nftPowerUsed[tokenId] - nftPowerClaimed[tokenId]) * earningGap / 900;
+        nftPowerClaimed[tokenId] = nftPowerUsed[tokenId];
+
+        gttCoin.mint(msg.sender, earned);
+    }
+
 }

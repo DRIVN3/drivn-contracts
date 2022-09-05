@@ -10,15 +10,18 @@ const COMMONPOWER = 1, UNCOMMONPOWER = 2, RAREPOWER = 3, EPICPOWER = 4;
 const CAR = 0, BICYCLE = 1, SCOOTER = 2;
 
 async function getContracts() {
+    let GTT = await ethers.getContractFactory("GTT");
+    GTT = await GTT.deploy("test", "testing");
+
     const [owner, firstAccount, secondAccount] = await ethers.getSigners();
 
     let earnNFT = await ethers.getContractFactory("EarnNFT"); 
     let name = "test";
     let symbol = "testing";  
     let baseUri = "testing";
-    earnNFT = await earnNFT.deploy(name, symbol, baseUri); 
+    earnNFT = await earnNFT.deploy(name, symbol, baseUri, GTT.address); 
 
-    return { earnNFT, owner, firstAccount, secondAccount, name, symbol, baseUri } 
+    return { earnNFT, owner, firstAccount, secondAccount, name, symbol, baseUri, GTT } 
 }
 
 
@@ -34,7 +37,7 @@ describe("EarnNFt", function () {
 
             it("Checking power decimals", async function () {
                 const { earnNFT } = await loadFixture(getContracts);
-                expect(await earnNFT.powerMultiplier()).to.be.equal(3600);
+                expect(await earnNFT.powerMultiplier()).to.be.equal(900);
             });
 
             it("Checking getLevelByPower", async function () {
@@ -268,7 +271,7 @@ describe("EarnNFt", function () {
             await earnNFT.setAllowed([owner.address], true);
 
             await expect(earnNFT.connect(owner).tieVehicle(secondAccount.address, 1, 123123, CAR))
-                .to.be.revertedWith("EarnNFT: sender is not the owner of the token");
+                .to.be.revertedWith("EarnNFT: vehicleOwner is not the owner of the token");
         }); 
 
         it("Should fail when tie is called different vehicle type", async function () {
@@ -321,5 +324,150 @@ describe("EarnNFt", function () {
             const nftInfo = await earnNFT.nftInfo(1);
             expect(nftInfo.vehicleId).to.be.equal(0);
         }); 
+    });
+
+    describe("test calculate power", function () {
+        it("calculatePower when it's full should return max power", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            let power = await earnNFT.calculatePower(1);
+            expect(power).to.be.equal(COMMONPOWER * await earnNFT.powerMultiplier());
+        });
+    });
+
+    describe("test move nft", function () {
+        it("should fail when calling with no tied vehicle", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            
+            await expect(earnNFT.moveNft(1, 12321, 123123))
+                .to.be.revertedWith("EarnNFT: vehicleId is not tied on this nft");
+        });
+
+        it("should fail when duration is not fit in power limit", async function () {
+            const { earnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            let vehicleId = 123123123;
+
+            await earnNFT.tieVehicle(firstAccount.address, 1, vehicleId, CAR);
+
+            await expect(earnNFT.moveNft(1, vehicleId, 901))
+                .to.be.revertedWith("EarnNFT: durationSeconds exceeds current power's limit");
+        });
+
+        it("should change power correctly", async function () {
+            const { earnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            let vehicleId = 123123123;
+
+            await earnNFT.tieVehicle(firstAccount.address, 1, vehicleId, CAR);
+
+            await earnNFT.moveNft(1, vehicleId, 500);
+
+            const nftInfo = await earnNFT.nftInfo(1);
+
+            const blockNumBefore = await ethers.provider.getBlockNumber();
+            const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+            const timestampBefore = blockBefore.timestamp;
+            expect(nftInfo.lastUsage).to.be.equal(timestampBefore);
+            expect(nftInfo.powerLeft).to.be.equal(400);
+        });
+
+        it("should change be zero power on Uncommon waste 900 + 900", async function () {
+            const { earnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.connect(firstAccount).merge(1, 2);
+            await earnNFT.setAllowed([owner.address], true);
+
+            let vehicleId = 123123123;
+
+            await earnNFT.tieVehicle(firstAccount.address, 3, vehicleId, CAR);
+
+            await earnNFT.moveNft(3, vehicleId, 500);
+            await earnNFT.moveNft(3, vehicleId, 500);
+            await earnNFT.moveNft(3, vehicleId, 800);
+
+            const nftInfo = await earnNFT.nftInfo(3);
+
+            const blockNumBefore = await ethers.provider.getBlockNumber();
+            const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+            const timestampBefore = blockBefore.timestamp;
+            expect(nftInfo.lastUsage).to.be.equal(timestampBefore);
+            expect(nftInfo.powerLeft).to.be.equal(0);
+        });
+
+        it("should change be zero power on Uncommon waste 900 + 900", async function () {
+            const { earnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.connect(firstAccount).merge(1, 2);
+            await earnNFT.setAllowed([owner.address], true);
+
+            let vehicleId = 123123123;
+
+            await earnNFT.tieVehicle(firstAccount.address, 3, vehicleId, CAR);
+
+            await earnNFT.moveNft(3, vehicleId, 500);
+            await earnNFT.moveNft(3, vehicleId, 500);
+            await earnNFT.moveNft(3, vehicleId, 800);
+
+            const halfDay = 12 * 60 * 60;
+            await network.provider.send("evm_increaseTime", [halfDay]);
+            await network.provider.send("evm_mine");
+
+            let power = await earnNFT.calculatePower(1);
+            expect(power).to.be.equal(UNCOMMONPOWER * await earnNFT.powerMultiplier() / 2);
+        });
+    });
+
+    describe("test generate GTT", function () {
+        it("should change be 8 GTT power when uncommon wasted whole", async function () {
+            const { earnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.connect(firstAccount).merge(1, 2);
+            await earnNFT.setAllowed([owner.address], true);
+
+            let vehicleId = 123123123;
+
+            await earnNFT.tieVehicle(firstAccount.address, 3, vehicleId, CAR);
+
+            await earnNFT.moveNft(3, vehicleId, 500);
+            await earnNFT.moveNft(3, vehicleId, 500);
+            await earnNFT.moveNft(3, vehicleId, 800);
+
+            await GTT.setAllowed([earnNFT.address], true);
+            await earnNFT.connect(firstAccount).generateGTT(3);
+
+            expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("8000000000000000000");
+        });
+
+        it("should fail while calling non owner", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await expect(earnNFT.generateGTT(1)).to.be.revertedWith("EarnNFT: sender is not the owner of the token");
+        });
+
+        it("should change be 8 GTT power when uncommon wasted whole", async function () {
+            const { earnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            let vehicleId = 123123123;
+
+            await earnNFT.tieVehicle(firstAccount.address, 1, vehicleId, CAR);
+
+            await earnNFT.moveNft(1, vehicleId, 450);
+
+            await GTT.setAllowed([earnNFT.address], true);
+            await earnNFT.connect(firstAccount).generateGTT(1);
+
+            expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("2000000000000000000");
+        });
     });
 });
