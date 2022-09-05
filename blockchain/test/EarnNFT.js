@@ -44,6 +44,20 @@ describe("EarnNFt", function () {
         });
     });
 
+    describe("Setting allowed", function () {
+        it("Should be false initial", async function () {
+            const { earnNFT, owner } = await loadFixture(getContracts);
+            expect(await earnNFT.isAllowed(owner.address)).to.be.equal(false);
+        });
+
+        it("Should be true after setting", async function () {
+            const { earnNFT, owner } = await loadFixture(getContracts);
+            
+            await earnNFT.setAllowed([owner.address], true);
+            expect(await earnNFT.isAllowed(owner.address)).to.be.equal(true);
+        });
+    });
+
     describe("test EarnNft minting", function () {
         it("Should fail when not enough balance", async function () {
             const { earnNFT, firstAccount } = await loadFixture(getContracts);
@@ -237,5 +251,75 @@ describe("EarnNFt", function () {
             await expect(earnNFT.connect(firstAccount).merge(5, 8)).to.be.revertedWith("EarnNFT: Power is too high");
         });
 
+    });
+
+    describe("Test tie/untie", function () {
+        it("Should fail when tie is called with no allowed address", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+
+            await expect(earnNFT.connect(firstAccount).tieVehicle(firstAccount.address, 1, 123123, CAR))
+                .to.be.revertedWith("EarnNFT: address is not allowed to call this function");
+        }); 
+
+        it("Should fail when tie is called not token owner", async function () {
+            const { earnNFT, owner, firstAccount, secondAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            await expect(earnNFT.connect(owner).tieVehicle(secondAccount.address, 1, 123123, CAR))
+                .to.be.revertedWith("EarnNFT: sender is not the owner of the token");
+        }); 
+
+        it("Should fail when tie is called different vehicle type", async function () {
+            const { earnNFT, owner, firstAccount, secondAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            await expect(earnNFT.connect(owner).tieVehicle(firstAccount.address, 1, 123123, BICYCLE))
+                .to.be.revertedWith("EarnNFT: vehicle type does not match the nft type");
+        }); 
+
+        it("Should fail when tie is called twice without untie", async function () {
+            const { earnNFT, owner, firstAccount, secondAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            await earnNFT.connect(owner).tieVehicle(firstAccount.address, 1, 123123, CAR)
+
+            await expect(earnNFT.connect(owner).tieVehicle(firstAccount.address, 1, 123123, CAR))
+                .to.be.revertedWith("EarnNFT: untie vehicle first, to do this action");
+        }); 
+
+        it("Should store correct id after tie vehicle", async function () {
+            const { earnNFT, owner, firstAccount, secondAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            const id = 123123123;
+            await earnNFT.connect(owner).tieVehicle(firstAccount.address, 1, id, CAR);
+
+            const nftInfo = await earnNFT.nftInfo(1);
+            expect(nftInfo.vehicleId).to.be.equal(id);
+        }); 
+
+        it("Should faile when untie is called no owner", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
+            await expect(earnNFT.connect(firstAccount).untieVehicle(1))
+                .to.be.revertedWith("EarnNFT: address is not allowed to call this function");
+        }); 
+
+        it("Should untie correctly", async function () {
+            const { earnNFT, owner, firstAccount, secondAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            const id = 123123123;
+            await earnNFT.connect(owner).tieVehicle(firstAccount.address, 1, id, CAR);
+            await earnNFT.connect(owner).untieVehicle(1);
+
+            const nftInfo = await earnNFT.nftInfo(1);
+            expect(nftInfo.vehicleId).to.be.equal(0);
+        }); 
     });
 });

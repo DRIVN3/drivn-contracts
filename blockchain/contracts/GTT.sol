@@ -129,7 +129,7 @@ contract GTT is ERC20, Ownable, Pausable {
 
     /**
      * @dev setting allowed list
-     * @param addresses array of counts of coins
+     * @param addresses array of counts of allowed addresses
      * @param allowed True/False bool for enable minting or not
     */
     

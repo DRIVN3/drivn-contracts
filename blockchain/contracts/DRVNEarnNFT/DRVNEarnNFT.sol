@@ -19,6 +19,7 @@ struct NFTInformation {
     uint256 lastUsage;
     uint256 powerLeft;
     uint256 maxPower;
+    uint256 vehicleId;
 }
 
 contract EarnNFT is ERC721, Ownable {
@@ -74,6 +75,8 @@ contract EarnNFT is ERC721, Ownable {
     // commong token price
     uint256 public commonTokenScooterPrice = 0.01 ether;
 
+    // mapping for allowed addresses
+    mapping(address=>bool) public isAllowed;
 
     /**
      * @dev Sets main dependencies and constants
@@ -91,6 +94,16 @@ contract EarnNFT is ERC721, Ownable {
         nftTypePower[Level.UNCOMMON] = 2 * powerMultiplier();
         nftTypePower[Level.RARE] = 3 * powerMultiplier();
         nftTypePower[Level.EPIC] = 4 * powerMultiplier();
+    }
+
+
+    /**
+     * @dev modifier to detect if address is allowed for specific operation
+    */
+
+    modifier whenAlloed() {
+        require(isAllowed[msg.sender], "EarnNFT: address is not allowed to call this function");
+        _;
     }
 
     /**
@@ -130,7 +143,8 @@ contract EarnNFT is ERC721, Ownable {
             vehicle, // EVehile
             0, // last usage
             nftTypePower[Level.COMMON], // powerLeft
-            nftTypePower[Level.COMMON] // max power
+            nftTypePower[Level.COMMON], // max power,
+            0 // vehicle id
         );
 
         emit Mint(msg.sender, vehicle, tokenId);
@@ -162,7 +176,8 @@ contract EarnNFT is ERC721, Ownable {
             nftInfo[tokenId1].vehicle, // vehicle
             0, // last usage
             newPower, // powerLeft
-            newPower // maxPower
+            newPower, // maxPower
+            0 // vehicle id
         );
 
         // burning mergin tokens
@@ -171,6 +186,19 @@ contract EarnNFT is ERC721, Ownable {
 
         emit Merge(msg.sender, tokenId1, tokenId2);
     }
+
+    /**
+     * @dev setting allowed addresses for nft usage
+     * @param addresses array of counts of allowed addresses
+     * @param allowed True/False bool for enable certain operations
+    */
+    
+    function setAllowed(address[] calldata addresses, bool allowed) external onlyOwner {
+        for (uint256 i = 0; i < addresses.length; ++i) {
+            isAllowed[addresses[i]] = allowed;
+        }
+    }
+
 
     /**
      * @dev Set the base URI
@@ -190,7 +218,7 @@ contract EarnNFT is ERC721, Ownable {
     }
 
     /**
-        @dev pure function for returning decimals of power
+     * @dev pure function for returning decimals of power
     */
 
     function powerMultiplier() public pure returns (uint256) {
@@ -198,7 +226,7 @@ contract EarnNFT is ERC721, Ownable {
     }
 
     /**
-        @dev pure function for returning type by power
+     * @dev pure function for returning type by power
     */
 
     function getLevelByPower(uint256 power) public pure returns (Level) {
@@ -213,4 +241,28 @@ contract EarnNFT is ERC721, Ownable {
             return Level.EPIC;
     }
 
+    /**
+     * @dev ties vehicle to nft
+     * @param vehicleOwner address of nft owner
+     * @param tokenId nft token id
+     * @param vehicleId the identification of vehicle
+     * @param vehicleType type of vehicle
+    */
+
+    function tieVehicle(address vehicleOwner, uint256 tokenId, uint256 vehicleId, EType vehicleType) external whenAlloed {
+        require(ownerOf(tokenId) == vehicleOwner, "EarnNFT: sender is not the owner of the token");
+        require(nftInfo[tokenId].vehicleId == 0, "EarnNFT: untie vehicle first, to do this action");
+        require(nftInfo[tokenId].vehicle == vehicleType, "EarnNFT: vehicle type does not match the nft type");
+
+        nftInfo[tokenId].vehicleId = vehicleId;
+    }
+
+    /**
+     * @dev unties NFT from vehicle
+     * @param tokenId nft token id
+    */
+
+    function untieVehicle(uint256 tokenId) external whenAlloed {
+        nftInfo[tokenId].vehicleId = 0;
+    }
 }
