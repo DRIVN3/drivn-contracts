@@ -20,7 +20,6 @@ struct NFTInformation {
     uint256 lastUsage;
     uint256 powerLeft;
     uint256 maxPower;
-    uint256 vehicleId;
 }
 
 contract EarnNFT is ERC721, Ownable {
@@ -166,8 +165,7 @@ contract EarnNFT is ERC721, Ownable {
             vehicle, // EVehile
             0, // last usage
             nftTypePower[Level.COMMON], // powerLeft
-            nftTypePower[Level.COMMON], // max power,
-            0 // vehicle id
+            nftTypePower[Level.COMMON] // max power,
         );
 
         emit Mint(msg.sender, vehicle, tokenId);
@@ -199,8 +197,7 @@ contract EarnNFT is ERC721, Ownable {
             nftInfo[tokenId1].vehicle, // vehicle
             0, // last usage
             newPower, // powerLeft
-            newPower, // maxPower
-            0 // vehicle id
+            newPower // maxPower
         );
 
         // burning mergin tokens
@@ -265,31 +262,6 @@ contract EarnNFT is ERC721, Ownable {
     }
 
     /**
-     * @dev ties vehicle to nft
-     * @param vehicleOwner address of nft owner
-     * @param tokenId nft token id
-     * @param vehicleId the identification of vehicle
-     * @param vehicleType type of vehicle
-    */
-
-    function tieVehicle(address vehicleOwner, uint256 tokenId, uint256 vehicleId, EType vehicleType) external whenAlloed {
-        require(ownerOf(tokenId) == vehicleOwner, "EarnNFT: vehicleOwner is not the owner of the token");
-        require(nftInfo[tokenId].vehicleId == 0, "EarnNFT: untie vehicle first, to do this action");
-        require(nftInfo[tokenId].vehicle == vehicleType, "EarnNFT: vehicle type does not match the nft type");
-
-        nftInfo[tokenId].vehicleId = vehicleId;
-    }
-
-    /**
-     * @dev unties NFT from vehicle
-     * @param tokenId nft token id
-    */
-
-    function untieVehicle(uint256 tokenId) external whenAlloed {
-        nftInfo[tokenId].vehicleId = 0;
-    }
-
-    /**
      * @dev calculates power left for given token id
      * @param tokenId nft token id
     */
@@ -303,13 +275,10 @@ contract EarnNFT is ERC721, Ownable {
     
     /**
      * @dev updates the vehicle traffic
-     * @param vehicleId id of vehicle
      * @param tokenId nft token id
     */ 
 
-    function moveNft(uint256 tokenId, uint256 vehicleId, uint256 durationSeconds) external {
-        require(nftInfo[tokenId].vehicleId == vehicleId, "EarnNFT: vehicleId is not tied on this nft");
-
+    function generate(uint256 tokenId, uint256 durationSeconds) external {
         uint256 currentPower = calculatePower(tokenId);
         require(currentPower >= durationSeconds, "EarnNFT: durationSeconds exceeds current power's limit");
 
@@ -321,11 +290,11 @@ contract EarnNFT is ERC721, Ownable {
     }
 
     /**
-     * @dev generating GTT
+     * @dev claiming GTT tokens
      * @param tokenId nft token id
     */ 
 
-    function generateGTT(uint256 tokenId) external {
+    function claim(uint256 tokenId) external {
         require(ownerOf(tokenId) == msg.sender, "EarnNFT: sender is not the owner of the token");
 
         uint256 earningGap = vehicleGTTGap[nftInfo[tokenId].vehicle];
