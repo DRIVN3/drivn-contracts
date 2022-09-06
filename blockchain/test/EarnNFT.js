@@ -115,25 +115,25 @@ describe("EarnNFt", function () {
             expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
         });
 
-        // it("should fail after minting 1001 bicycle", async function () {
-        //     const { earnNFT, firstAccount } = await loadFixture(getContracts);
+        it("should fail after minting 1001 bicycle", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
             
-        //     for (let k = 0; k < 1000; ++ k)
-        //         await earnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')});
+            for (let k = 0; k < 1000; ++ k)
+                await earnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')});
 
-        //     await expect(earnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')}))
-        //         .to.be.revertedWith("EarnNFT: can't mint, max bicycle supply reached");
-        // });
+            await expect(earnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')}))
+                .to.be.revertedWith("EarnNFT: can't mint, max bicycle supply reached");
+        });
 
-        // it("should fail after minting 2001 scooter", async function () {
-        //     const { earnNFT, firstAccount } = await loadFixture(getContracts);
+        it("should fail after minting 2001 scooter", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
             
-        //     for (let k = 0; k < 2000; ++ k)
-        //         await earnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')});
+            for (let k = 0; k < 2000; ++ k)
+                await earnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')});
 
-        //     await expect(earnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')}))
-        //         .to.be.revertedWith("EarnNFT: can't mint, max scooter supply reached");
-        // });
+            await expect(earnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')}))
+                .to.be.revertedWith("EarnNFT: can't mint, max scooter supply reached");
+        });
     });
 
     describe("test EarnNft merging", function () {
@@ -388,5 +388,45 @@ describe("EarnNFt", function () {
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("8000000000000000000")
         });
+
+        it("should be 6 GTT power when uncommon wasted 1.5 times", async function () {
+            const { earnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            await earnNFT.generate(1, 900);
+
+            await GTT.setAllowed([earnNFT.address], true);
+            await earnNFT.connect(firstAccount).claim(1);
+
+            expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
+
+            const halfDay = 12 * 60 * 60;
+            await network.provider.send("evm_increaseTime", [halfDay]);
+            await network.provider.send("evm_mine");
+            await earnNFT.generate(1, 450);
+            await earnNFT.connect(firstAccount).claim(1);
+
+            expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("6000000000000000000")
+        });
+
+        it("should fail when duration exceeds it's current limit", async function () {
+            const { earnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed([owner.address], true);
+
+            await earnNFT.generate(1, 900);
+
+            await GTT.setAllowed([earnNFT.address], true);
+            await earnNFT.connect(firstAccount).claim(1);
+
+            expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
+
+            const halfDay = 12 * 60 * 60;
+            await network.provider.send("evm_increaseTime", [halfDay]);
+            await network.provider.send("evm_mine");
+            await expect(earnNFT.generate(1, 451)).to.be.revertedWith("EarnNFT: durationSeconds exceeds current power's limit");
+        });
+
     });
 });
