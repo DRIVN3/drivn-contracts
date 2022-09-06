@@ -209,7 +209,7 @@ describe("BurnNFT", function () {
             const { burnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
             await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
 
-            await expct(burnNFT.connect(owner).burn(1)).to.be.revertedWith("BurnNFT: sender is not the owner of the token");
+            await expect(burnNFT.connect(owner).burn(1)).to.be.revertedWith("BurnNFT: sender is not the owner of the token");
         });
 
         it("should be 8 GTT power when wasted twice", async function () {
