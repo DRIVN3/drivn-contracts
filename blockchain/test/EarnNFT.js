@@ -266,6 +266,12 @@ describe("EarnNFt", function () {
     });
 
     describe("test generate nft", function () {
+        it("should fail while calling non allowed address", async function () {
+            const { earnNFT, firstAccount } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await expect(earnNFT.generate(1, 100)).to.be.revertedWith("EarnNFT: address is not allowed to call this function");
+        });
+
         it("should fail when duration is not fit in power limit", async function () {
             const { earnNFT, firstAccount, owner } = await loadFixture(getContracts);
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});

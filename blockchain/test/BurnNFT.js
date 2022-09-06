@@ -138,6 +138,12 @@ describe("BurnNFT", function () {
     });
 
     describe("test generate nft", function () {
+        it("should fail while calling non allowed address", async function () {
+            const { burnNFT, firstAccount } = await loadFixture(getContracts);
+            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await expect(burnNFT.generate(1, 100)).to.be.revertedWith("BurnNFT: address is not allowed to call this function");
+        });
+
         it("should fail when duration is not fit in power limit", async function () {
             const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
             await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
@@ -198,7 +204,14 @@ describe("BurnNFT", function () {
         });
     });
 
-    describe("test claiming generated GTT", function () {
+    describe("test burning generated GTT", function () {
+        it("should fail when calling no owner", async function () {
+            const { burnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
+            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+
+            await expct(burnNFT.connect(owner).burn(1)).to.be.revertedWith("BurnNFT: sender is not the owner of the token");
+        });
+
         it("should be 8 GTT power when wasted twice", async function () {
             const { burnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
             await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
