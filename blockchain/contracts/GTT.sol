@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-interface IGTT {
+interface IGTT is IERC20 {
 
     /**
      * @dev burns coins on burn wallet ballance
@@ -25,6 +25,18 @@ interface IGTT {
      */
     function balanceOf(address account) external view returns (uint256);
 
+    /**
+     * @dev get decimals of the coin
+    */
+    function decimals() external view  returns (uint8);
+
+    /**
+     * @dev minting the coins
+     * @param account account to mint coins
+     * @param amount_ amount of coins
+    */
+
+    function mint(address account, uint256 amount_) external;
 }
 
 contract GTTBurnWallet is Ownable {
