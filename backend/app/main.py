@@ -46,8 +46,8 @@ async def earn_nft_metadata(
     max_power = nft_info[4]
 
     return {
-            "description": f'This is an example of Earn NFT {token_id}',
             "name": f'Earn NFT Example {token_id}',
+            "description": f'This is an example of Earn NFT {token_id}',
             "image": image_etype[etype],
             "attributes": [
                 {
@@ -76,19 +76,9 @@ async def burn_nft_metadata(
     max_power = nft_info[3]
 
     return {
-            "description": f'This is an example of BURN NFT {token_id}',
             "name": f'Earn BURN Example {token_id}',
+            "description": f'This is an example of BURN NFT {token_id}',
             "image": image_etype[etype],
-            "attributes": [
-                {
-                    "trait_type": 'vehicle', 
-                    "value": etype
-                }, 
-                {
-                    "trait_type": "power", 
-                    "value": max_power
-                }, 
-            ]
         }
     
 
