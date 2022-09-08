@@ -1,13 +1,6 @@
 FROM python:3.9.8-slim-buster
 
-RUN apt-get update \
-  && apt-get install -y python3-dev build-essential libssl-dev \
-  && apt-get install -y ffmpeg curl libpq-dev
-
-# Get Rust, this is required to build tokenizers package. This is due to OS/Wheel mismatch for some M1 Macs.
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
-
+RUN apt-get update
 EXPOSE 9000
 EXPOSE 9001
 
