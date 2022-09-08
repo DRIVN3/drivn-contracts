@@ -35,10 +35,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     //   accounts: [process.env.ACCOUNT_PRIVATE_KEY]
     // },
     // polygon testnet mumbai
-    // mumbai: {
-    //   url: process.env.MUMBAI,
-    //   accounts: [process.env.ACCOUNT_PRIVATE_KEY]
-    // },
+    mumbai: {
+      url: process.env.MUMBAI,
+      accounts: [process.env.ACCOUNT_PRIVATE_KEY]
+    },
     // goerli testnet
     // goerli: {
     //   url: process.env.GOERLI_URL,
@@ -56,7 +56,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
   },
   etherscan: {
-    apiKey: process.env.BSCSCAN_API_KEY
+    apiKey: process.env.MUMBAI_API_KEY
   },
   //plugins: ["solidity-coverage"],
 };
