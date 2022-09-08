@@ -1,7 +1,7 @@
-from audioop import add
+from fastapi import Path
 from fastapi import APIRouter
 from services.nft_service import get_nft_count
-from fastapi import Path
+from models.earn_nft_model import EarnNftMetadata
 
 Level  = {
     0: "COMMON",
@@ -28,8 +28,8 @@ image_etype = {
     "SCOOTER": "https://ipfs.io/ipfs/QmWEQrCYjygdBD2yAykTNqpHxmqRmQR7pZSTYvAXmPu8DY"
 }
 
-@router.get("/earn-nft/{token_id}", response_model_exclude_unset=True)
-async def detect_sentiment(
+@router.get("/earn-nft/{token_id}", response_model=EarnNftMetadata, response_model_exclude_unset=True)
+async def earn_nft_metadata(
     token_id: int = Path(title="The ID of the item to get", default=0)
 ):
     nft_info = await get_nft_count(token_id)
@@ -45,7 +45,7 @@ async def detect_sentiment(
             "image": image_etype[etype],
             "level": level,
             "etype": etype,
-            "max_power": max_power
+            "maxPower": max_power
         }
     }
 
