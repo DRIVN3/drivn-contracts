@@ -8,8 +8,8 @@ RUN apt-get update \
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-EXPOSE 8000
-EXPOSE 8001
+EXPOSE 9000
+EXPOSE 9001
 
 RUN pip install --upgrade pip
 RUN pip3 install poetry
