@@ -54,8 +54,8 @@ async def get_burn_nft_metadata(token_id):
 
     return {
         "data": {
-            "description": f'This is an example of Earn NFT {token_id}',
-            "name": f'Earn NFT Example {token_id}',
+            "description": f'This is an example of BURN NFT {token_id}',
+            "name": f'Earn BURN Example {token_id}',
             "image": image_etype[etype],
             "etype": etype,
             "maxPower": max_power
