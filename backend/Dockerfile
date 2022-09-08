@@ -1,20 +1,10 @@
-FROM python:3.9.8-slim-buster
+FROM python:3.10
 
-RUN apt-get update
-EXPOSE 9000
-EXPOSE 9001
+EXPOSE 9999
 
 RUN pip install --upgrade pip
-RUN pip3 install poetry
 
+RUN pip3 install fastapi[all] web3
 WORKDIR /app
 
-COPY ./pyproject.toml ./pyproject.toml
-# COPY ./poetry.lock ./poetry.lock
-
-RUN poetry config virtualenvs.create false \
-  && poetry install --no-dev --no-root
-
-COPY . .
-
-CMD ["python3", "main.py"]
+CMD uvicorn app.main:app --reload --host 0.0.0.0 --port 9999
