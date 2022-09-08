@@ -46,7 +46,6 @@ async def earn_nft_metadata(
     max_power = nft_info[4]
 
     return {
-        "data": {
             "description": f'This is an example of Earn NFT {token_id}',
             "name": f'Earn NFT Example {token_id}',
             "image": image_etype[etype],
@@ -55,7 +54,7 @@ async def earn_nft_metadata(
             "maxPower": max_power,
             "attributes": []
         }
-    }
+    
 
 @router.get("/burn-nft/{token_id}")
 async def burn_nft_metadata(
@@ -67,7 +66,6 @@ async def burn_nft_metadata(
     max_power = nft_info[3]
 
     return {
-        "data": {
             "description": f'This is an example of BURN NFT {token_id}',
             "name": f'Earn BURN Example {token_id}',
             "image": image_etype[etype],
@@ -75,6 +73,6 @@ async def burn_nft_metadata(
             "maxPower": max_power,
             "attributes": []
         }
-    }
+    
 
 app.include_router(router)
