@@ -49,10 +49,20 @@ async def earn_nft_metadata(
             "description": f'This is an example of Earn NFT {token_id}',
             "name": f'Earn NFT Example {token_id}',
             "image": image_etype[etype],
-            "level": level,
-            "etype": etype,
-            "maxPower": max_power,
-            "attributes": []
+            "attributes": [
+                {
+                    "trait_type": "Level", 
+                    "value": level
+                }, 
+                {
+                    "trait_type": 'vehicle', 
+                    "value": etype
+                }, 
+                {
+                    "trait_type": "power", 
+                    "value": max_power
+                }, 
+            ]
         }
     
 
@@ -69,9 +79,16 @@ async def burn_nft_metadata(
             "description": f'This is an example of BURN NFT {token_id}',
             "name": f'Earn BURN Example {token_id}',
             "image": image_etype[etype],
-            "etype": etype,
-            "maxPower": max_power,
-            "attributes": []
+            "attributes": [
+                {
+                    "trait_type": 'vehicle', 
+                    "value": etype
+                }, 
+                {
+                    "trait_type": "power", 
+                    "value": max_power
+                }, 
+            ]
         }
     
 
