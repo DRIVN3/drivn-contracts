@@ -29,9 +29,9 @@ EType  = {
 }
 
 image_etype = {
-    "CAR": "https://ipfs.io/ipfs/QmRXjo1Put4heEM1ggXYuK4RcrPS4F6KYbKrjhLT21c9V4",
-    "BICYCLE": "https://ipfs.io/ipfs/QmUxSCmdSTndfnF5U8SZmU8njUNe12DWL8gye25aRx7Rge",
-    "SCOOTER": "https://ipfs.io/ipfs/QmWEQrCYjygdBD2yAykTNqpHxmqRmQR7pZSTYvAXmPu8DY"
+    "CAR": "https://ipfs.io/ipfs/QmNnjnPmYn7yFPj7mtx9cw7rQdR81rFK1Z7Fvs4Drvr8i6",
+    "BICYCLE": "https://ipfs.io/ipfs/QmTWg6UwCE4Tyt9nUyS4kyRMnJXJx1QrW7VxSaduFX5tcU",
+    "SCOOTER": "https://ipfs.io/ipfs/QmUEXkGdnuPEAAYpVKqUswYV1U9xiiQhG2BsLhuFKbTTJs"
 }
 
 
