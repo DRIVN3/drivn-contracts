@@ -52,7 +52,8 @@ async def earn_nft_metadata(
             "image": image_etype[etype],
             "level": level,
             "etype": etype,
-            "maxPower": max_power
+            "maxPower": max_power,
+            "attributes": []
         }
     }
 
@@ -71,7 +72,8 @@ async def burn_nft_metadata(
             "name": f'Earn BURN Example {token_id}',
             "image": image_etype[etype],
             "etype": etype,
-            "maxPower": max_power
+            "maxPower": max_power,
+            "attributes": []
         }
     }
 
