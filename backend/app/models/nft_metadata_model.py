@@ -1,13 +1,14 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class Data(BaseModel):
     description: str
     name: str
     image: str
-    level: str
+    level: Optional[str]
     etype: str
     maxPower: str
 
     
-class EarnNftMetadata(BaseModel):
+class NftMetadataModel(BaseModel):
     data: Data
