@@ -31,11 +31,6 @@ def custom_openapi():
 app.openapi = custom_openapi
 
 
-@app.on_event('startup')
-async def startup():
-    pass
-
-
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",

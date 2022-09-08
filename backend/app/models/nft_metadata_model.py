@@ -12,3 +12,4 @@ class Data(BaseModel):
     
 class NftMetadataModel(BaseModel):
     data: Data
+
