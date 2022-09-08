@@ -1,7 +1,6 @@
 from web3 import Web3
 from fastapi import FastAPI, Path, APIRouter
 from app.settings import EARNNFTADDRESS, BURNNFTADDRESS, BurnNftAbi, EarnNft, MUMBAIURL
-from app.route import r
 
 router = APIRouter(
     prefix="",
