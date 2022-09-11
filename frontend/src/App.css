@@ -1,0 +1,19 @@
+.accounts-container {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    padding: 1rem;
+}
+
+.vehicle-type-dropdown,
+.token-dropdown {
+    padding: 4px;
+}
+
+.vehicle-type-item,
+.token-item {
+    width: 100%;
+    padding: 4px;
+}
