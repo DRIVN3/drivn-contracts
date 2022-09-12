@@ -70,24 +70,17 @@ async def earn_nft_metadata(
 async def burn_nft_metadata(
     token_id: int = Path(title="The ID of the item to get", default=0)
 ):
-    nft_info = burn_nft.functions.nftInfo(token_id).call()
-
-    etype = EType[nft_info[0]]
-    max_power = nft_info[3]
+    power = burn_nft.functions.nftPower(token_id).call()
 
     return {
             "name": f'Earn BURN Example {token_id}',
             "description": f'This is an example of BURN NFT {token_id}',
-            "image": image_etype[etype],
+            "image": "https://ipfs.io/ipfs/QmNnjnPmYn7yFPj7mtx9cw7rQdR81rFK1Z7Fvs4Drvr8i6",
             "attributes": [
                 {
-                    "trait_type": 'vehicle', 
-                    "value": etype
-                }, 
-                {
                     "trait_type": "power", 
-                    "value": max_power
-                }, 
+                    "value": power / 10**18
+                }
             ]
         }
     
