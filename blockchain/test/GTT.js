@@ -112,20 +112,41 @@ describe("GTT", function () {
         });
     });
 
-    describe("Test Setting Allowed addresses", function () {
+    describe("Test Setting Allowed Minting addresses", function () {
         it("Should be false at starting", async function () {
             const { GTT, firstAccount } = await loadFixture(deployGTT);
             expect(await GTT.isAllowedMinting(firstAccount.address)).to.be.equal(false);        
         });
+        
         it("Should be true after setting", async function () {
             const { GTT, firstAccount } = await loadFixture(deployGTT);
-            await GTT.setAllowed([firstAccount.address], true);
+            await GTT.setAllowedMint([firstAccount.address], true);
             expect(await GTT.isAllowedMinting(firstAccount.address)).to.be.equal(true);        
         });
+        
         it("Should fail if caller is not owner", async function () {
             const { GTT, firstAccount } = await loadFixture(deployGTT);
 
-            await expect(GTT.connect(firstAccount).setAllowed([firstAccount.address], true))
+            await expect(GTT.connect(firstAccount).setAllowedMint([firstAccount.address], true))
+                .to.be.revertedWith("Ownable: caller is not the owner");        
+        });
+    });
+
+    describe("Test Setting Allowed Burning addresses", function () {
+        it("Should be false at starting", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
+            expect(await GTT.isAllowedBurn(firstAccount.address)).to.be.equal(false);        
+        });
+
+        it("Should be true after setting", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
+            await GTT.setAllowedBurn(firstAccount.address, true);
+            expect(await GTT.isAllowedBurn(firstAccount.address)).to.be.equal(true);        
+        });
+
+        it("Should fail if caller is not owner", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
+            await expect(GTT.connect(firstAccount).setAllowedBurn(firstAccount.address, true))
                 .to.be.revertedWith("Ownable: caller is not the owner");        
         });
     });
@@ -138,7 +159,7 @@ describe("GTT", function () {
 
         it("Should enable minting after setting allowed", async function () {
             const { GTT, owner, firstAccount } = await loadFixture(deployGTT);
-            await GTT.setAllowed([owner.address], true);
+            await GTT.setAllowedMint([owner.address], true);
 
             const toMint = 100;
             await GTT.connect(owner).mint(firstAccount.address, toMint);

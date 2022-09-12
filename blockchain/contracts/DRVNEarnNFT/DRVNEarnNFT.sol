@@ -123,7 +123,7 @@ contract EarnNFT is ERC721, Ownable {
      * @dev modifier to detect if address is allowed for specific operation
     */
 
-    modifier whenAlloed() {
+    modifier whenAllowed() {
         require(isAllowed[msg.sender], "EarnNFT: address is not allowed to call this function");
         _;
     }
@@ -278,7 +278,7 @@ contract EarnNFT is ERC721, Ownable {
      * @param tokenId nft token id
     */ 
 
-    function generate(uint256 tokenId, uint256 durationSeconds) external whenAlloed {
+    function generate(uint256 tokenId, uint256 durationSeconds) external whenAllowed {
         uint256 currentPower = calculatePower(tokenId);
         require(currentPower >= durationSeconds, "EarnNFT: durationSeconds exceeds current power's limit");
 

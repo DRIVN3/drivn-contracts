@@ -19,7 +19,7 @@ async function getContracts() {
     let name = "test";
     let symbol = "testing";  
     let baseUri = "testing";
-    burnNFT = await burnNFT.deploy(name, symbol, baseUri, GTT.address, await GTT.burnWallet()); 
+    burnNFT = await burnNFT.deploy(name, symbol, baseUri, GTT.address); 
 
     return { burnNFT, owner, firstAccount, secondAccount, name, symbol, baseUri, GTT } 
 }
@@ -34,203 +34,57 @@ describe("BurnNFT", function () {
                 expect(await burnNFT.symbol()).to.be.equal(symbol);
                 expect(await burnNFT.owner()).to.be.equal(owner.address);
             });
-
-            it("Checking power decimals", async function () {
-                const { burnNFT } = await loadFixture(getContracts);
-                expect(await burnNFT.powerMultiplier()).to.be.equal(900);
-            });
         });
     });
 
-    describe("Setting allowed", function () {
-        it("Should be false initial", async function () {
-            const { burnNFT, owner } = await loadFixture(getContracts);
-            expect(await burnNFT.isAllowed(owner.address)).to.be.equal(false);
-        });
-
-        it("Should be true after setting", async function () {
-            const { burnNFT, owner } = await loadFixture(getContracts);
-            
-            await burnNFT.setAllowed([owner.address], true);
-            expect(await burnNFT.isAllowed(owner.address)).to.be.equal(true);
-        });
-    });
 
     describe("test BurnNFT minting", function () {
         it("Should fail when not enough balance", async function () {
             const { burnNFT, firstAccount } = await loadFixture(getContracts);
-            await expect(burnNFT.connect(firstAccount).mint(CAR)).to.be.revertedWith("BurnNFT: not enough money");
+            await expect(burnNFT.connect(firstAccount).mint()).to.be.revertedWith("BurnNFT: not enough money");
         });
 
         it("Should mint correctly", async function () {
             const { burnNFT, firstAccount, baseUri } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
             
             expect(await burnNFT.ownerOf(1)).to.be.equal(firstAccount.address);
             expect(await burnNFT.tokenURI(1)).to.be.equal(baseUri+'1');
         });
 
-        it("Should get correct information after minting car", async function () {
-            const { burnNFT, firstAccount } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            
-
-            let multiplier = await burnNFT.powerMultiplier();
-            let nftInfo = await burnNFT.nftInfo(1);
-            expect(nftInfo.vehicle).to.be.equal(CAR);
-            expect(nftInfo.lastUsage).to.be.equal(0);
-            expect(nftInfo.powerLeft).to.be.equal(COMMONPOWER * multiplier);
-            expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
-        });
-
-        it("Should get correct information after minting bycicle", async function () {
-            const { burnNFT, firstAccount } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')});
-            
-            let multiplier = await burnNFT.powerMultiplier();
-            let nftInfo = await burnNFT.nftInfo(1);
-            expect(nftInfo.vehicle).to.be.equal(BICYCLE);
-            expect(nftInfo.lastUsage).to.be.equal(0);
-            expect(nftInfo.powerLeft).to.be.equal(COMMONPOWER * multiplier);
-            expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
-        });
-
-        it("Should get correct information after minting scooter", async function () {
-            const { burnNFT, firstAccount } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')});
-            
-            let multiplier = await burnNFT.powerMultiplier();
-            let nftInfo = await burnNFT.nftInfo(1);
-            expect(nftInfo.vehicle).to.be.equal(SCOOTER);
-            expect(nftInfo.lastUsage).to.be.equal(0);
-            expect(nftInfo.powerLeft).to.be.equal(COMMONPOWER * multiplier);
-            expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
-        });
-
-        it("should fail after minting 101 bicycle", async function () {
+        it("should fail after minting 1000 burn nft", async function () {
             const { burnNFT, firstAccount } = await loadFixture(getContracts);
             
-            for (let k = 0; k < 100; ++ k)
-                await burnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')});
+            for (let k = 0; k < 1000; ++ k)
+                await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
 
-            await expect(burnNFT.connect(firstAccount).mint(BICYCLE, {value: ethers.utils.parseEther('0.01')}))
-                .to.be.revertedWith("BurnNFT: can't mint, max bicycle supply reached");
-        });
-
-        it("should fail after minting 201 scooter", async function () {
-            const { burnNFT, firstAccount } = await loadFixture(getContracts);
-            
-            for (let k = 0; k < 200; ++ k)
-                await burnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')});
-
-            await expect(burnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')}))
-                .to.be.revertedWith("BurnNFT: can't mint, max scooter supply reached");
-        });
-    });
-
-    describe("test calculate power", function () {
-        it("calculatePower when it's full should return max power", async function () {
-            const { burnNFT, firstAccount } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            let power = await burnNFT.calculatePower(1);
-            expect(power).to.be.equal(COMMONPOWER * await burnNFT.powerMultiplier());
-        });
-    });
-
-    describe("test generate nft", function () {
-        it("should fail while calling non allowed address", async function () {
-            const { burnNFT, firstAccount } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await expect(burnNFT.generate(1, 100)).to.be.revertedWith("BurnNFT: address is not allowed to call this function");
-        });
-
-        it("should fail when duration is not fit in power limit", async function () {
-            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await burnNFT.setAllowed([owner.address], true);
-
-            await expect(burnNFT.generate(1, 901))
-                .to.be.revertedWith("BurnNFT: durationSeconds exceeds current power's limit");
-        });
-
-        it("should power correctly", async function () {
-            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await burnNFT.setAllowed([owner.address], true);
-
-            await burnNFT.generate(1, 500);
-
-            const nftInfo = await burnNFT.nftInfo(1);
-
-            const blockNumBefore = await ethers.provider.getBlockNumber();
-            const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-            const timestampBefore = blockBefore.timestamp;
-            expect(nftInfo.lastUsage).to.be.equal(timestampBefore);
-            expect(nftInfo.powerLeft).to.be.equal(400);
-        });
-
-        it("should be zero power left when BURN NFT waste 900", async function () {
-            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await burnNFT.setAllowed([owner.address], true);
-
-            await burnNFT.generate(1, 500);
-            await burnNFT.generate(1, 400);
-
-            const nftInfo = await burnNFT.nftInfo(1);
-
-            const blockNumBefore = await ethers.provider.getBlockNumber();
-            const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-            const timestampBefore = blockBefore.timestamp;
-            expect(nftInfo.lastUsage).to.be.equal(timestampBefore);
-            expect(nftInfo.powerLeft).to.be.equal(0);
-        });
-
-        it("should be half of power after waste and pass 12 hour", async function () {
-            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await burnNFT.setAllowed([owner.address], true);
-
-            await burnNFT.generate(1, 500);
-            await burnNFT.generate(1, 400);
-
-            const halfDay = 12 * 60 * 60;
-            await network.provider.send("evm_increaseTime", [halfDay]);
-            await network.provider.send("evm_mine");
-
-            let power = await burnNFT.calculatePower(1);
-            expect(power).to.be.equal(COMMONPOWER * await burnNFT.powerMultiplier() / 2);
+            await expect(burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')}))
+                .to.be.revertedWith("BurnNFT: can't mint, max burn nft supply reached");
         });
     });
 
     describe("test burning generated GTT", function () {
         it("should fail when calling no owner", async function () {
             const { burnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
 
-            await expect(burnNFT.connect(owner).burn(1)).to.be.revertedWith("BurnNFT: sender is not the owner of the token");
+            await expect(burnNFT.connect(owner).burn(1, 4)).to.be.revertedWith("BurnNFT: sender is not the owner of the token");
         });
 
-        it("should be 8 GTT power when wasted twice", async function () {
+        it("should be burn 4 when burn was called", async function () {
             const { burnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await burnNFT.setAllowed([owner.address], true);
+            await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
 
-            await burnNFT.generate(1, 900);
+            // give the allowance to burn nft contract
+            await GTT.airdrop([firstAccount.address], [4]);
+            await GTT.connect(firstAccount).increaseAllowance(burnNFT.address, 4);
 
-            await GTT.setAllowed([burnNFT.address], true);
-            await burnNFT.connect(firstAccount).burn(1);
+            await GTT.setAllowedBurn(burnNFT.address, true);
+            await burnNFT.connect(firstAccount).burn(1, 4);
 
-            expect(await GTT.balanceOf(await GTT.burnWallet())).to.be.equal("4000000000000000000");
 
-            const halfDay = 24 * 60 * 60;
-            await network.provider.send("evm_increaseTime", [halfDay]);
-            await network.provider.send("evm_mine");
-            await burnNFT.generate(1, 900);
-            await burnNFT.connect(firstAccount).burn(1);
-
-            expect(await GTT.balanceOf(await GTT.burnWallet())).to.be.equal("8000000000000000000")
+            expect(await GTT.balanceOf(firstAccount.address)).to.be.equal(0);
+            expect(await GTT.balanceOf(burnNFT.address)).to.be.equal(0);
         });
     });
 });
