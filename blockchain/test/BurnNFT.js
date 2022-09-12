@@ -219,7 +219,7 @@ describe("BurnNFT", function () {
 
             await burnNFT.generate(1, 900);
 
-            await GTT.setAllowed([burnNFT.address], true);
+            await GTT.setAllowedMint([burnNFT.address], true);
             await burnNFT.connect(firstAccount).burn(1);
 
             expect(await GTT.balanceOf(await GTT.burnWallet())).to.be.equal("4000000000000000000");

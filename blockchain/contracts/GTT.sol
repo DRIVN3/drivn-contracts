@@ -76,8 +76,11 @@ contract GTT is ERC20, Ownable, Pausable {
     // start coins
     uint256 public constant startCoins = 200000 * 10**18;
 
-    // mapping for allowed addresses
+    // mapping for allowed mint addresses
     mapping(address=>bool) public isAllowedMinting;
+
+    // mapping for allowed burn addresses
+    mapping(address=>bool) public isAllowedBurn;
 
     /**
      * @dev Constructing the contract minting 200000 coin to the contract address and setting name, symbol
@@ -95,6 +98,8 @@ contract GTT is ERC20, Ownable, Pausable {
 
         burnWallet = new GTTBurnWallet(address(this), owner());
 
+        // burn allowed
+        isAllowedBurn[address(burnWallet)] = true;
     }
 
     /**
@@ -102,7 +107,7 @@ contract GTT is ERC20, Ownable, Pausable {
     */
 
     modifier onlyBurnWallet() {
-        require(msg.sender == address(burnWallet), "GTT: address does not have burn access");
+        require(isAllowedBurn[msg.sender], "GTT: address does not have burn access");
         _;
     }
 
@@ -140,15 +145,25 @@ contract GTT is ERC20, Ownable, Pausable {
     }
 
     /**
-     * @dev setting allowed list
+     * @dev setting allowed minting list
      * @param addresses array of counts of allowed addresses
      * @param allowed True/False bool for enable minting or not
     */
     
-    function setAllowed(address[] calldata addresses, bool allowed) external onlyOwner {
+    function setAllowedMint(address[] calldata addresses, bool allowed) external onlyOwner {
         for (uint256 i = 0; i < addresses.length; ++i) {
             isAllowedMinting[addresses[i]] = allowed;
         }
+    }
+
+    /**
+     * @dev setting allowed burning list
+     * @param addresses array of counts of allowed addresses
+     * @param allowed True/False bool for enable burning or not
+    */
+    
+    function setAllowedBurn(address addresses, bool allowed) external onlyOwner {
+        isAllowedBurn[addresses] = allowed;
     }
 
     /**
