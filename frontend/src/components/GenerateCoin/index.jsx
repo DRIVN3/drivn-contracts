@@ -1,6 +1,6 @@
 import {Button} from "react-bootstrap";
 import {useState} from "react";
-import {getTokenFullName} from "../../utils";
+import {getEarnNftTokenFullName} from "../../utils";
 import './styles.css'
 
 export const GenerateCoin = ({
@@ -30,7 +30,7 @@ export const GenerateCoin = ({
                 setErrorMessage('');
                 setTime(Number(value));
             } else {
-                setErrorMessage('Time can\'t be greater than token powerLeft');
+                setErrorMessage('Time can\'t be greater than token powerLeft.');
             }
         }
 
@@ -51,7 +51,7 @@ export const GenerateCoin = ({
                                         className="token-item"
                                         value={option.tokenId}
                                     >
-                                        {getTokenFullName(option)}
+                                        {getEarnNftTokenFullName(option)}
                                     </option>
                                 })
                             }

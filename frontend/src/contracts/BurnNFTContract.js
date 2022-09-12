@@ -15,4 +15,16 @@ export class BurnNFTContract {
     balanceOf = async (address) => {
         return await this.contract.balanceOf(address);
     };
+
+    mint = async (amount) => {
+        const receipt = await this.contract.mint({
+            value: ethers.utils.parseEther(amount.toString()).toString()
+        });
+        await receipt.wait();
+    };
+
+    burn = async (tokenId, amount) => {
+        const receipt = await this.contract.burn(tokenId, amount * Math.pow(10, 18));
+        await receipt.wait();
+    };
 }

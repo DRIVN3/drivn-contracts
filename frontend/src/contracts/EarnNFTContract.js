@@ -17,20 +17,24 @@ export class EarnNFTContract {
     };
 
     mint = async (amount, vehicleType) => {
-        return await this.contract.mint(vehicleType, {
+        const receipt = await this.contract.mint(vehicleType, {
             value: ethers.utils.parseEther(amount.toString()).toString()
         });
+        await receipt.wait();
     };
 
     merge = async (token1, token2) => {
-        return await this.contract.merge(token1, token2);
+        const receipt = await this.contract.merge(token1, token2);
+        await receipt.wait();
     };
 
     generate = async (token, time) => {
-        return await this.contract.generate(token, time);
+        const receipt = await this.contract.generate(token, time);
+        await receipt.wait();
     };
 
     claim = async (token) => {
-        return await this.contract.claim(token);
+        const receipt = await this.contract.claim(token);
+        await receipt.wait();
     };
 }

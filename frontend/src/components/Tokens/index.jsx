@@ -1,6 +1,4 @@
-import {getTokenFullName} from "../../utils";
-
-export const Tokens = ({tokens = []}) => {
+export const Tokens = ({tokens = [], getTokenFullName}) => {
     return <div className="row w-100">
         <div className="col-3"/>
         <div className="col-6 text-start">

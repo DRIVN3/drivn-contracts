@@ -2,11 +2,15 @@ import {useEffect, useState} from "react";
 import {Button} from "react-bootstrap";
 import {ethers} from "ethers";
 import Web3Modal from "web3modal";
-import {AssetService, EarnNFTService} from "./service";
-import {displayAddress, toHex} from "./utils";
+import {AssetService, EarnNFTService, BurnNFTService} from "./service";
+import {displayAddress, getBurnNftTokenFullName, getEarnNftTokenFullName, toHex} from "./utils";
 import {CHAIN, EARN_NFT_VEHICLE_TYPES} from "./constants";
 import {EarnNFTContract} from "./contracts/EarnNFTContract";
 import {Assets, GenerateCoin, MintButton, ReloadPageButton, MergeNFTs, Tokens} from "./components";
+import {BurnNFTContract} from "./contracts/BurnNFTContract";
+import {BURN_NFT_PRICE} from "./constants/burnNFT";
+import {BurnNFTs} from "./components/BurnNFTs";
+import {GTTContract} from "./contracts/GTTContract";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -18,6 +22,8 @@ function App() {
         loadingAssets: false,
         loadingTokens: false,
         mintingEarnNft: false,
+        mintingBurnNft: false,
+        burningBurnNft: false,
         mergingEarnNft: false,
         generatingToken: false,
         claimingToken: false,
@@ -28,7 +34,8 @@ function App() {
         connected: false
     });
     const [assets, setAssets] = useState({});
-    const [tokens, setTokens] = useState({});
+    const [earnNftTokens, setEarnNftTokens] = useState();
+    const [burnNftTokens, setBurnNftTokens] = useState();
     const [vehicleType, setVehicleType] = useState(EARN_NFT_VEHICLE_TYPES[0]);
 
     useEffect(() => {
@@ -77,6 +84,19 @@ function App() {
         }
     };
 
+    const handleBurnNftTokensBurn = async (token, amount) => {
+        try {
+            setLoading({burningBurnNft: true});
+            await new GTTContract(account.signer).approveBurn(amount);
+            await new BurnNFTContract(account.signer).burn(token, amount);
+            setLoading({burningBurnNft: false});
+            setAccountFromProvider(account.library);
+        } catch (e) {
+            setLoading({burningBurnNft: false});
+            setErrorMessage("Something went wrong. Couldn't burn BurnNFT.");
+        }
+    };
+
     const handleMergeEarnNfts = async (token1, token2) => {
         try {
             setLoading({mergingEarnNft: true});
@@ -105,18 +125,52 @@ function App() {
         try {
             setLoading({loadingTokens: true});
             const tokens = await EarnNFTService.getMyTokens(library, address);
-            let metadata = await EarnNFTService.getTokensMetadata(library, tokens);
-            metadata = metadata.map((data, index) => {
-                data.tokenId = tokens[index]
-                return data;
-            });
-            setTokens({
-                earnNFT: metadata,
-            });
+            let metadata = [];
+            if (tokens.length) {
+                metadata = await EarnNFTService.getTokensMetadata(library, tokens);
+                metadata = metadata.map((data, index) => {
+                    data.tokenId = tokens[index]
+                    return data;
+                });
+                setEarnNftTokens(metadata);
+            }
             setLoading({loadingTokens: false});
         } catch (e) {
             setLoading({loadingTokens: false});
             setErrorMessage("Something went wrong. Couldn't load EarnNFT tokens.");
+        }
+    }
+
+    const handleMintBurnNft = async (amount) => {
+        try {
+            setLoading({mintingBurnNft: true});
+            await new BurnNFTContract(account.signer).mint(amount);
+            setLoading({mintingBurnNft: false});
+            setAccountFromProvider(account.library);
+        } catch (e) {
+            setLoading({mintingBurnNft: false});
+            setErrorMessage("Something went wrong. Couldn't mint BurnNFT.");
+        }
+    };
+
+    const loadBurnNFTs = async (library, address) => {
+        try {
+            setLoading({loadingTokens: true});
+            const tokens = await BurnNFTService.getMyTokens(library, address);
+            let metadata = [];
+            if (tokens.length) {
+                metadata = await BurnNFTService.getTokensMetadata(library, tokens);
+                metadata = metadata.map((data, index) => {
+                    data.tokenId = tokens[index]
+                    return data;
+                });
+            }
+
+            setBurnNftTokens(metadata);
+            setLoading({loadingTokens: false});
+        } catch (e) {
+            setLoading({loadingTokens: false});
+            setErrorMessage("Something went wrong. Couldn't load BurnNFT tokens.");
         }
     }
 
@@ -177,6 +231,7 @@ function App() {
 
         await loadAllAssets(library, address);
         await loadEarnNFTs(library, address);
+        await loadBurnNFTs(library, address);
     };
 
     const connectWallet = async () => {
@@ -286,22 +341,30 @@ function App() {
                     </div> : null
             }
             {
-                !loadingState.loadingTokens && tokens.earnNFT !== undefined &&
+                !loadingState.loadingTokens && (earnNftTokens !== undefined || burnNftTokens !== undefined) &&
                 <>
                     <div className="row w-100">
                         <div className="col-12 mt-3">
                             <h4>GTT Coins</h4>
                         </div>
                     </div>
-                    <GenerateCoin
-                        allTokens={tokens.earnNFT}
-                        onGenerate={handleGenerateCoin}
-                        onClaim={handleClaimToken}
-                        isGenerating={loadingState.generatingToken}
-                        isClaiming={loadingState.claimingToken}
-                    />
+                    {
+                        earnNftTokens !== undefined && <GenerateCoin
+                            allTokens={earnNftTokens}
+                            onGenerate={handleGenerateCoin}
+                            onClaim={handleClaimToken}
+                            isGenerating={loadingState.generatingToken}
+                            isClaiming={loadingState.claimingToken}
+                        />
+                    }
+                    {
+                        burnNftTokens !== undefined && <BurnNFTs
+                            allTokens={burnNftTokens}
+                            onBurn={handleBurnNftTokensBurn}
+                            loading={loadingState.burningBurnNft}
+                        />
+                    }
                 </>
-
             }
             {
                 account.connected &&
@@ -311,7 +374,10 @@ function App() {
                     </div>
                     {
                         loadingState.loadingTokens ? <div className="col-12">Loading Tokens...</div>
-                            : <Tokens tokens={tokens.earnNFT}/>
+                            : <Tokens
+                                tokens={earnNftTokens}
+                                getTokenFullName={getEarnNftTokenFullName}
+                            />
                     }
                     {
                         !loadingState.loadingTokens && <>
@@ -357,11 +423,37 @@ function App() {
                     }
 
                     {
-                        !loadingState.loadingTokens && tokens.earnNFT !== undefined &&
+                        !loadingState.loadingTokens && earnNftTokens !== undefined &&
                         <MergeNFTs
-                            allTokens={tokens.earnNFT}
+                            allTokens={earnNftTokens}
                             onMerge={handleMergeEarnNfts}
                             loading={loadingState.mergingEarnNft}
+                        />
+                    }
+                </div>
+            }
+            {
+                account.connected &&
+                <div className="row w-100">
+                    <div className="col-12 mt-3">
+                        <h4>BurnNFT Tokens</h4>
+                    </div>
+                    {
+                        loadingState.loadingTokens ? <div className="col-12">Loading Tokens...</div>
+                            : <Tokens
+                                tokens={burnNftTokens}
+                                getTokenFullName={getBurnNftTokenFullName}
+                            />
+                    }
+                    {
+                        !loadingState.loadingTokens && <MintButton
+                            isSingleMint={true}
+                            disabled={loadingState.mintingBurnNft}
+                            loading={loadingState.mintingBurnNft}
+                            price={BURN_NFT_PRICE}
+                            onMint={({amount}) => {
+                                handleMintBurnNft(amount);
+                            }}
                         />
                     }
                 </div>

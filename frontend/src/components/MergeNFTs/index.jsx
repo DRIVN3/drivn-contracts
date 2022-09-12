@@ -1,6 +1,6 @@
 import {Button} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import {getTokenFullName} from "../../utils";
+import {getEarnNftTokenFullName} from "../../utils";
 
 export const MergeNFTs = ({
                               allTokens,
@@ -57,7 +57,7 @@ export const MergeNFTs = ({
                                     className="token-item"
                                     value={option.tokenId}
                                 >
-                                    {getTokenFullName(option)}
+                                    {getEarnNftTokenFullName(option)}
                                 </option>
                             })
                         }
@@ -79,7 +79,7 @@ export const MergeNFTs = ({
                                     className="token-item"
                                     value={option.tokenId}
                                 >
-                                    {getTokenFullName(option)}
+                                    {getEarnNftTokenFullName(option)}
                                 </option>
                             })
                         }

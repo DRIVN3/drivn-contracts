@@ -23,11 +23,4 @@ export const EARN_NFT_VEHICLE_TYPES = [{
     maxSupply: 1000,
 }];
 
-// export const EARN_NFT_LEVELS_MAP = {
-//     COMMON: 0,
-//     UNCOMMON: 1,
-//     RARE: 2,
-//     EPIC: 3,
-// };
-
 export const EARN_NFT_LEVELS_ARRAY = ['Common', 'Uncommon', 'Rare', 'Epic'];
