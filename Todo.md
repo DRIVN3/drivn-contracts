@@ -1,8 +1,8 @@
 ###  Todo GTT
-- enable setting burn wallet in GTT
-- separate BurnWallet and GTT
-- rename airdrop --> distribute 
-- change airdrop parameters like (address addr, uint256 amount)
+- enable setting burn wallet in GTT +
+- separate BurnWallet and GTT +
+- rename airdrop --> distribute +
+- change airdrop parameters like (address addr, uint256 amount) +
 - change setAllowed parameters (address addr, bool allowed)
 
 ###  Todo DRVN
