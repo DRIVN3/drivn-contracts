@@ -114,15 +114,13 @@ contract GTT is ERC20, Ownable, Pausable {
     }
 
     /**
-     * @dev setting allowed minting list
-     * @param addresses array of counts of allowed addresses
+     * @dev setting allowed minting address
+     * @param allowedAddress allowed address
      * @param allowed True/False bool for enable minting or not
     */
     
-    function setAllowedMint(address[] calldata addresses, bool allowed) external onlyOwner {
-        for (uint256 i = 0; i < addresses.length; ++i) {
-            isAllowedMinting[addresses[i]] = allowed;
-        }
+    function setAllowedMint(address allowedAddress, bool allowed) external onlyOwner {
+        isAllowedMinting[allowedAddress] = allowed;
     }
 
     /**

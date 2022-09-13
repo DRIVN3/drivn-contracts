@@ -349,7 +349,7 @@ describe("EarnNFt", function () {
             await earnNFT.generate(3, 500);
             await earnNFT.generate(3, 800);
 
-            await GTT.setAllowedMint([earnNFT.address], true);
+            await GTT.setAllowedMint(earnNFT.address, true);
             await earnNFT.connect(firstAccount).claim(3);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("8000000000000000000");
@@ -368,7 +368,7 @@ describe("EarnNFt", function () {
 
             await earnNFT.generate(1, 450);
 
-            await GTT.setAllowedMint([earnNFT.address], true);
+            await GTT.setAllowedMint(earnNFT.address, true);
             await earnNFT.connect(firstAccount).claim(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("2000000000000000000");
@@ -381,7 +381,7 @@ describe("EarnNFt", function () {
 
             await earnNFT.generate(1, 900);
 
-            await GTT.setAllowedMint([earnNFT.address], true);
+            await GTT.setAllowedMint(earnNFT.address, true);
             await earnNFT.connect(firstAccount).claim(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
@@ -402,7 +402,7 @@ describe("EarnNFt", function () {
 
             await earnNFT.generate(1, 900);
 
-            await GTT.setAllowedMint([earnNFT.address], true);
+            await GTT.setAllowedMint(earnNFT.address, true);
             await earnNFT.connect(firstAccount).claim(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
@@ -423,7 +423,7 @@ describe("EarnNFt", function () {
 
             await earnNFT.generate(1, 900);
 
-            await GTT.setAllowedMint([earnNFT.address], true);
+            await GTT.setAllowedMint(earnNFT.address, true);
             await earnNFT.connect(firstAccount).claim(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
