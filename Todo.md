@@ -3,7 +3,7 @@
 - separate BurnWallet and GTT +
 - rename airdrop --> distribute +
 - change airdrop parameters like (address addr, uint256 amount) +
-- change setAllowed parameters (address addr, bool allowed)
+- change setAllowed parameters (address addr, bool allowed) +
 
 ###  Todo DRVN
 - refactor numbers with _ example 5000000 = 5_000_000
