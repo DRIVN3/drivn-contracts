@@ -6,8 +6,8 @@
 - change setAllowed parameters (address addr, bool allowed) +
 
 ###  Todo DRVN
-- refactor numbers with _ example 5000000 = 5_000_000
-- remove this require(contractAddress_ != address(0), "DRVN: should not send to zero address");
+- refactor numbers with _ example 5000000 = 5_000_000 + 
+- remove this require(contractAddress_ != address(0), "DRVN: should not send to zero address");  +
 - extend governance
 - test governance  integration with tally
 

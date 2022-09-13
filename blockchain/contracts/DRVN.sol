@@ -50,7 +50,6 @@ contract DRVNCoin is ERC20, Ownable, Pausable {
     */
 
     function sendTokens(string memory supplyName, address contractAddress_) external onlyOwner {
-        require(contractAddress_ != address(0), "DRVN: should not send to zero address");
         require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");
 
         uint256 supply = supplyData[supplyName];
