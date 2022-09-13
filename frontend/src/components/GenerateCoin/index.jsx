@@ -74,7 +74,7 @@ export const GenerateCoin = ({
                     <span className="text-danger mx-2">{errorMessage}</span>
                 </div>
             </div>
-            <div className="row w-100 p-3">
+            <div className="row w-100">
                 <div className="col-6 pt-2 text-end">
                     <Button
                         disabled={!token || isGenerating || isClaiming}

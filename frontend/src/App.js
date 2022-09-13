@@ -352,7 +352,7 @@ function App() {
                     </div>
                     {
                         !loadingState.loadingTokens && <>
-                            <div className="row w-100 mt-3">
+                            <div className="row w-100 my-3">
                                 <div className="col text-end fw-bold">Vehicle Type:</div>
                                 <div className="col-auto text-start">
                                     <select

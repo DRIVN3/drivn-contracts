@@ -66,14 +66,14 @@ export const MintButton = ({
                         </Button>
                     </div>
                 </div>
-                <div className="row w-100 p-3">
+                <div className="row w-100">
                     <div className="col-12">
                         <b>{'Total: '}</b>{count * price}<b>{' '}{CHAIN.currency}</b>
                     </div>
                 </div>
             </>
         }
-        <div className="row w-100 p-3">
+        <div className="row w-100">
             <div className="col-12">
                 <Button
                     disabled={disabled || loading}
