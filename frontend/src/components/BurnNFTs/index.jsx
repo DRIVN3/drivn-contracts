@@ -28,7 +28,10 @@ export const BurnNFTs = ({
     }
 
     return (<>
-        <div className="row w-100 p-3">
+        <div className="row w-100 mt-3">
+            <h6>Burn GTT tokens using BurnNFT:</h6>
+        </div>
+        <div className="row w-100 mt-3">
             <div className="col-6 text-end fw-bold">
                 <span>Token 1: </span>
                 {
@@ -63,7 +66,7 @@ export const BurnNFTs = ({
                 <span className="text-danger mx-2">{errorMessage}</span>
             </div>
         </div>
-        <div className="row w-100">
+        <div className="row w-100 mt-3">
             <div className="col-12">
                 <Button
                     disabled={!tokenId || loading}

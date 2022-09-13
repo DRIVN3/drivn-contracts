@@ -1,4 +1,4 @@
-import {ethers} from 'ethers';
+import {BigNumber, ethers} from 'ethers';
 import {appConfig} from "../config";
 
 export class EarnNFTContract {
@@ -29,7 +29,7 @@ export class EarnNFTContract {
     };
 
     generate = async (token, time) => {
-        const receipt = await this.contract.generate(token, time);
+        const receipt = await this.contract.generate(token, BigNumber.from(String(time)));
         await receipt.wait();
     };
 

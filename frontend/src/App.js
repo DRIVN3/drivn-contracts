@@ -185,8 +185,8 @@ function App() {
                 burnNFTBalance,
             } = result;
             setAssets({
-                gttCoin: gttBalance.toString(),
-                drvnCoin: drvnCoinBalance.toString(),
+                gttCoin: Number.parseFloat(ethers.utils.formatEther(gttBalance)),
+                drvnCoin: ethers.utils.formatEther(drvnCoinBalance),
                 earnNFT: earnNFTBalance.toString(),
                 burnNFT: burnNFTBalance.toString(),
             });
@@ -317,71 +317,42 @@ function App() {
                     </div>
                 }
             </div>
-            <div className="col-12 text-danger">
-                {errorMessage}
+            <div className="row w-100 my-2">
+                <div className="col-12 text-danger">
+                    {errorMessage}
+                </div>
             </div>
             {
                 errorMessage && <ReloadPageButton/>
             }
             {
-                account.connected ?
-                    <div className="row w-100">
-                        <div className="col-12 mt-3">
-                            <h4>Assets</h4>
-                        </div>
-                        {
-                            loadingState.loadingAssets ? <div className="col-12">Loading Assets...</div> :
-                                <div className="col-12">
-                                    <Assets assetName="GTT coin" assetValue={assets.gttCoin}/>
-                                    <Assets assetName="DRVN coin" assetValue={assets.drvnCoin}/>
-                                    <Assets assetName="EarnNFT" assetValue={assets.earnNFT}/>
-                                    <Assets assetName="BurnNFT" assetValue={assets.burnNFT}/>
-                                </div>
-                        }
-                    </div> : null
+                loadingState.loadingAssets && <div className="col-12">Loading Assets...</div>
             }
             {
-                !loadingState.loadingTokens && (earnNftTokens !== undefined || burnNftTokens !== undefined) &&
-                <>
-                    <div className="row w-100">
-                        <div className="col-12 mt-3">
-                            <h4>GTT Coins</h4>
-                        </div>
+                account.connected && <div className="row w-100 mt-4">
+                    <div className="col-12">
+                        <h4>Assets</h4>
                     </div>
-                    {
-                        earnNftTokens !== undefined && <GenerateCoin
-                            allTokens={earnNftTokens}
-                            onGenerate={handleGenerateCoin}
-                            onClaim={handleClaimToken}
-                            isGenerating={loadingState.generatingToken}
-                            isClaiming={loadingState.claimingToken}
-                        />
-                    }
-                    {
-                        burnNftTokens !== undefined && <BurnNFTs
-                            allTokens={burnNftTokens}
-                            onBurn={handleBurnNftTokensBurn}
-                            loading={loadingState.burningBurnNft}
-                        />
-                    }
-                </>
+                </div>
+            }
+            {account.connected && <Assets assetName="GTT coin" assetValue={assets.gttCoin}/>}
+            {account.connected && <Assets assetName="DRVN coin" assetValue={assets.drvnCoin}/>}
+            {account.connected && <Assets assetName="EarnNFT" assetValue={assets.earnNFT}/>}
+            {
+                loadingState.loadingTokens ? <div className="col-12">Loading Tokens...</div>
+                    : <Tokens
+                        tokens={earnNftTokens}
+                        getTokenFullName={getEarnNftTokenFullName}
+                    />
             }
             {
-                account.connected &&
-                <div className="row w-100">
+                account.connected && <div className="row w-100">
                     <div className="col-12 mt-3">
-                        <h4>EarnNFT Tokens</h4>
+                        <h6>Mint EarnNFT:</h6>
                     </div>
-                    {
-                        loadingState.loadingTokens ? <div className="col-12">Loading Tokens...</div>
-                            : <Tokens
-                                tokens={earnNftTokens}
-                                getTokenFullName={getEarnNftTokenFullName}
-                            />
-                    }
                     {
                         !loadingState.loadingTokens && <>
-                            <div className="row w-100">
+                            <div className="row w-100 mt-3">
                                 <div className="col text-end fw-bold">Vehicle Type:</div>
                                 <div className="col-auto text-start">
                                     <select
@@ -421,7 +392,6 @@ function App() {
                             />
                         </>
                     }
-
                     {
                         !loadingState.loadingTokens && earnNftTokens !== undefined &&
                         <MergeNFTs
@@ -433,18 +403,30 @@ function App() {
                 </div>
             }
             {
-                account.connected &&
-                <div className="row w-100">
-                    <div className="col-12 mt-3">
-                        <h4>BurnNFT Tokens</h4>
+                !loadingState.loadingTokens && earnNftTokens !== undefined && <GenerateCoin
+                    allTokens={earnNftTokens}
+                    onGenerate={handleGenerateCoin}
+                    onClaim={handleClaimToken}
+                    isGenerating={loadingState.generatingToken}
+                    isClaiming={loadingState.claimingToken}
+                />
+            }
+            <div className="mt-3"/>
+            {account.connected && <Assets assetName="BurnNFT" assetValue={assets.burnNFT}/>}
+            {
+                loadingState.loadingTokens ? <div className="col-12">Loading Tokens...</div>
+                    : <Tokens
+                        tokens={burnNftTokens}
+                        getTokenFullName={getBurnNftTokenFullName}
+                    />
+            }
+            {
+                account.connected && <>
+                    <div className="row w-100">
+                        <div className="col-12">
+                            <h6>Mint BurnNFT:</h6>
+                        </div>
                     </div>
-                    {
-                        loadingState.loadingTokens ? <div className="col-12">Loading Tokens...</div>
-                            : <Tokens
-                                tokens={burnNftTokens}
-                                getTokenFullName={getBurnNftTokenFullName}
-                            />
-                    }
                     {
                         !loadingState.loadingTokens && <MintButton
                             isSingleMint={true}
@@ -456,7 +438,14 @@ function App() {
                             }}
                         />
                     }
-                </div>
+                </>
+            }
+            {
+                !loadingState.loadingTokens && burnNftTokens !== undefined && <BurnNFTs
+                    allTokens={burnNftTokens}
+                    onBurn={handleBurnNftTokensBurn}
+                    loading={loadingState.burningBurnNft}
+                />
             }
         </div>
     );

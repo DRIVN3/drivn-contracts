@@ -34,7 +34,7 @@ export const MintButton = ({
     return (<>
         {
             !isSingleMint && <>
-                <div className="row w-100 p-1">
+                <div className="row w-100">
                     <div className="col text-end">
                         <Button
                             disabled={disabled || count === 1}

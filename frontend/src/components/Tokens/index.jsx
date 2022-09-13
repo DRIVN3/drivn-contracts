@@ -1,5 +1,5 @@
 export const Tokens = ({tokens = [], getTokenFullName}) => {
-    return <div className="row w-100">
+    return <div className="row w-100 p-0">
         <div className="col-3"/>
         <div className="col-6 text-start">
             {

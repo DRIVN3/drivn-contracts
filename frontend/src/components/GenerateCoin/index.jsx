@@ -35,7 +35,10 @@ export const GenerateCoin = ({
         }
 
         return (<>
-            <div className="row w-100">
+            <div className="row w-100 mt-4">
+                <h6>Generate and claim GTT tokens using EarnNFT:</h6>
+            </div>
+            <div className="row w-100 mt-3">
                 <div className="col-6 text-end fw-bold">
                     <span>Earn NFT: </span>
                     {

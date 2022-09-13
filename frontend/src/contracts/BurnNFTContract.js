@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import {BigNumber, ethers} from 'ethers';
 import {appConfig} from "../config";
 
 export class BurnNFTContract {
@@ -24,7 +24,7 @@ export class BurnNFTContract {
     };
 
     burn = async (tokenId, amount) => {
-        const receipt = await this.contract.burn(tokenId, amount * Math.pow(10, 18));
+        const receipt = await this.contract.burn(tokenId, BigNumber.from(String(amount * Math.pow(10, 18))));
         await receipt.wait();
     };
 }

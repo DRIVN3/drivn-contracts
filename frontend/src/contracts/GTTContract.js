@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import {BigNumber, ethers} from 'ethers';
 import {appConfig} from "../config";
 
 export class GTTContract {
@@ -17,7 +17,7 @@ export class GTTContract {
     };
 
     approveBurn = async (amount) => {
-        const receipt = await this.contract.approve(appConfig.contracts.BurnNFT.address, amount * Math.pow(10, 18));
+        const receipt = await this.contract.approve(appConfig.contracts.BurnNFT.address, BigNumber.from(String(amount * Math.pow(10, 18))));
         await receipt.wait();
     }
 }
