@@ -268,13 +268,13 @@ function App() {
     }
 
     return (
-        <div className="accounts-container">
-            <div className="row w-100">
+        <div className="container-fluid pt-2 pb-5 text-center">
+            <div className="row">
                 <div className="col-12">
                     <h3>DRVN Demo App</h3>
                 </div>
             </div>
-            <div className="row w-100">
+            <div className="row">
                 {
                     account.connected ? <>
                         <div className="col-12">
@@ -302,7 +302,7 @@ function App() {
                     </> : <div className="col-12">Account not connected</div>
                 }
             </div>
-            <div className="row w-100">
+            <div className="row">
                 {
                     (!account.connected || loadingState.connectingWallet) && <div className="col-12 mt-3">
                         <Button
@@ -317,7 +317,7 @@ function App() {
                     </div>
                 }
             </div>
-            <div className="row w-100 my-2">
+            <div className="row my-2">
                 <div className="col-12 text-danger">
                     {errorMessage}
                 </div>
@@ -329,7 +329,7 @@ function App() {
                 loadingState.loadingAssets && <div className="col-12">Loading Assets...</div>
             }
             {
-                account.connected && <div className="row w-100 mt-4">
+                account.connected && <div className="row mt-4">
                     <div className="col-12">
                         <h4>Assets</h4>
                     </div>
@@ -346,13 +346,12 @@ function App() {
                     />
             }
             {
-                account.connected && <div className="row w-100">
-                    <div className="col-12 mt-3">
+                account.connected && <div className="row">
+                    <div className="col-12">
                         <h6>Mint EarnNFT:</h6>
                     </div>
                     {
                         !loadingState.loadingTokens && <>
-                            <div className="row w-100 my-3">
                                 <div className="col text-end fw-bold">Vehicle Type:</div>
                                 <div className="col-auto text-start">
                                     <select
@@ -380,27 +379,29 @@ function App() {
                                 <div className="col text-start">
                                     <b>{'Price: '}</b>{vehicleType?.price}<b>{' '}{CHAIN.currency}</b>
                                 </div>
-                            </div>
-                            <MintButton
-                                isSingleMint={true}
-                                disabled={loadingState.mintingEarnNft}
-                                price={vehicleType?.price}
-                                loading={loadingState.mintingEarnNft}
-                                onMint={({amount}) => {
-                                    handleMintEarnNft(amount, vehicleType.type);
-                                }}
-                            />
                         </>
                     }
-                    {
-                        !loadingState.loadingTokens && earnNftTokens !== undefined &&
-                        <MergeNFTs
-                            allTokens={earnNftTokens}
-                            onMerge={handleMergeEarnNfts}
-                            loading={loadingState.mergingEarnNft}
-                        />
-                    }
                 </div>
+            }
+            {
+                !loadingState.loadingTokens && account.connected && <MintButton
+                    isSingleMint={true}
+                    disabled={loadingState.mintingEarnNft}
+                    price={vehicleType?.price}
+                    loading={loadingState.mintingEarnNft}
+                    onMint={({amount}) => {
+                        handleMintEarnNft(amount, vehicleType.type);
+                    }}
+                />
+            }
+
+            {
+                !loadingState.loadingTokens && earnNftTokens !== undefined &&
+                <MergeNFTs
+                    allTokens={earnNftTokens}
+                    onMerge={handleMergeEarnNfts}
+                    loading={loadingState.mergingEarnNft}
+                />
             }
             {
                 !loadingState.loadingTokens && earnNftTokens !== undefined && <GenerateCoin
@@ -411,7 +412,6 @@ function App() {
                     isClaiming={loadingState.claimingToken}
                 />
             }
-            <div className="mt-3"/>
             {account.connected && <Assets assetName="BurnNFT" assetValue={assets.burnNFT}/>}
             {
                 loadingState.loadingTokens ? <div className="col-12">Loading Tokens...</div>
@@ -422,7 +422,7 @@ function App() {
             }
             {
                 account.connected && <>
-                    <div className="row w-100">
+                    <div className="row">
                         <div className="col-12">
                             <h6>Mint BurnNFT:</h6>
                         </div>

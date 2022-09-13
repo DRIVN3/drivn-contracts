@@ -1,5 +1,5 @@
 export const Assets = ({ assetName, assetValue }) => {
-    return <div className="row w-100 mt-1">
+    return <div className="row mt-1">
         <div className="col-6 text-end fw-bold">
             <h5>{assetName}:</h5>
         </div>

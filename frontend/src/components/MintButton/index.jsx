@@ -13,28 +13,27 @@ export const MintButton = ({
                                loading,
                            }) => {
 
-    const [count, setCount] = useState(defaultCount);
+        const [count, setCount] = useState(defaultCount);
 
-    const handleDecrement = () => {
-        if (count > 1) {
-            setCount(count - 1);
+        const handleDecrement = () => {
+            if (count > 1) {
+                setCount(count - 1);
+            }
         }
-    }
 
-    const handleIncrement = () => {
-        if (maxCount) {
-            if (count < maxCount) {
+        const handleIncrement = () => {
+            if (maxCount) {
+                if (count < maxCount) {
+                    setCount(count + 1);
+                }
+            } else {
                 setCount(count + 1);
             }
-        } else {
-            setCount(count + 1);
         }
-    }
 
-    return (<>
-        {
-            !isSingleMint && <>
-                <div className="row w-100">
+        return (<div className="row mt-3">
+            {
+                !isSingleMint && <>
                     <div className="col text-end">
                         <Button
                             disabled={disabled || count === 1}
@@ -65,32 +64,27 @@ export const MintButton = ({
                             {' + '}
                         </Button>
                     </div>
-                </div>
-                <div className="row w-100">
                     <div className="col-12">
                         <b>{'Total: '}</b>{count * price}<b>{' '}{CHAIN.currency}</b>
                     </div>
+                </>
+            }
+                <div className="col-12">
+                    <Button
+                        disabled={disabled || loading}
+                        className="btn-success"
+                        onClick={() => {
+                            if (onMint) {
+                                onMint({
+                                    count,
+                                    amount: count * price,
+                                });
+                            }
+                        }}
+                    >
+                        {loading ? 'Minting...' : 'Mint'}
+                    </Button>
                 </div>
-            </>
-        }
-        <div className="row w-100">
-            <div className="col-12">
-                <Button
-                    disabled={disabled || loading}
-                    className="btn-success"
-                    onClick={() => {
-                        if (onMint) {
-                            onMint({
-                                count,
-                                amount: count * price,
-                            });
-                        }
-                    }}
-                >
-                    {loading ? 'Minting...' : 'Mint'}
-                </Button>
-            </div>
-        </div>
-    </>);
-}
+        </div>);
+    }
 ;

@@ -41,12 +41,12 @@ export const MergeNFTs = ({
     }
 
     return (<>
-        <div className="row w-100 mt-3">
+        <div className="row mt-3">
             <div className="col-12">
                 <h6>Merge EarnNFT:</h6>
             </div>
         </div>
-        <div className="row w-100 mt-3">
+        <div className="row mt-3">
             <div className="col-6 text-end fw-bold">
                 <span>Token 1: </span>
                 {
@@ -92,7 +92,7 @@ export const MergeNFTs = ({
                 }
             </div>
         </div>
-        <div className="row w-100 mt-3">
+        <div className="row mt-3">
             <div className="col-12">
                 <Button
                     disabled={!token1 || !token2 || loading}

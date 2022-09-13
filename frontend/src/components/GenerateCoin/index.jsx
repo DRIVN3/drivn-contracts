@@ -35,10 +35,12 @@ export const GenerateCoin = ({
         }
 
         return (<>
-            <div className="row w-100 mt-4">
-                <h6>Generate and claim GTT tokens using EarnNFT:</h6>
+            <div className="row mt-4">
+                <div className="col-12">
+                    <h6>Generate and claim GTT tokens using EarnNFT:</h6>
+                </div>
             </div>
-            <div className="row w-100 mt-3">
+            <div className="row mt-3 my-5">
                 <div className="col-6 text-end fw-bold">
                     <span>Earn NFT: </span>
                     {
@@ -73,8 +75,6 @@ export const GenerateCoin = ({
                     />
                     <span className="text-danger mx-2">{errorMessage}</span>
                 </div>
-            </div>
-            <div className="row w-100">
                 <div className="col-6 pt-2 text-end">
                     <Button
                         disabled={!token || isGenerating || isClaiming}
