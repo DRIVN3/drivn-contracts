@@ -211,14 +211,12 @@ contract EarnNFT is ERC721, Ownable {
 
     /**
      * @dev setting allowed addresses for nft usage
-     * @param addresses array of counts of allowed addresses
+     * @param allowedAddress allowed address
      * @param allowed True/False bool for enable certain operations
     */
     
-    function setAllowed(address[] calldata addresses, bool allowed) external onlyOwner {
-        for (uint256 i = 0; i < addresses.length; ++i) {
-            isAllowed[addresses[i]] = allowed;
-        }
+    function setAllowed(address allowedAddress, bool allowed) external onlyOwner {
+        isAllowed[allowedAddress] = allowed;
     }
 
 
