@@ -266,7 +266,7 @@ describe("EarnNFt", function () {
         it("should fail while calling non allowed address", async function () {
             const { earnNFT, firstAccount } = await loadFixture(getContracts);
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await expect(earnNFT.generate(1, 100)).to.be.revertedWith("EarnNFT: address is not allowed to call this function");
+            await expect(earnNFT.generate(1, 100, false)).to.be.revertedWith("EarnNFT: address is not allowed to call this function");
         });
 
         it("should generate whole when duration is not fit in power limit", async function () {
@@ -274,7 +274,7 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(1, 901);
+            await earnNFT.generate(1, 901, false);
 
             const nftInfo = await earnNFT.nftInfo(1);
             expect(nftInfo.powerLeft).to.be.equal(0);
@@ -285,7 +285,7 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(1, 500);
+            await earnNFT.generate(1, 500, false);
 
             const nftInfo = await earnNFT.nftInfo(1);
 
@@ -303,9 +303,9 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).merge(1, 2);
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(3, 500);
-            await earnNFT.generate(3, 500);
-            await earnNFT.generate(3, 800);
+            await earnNFT.generate(3, 500, false);
+            await earnNFT.generate(3, 500, false);
+            await earnNFT.generate(3, 800, false);
 
             const nftInfo = await earnNFT.nftInfo(3);
 
@@ -323,9 +323,9 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).merge(1, 2);
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(3, 500);
-            await earnNFT.generate(3, 500);
-            await earnNFT.generate(3, 800);
+            await earnNFT.generate(3, 500, false);
+            await earnNFT.generate(3, 500, false);
+            await earnNFT.generate(3, 800, false);
 
             const halfDay = 12 * 60 * 60;
             await network.provider.send("evm_increaseTime", [halfDay]);
@@ -336,6 +336,22 @@ describe("EarnNFt", function () {
         });
     });
 
+    describe("test claiming amount", function () {
+
+        it("should be 4 GTT power when common wasted 1 times", async function () {
+            const { earnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed(owner.address, true);
+
+            await earnNFT.generate(1, 900, false);
+
+            await GTT.setAllowedMint(earnNFT.address, true);
+
+            expect(await earnNFT.connect(firstAccount).getClaimAmount(1)).to.be.equal("4000000000000000000");
+        });
+
+    });
+
     describe("test claiming generated GTT", function () {
         it("should be 8 GTT power when uncommon wasted whole", async function () {
             const { earnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
@@ -344,12 +360,12 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).merge(1, 2);
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(3, 500);
-            await earnNFT.generate(3, 500);
-            await earnNFT.generate(3, 800);
+            await earnNFT.generate(3, 500, false);
+            await earnNFT.generate(3, 500, false);
+            await earnNFT.generate(3, 800, false);
 
             await GTT.setAllowedMint(earnNFT.address, true);
-            await earnNFT.connect(firstAccount).claim(3);
+            await earnNFT.connect(firstAccount).claimGeneratedCoins(3);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("8000000000000000000");
         });
@@ -357,7 +373,7 @@ describe("EarnNFt", function () {
         it("should fail while calling non owner", async function () {
             const { earnNFT, firstAccount } = await loadFixture(getContracts);
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-            await expect(earnNFT.claim(1)).to.be.revertedWith("EarnNFT: sender is not the owner of the token");
+            await expect(earnNFT.claimGeneratedCoins(1)).to.be.revertedWith("EarnNFT: sender is not the owner of the token");
         });
 
         it("should be 2 GTT power when uncommon wasted half", async function () {
@@ -365,10 +381,10 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(1, 450);
+            await earnNFT.generate(1, 450, false);
 
             await GTT.setAllowedMint(earnNFT.address, true);
-            await earnNFT.connect(firstAccount).claim(1);
+            await earnNFT.connect(firstAccount).claimGeneratedCoins(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("2000000000000000000");
         });
@@ -378,18 +394,18 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(1, 900);
+            await earnNFT.generate(1, 900, false);
 
             await GTT.setAllowedMint(earnNFT.address, true);
-            await earnNFT.connect(firstAccount).claim(1);
+            await earnNFT.connect(firstAccount).claimGeneratedCoins(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
 
             const halfDay = 24 * 60 * 60;
             await network.provider.send("evm_increaseTime", [halfDay]);
             await network.provider.send("evm_mine");
-            await earnNFT.generate(1, 900);
-            await earnNFT.connect(firstAccount).claim(1);
+            await earnNFT.generate(1, 900, false);
+            await earnNFT.connect(firstAccount).claimGeneratedCoins(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("8000000000000000000")
         });
@@ -399,42 +415,51 @@ describe("EarnNFt", function () {
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(1, 900);
+            await earnNFT.generate(1, 900, false);
 
             await GTT.setAllowedMint(earnNFT.address, true);
-            await earnNFT.connect(firstAccount).claim(1);
+            await earnNFT.connect(firstAccount).claimGeneratedCoins(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
 
             const halfDay = 12 * 60 * 60;
             await network.provider.send("evm_increaseTime", [halfDay]);
             await network.provider.send("evm_mine");
-            await earnNFT.generate(1, 450);
-            await earnNFT.connect(firstAccount).claim(1);
+            await earnNFT.generate(1, 450, false);
+            await earnNFT.connect(firstAccount).claimGeneratedCoins(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("6000000000000000000")
         });
 
-        it("should fail when duration exceeds it's current limit", async function () {
+        it("should generate whole when duration exceeds it's current limit", async function () {
             const { earnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
             await earnNFT.setAllowed(owner.address, true);
 
-            await earnNFT.generate(1, 900);
+            await earnNFT.generate(1, 900, false);
 
             await GTT.setAllowedMint(earnNFT.address, true);
-            await earnNFT.connect(firstAccount).claim(1);
+            await earnNFT.connect(firstAccount).claimGeneratedCoins(1);
 
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
 
             const halfDay = 12 * 60 * 60;
             await network.provider.send("evm_increaseTime", [halfDay]);
             await network.provider.send("evm_mine");
-            await earnNFT.generate(1, 451);
+            await earnNFT.generate(1, 451, false);
 
             const nftInfo = await earnNFT.nftInfo(1);
             expect(nftInfo.powerLeft).to.be.equal(0);
 
+        });
+
+        it("should generate and claim when pass true in claim parameter", async function () {
+            const { earnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
+            await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await earnNFT.setAllowed(owner.address, true);
+            await GTT.setAllowedMint(earnNFT.address, true);
+            await earnNFT.generate(1, 900, true);
+            expect(await GTT.balanceOf(firstAccount.address)).to.be.equal("4000000000000000000");
         });
 
     });

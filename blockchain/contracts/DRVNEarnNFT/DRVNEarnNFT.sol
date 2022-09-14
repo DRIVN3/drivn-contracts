@@ -273,9 +273,11 @@ contract EarnNFT is ERC721, Ownable {
     /**
      * @dev updates the vehicle traffic
      * @param tokenId nft token id
+     * @param durationSeconds movement durations in seconds
+     * @param claim claims if true else not claims 
     */ 
 
-    function generate(uint256 tokenId, uint256 durationSeconds) external whenAllowed {
+    function generate(uint256 tokenId, uint256 durationSeconds, bool claim) external whenAllowed {
         uint256 currentPower = calculatePower(tokenId);
 
         if (currentPower < durationSeconds) {
@@ -287,6 +289,10 @@ contract EarnNFT is ERC721, Ownable {
         nftInfo[tokenId].lastUsage = block.timestamp;
 
         nftPowerUsed[tokenId] += durationSeconds;
+
+        if (claim) {
+            _claimGeneratedCoins(tokenId);
+        }
     }
 
     /**
@@ -294,13 +300,20 @@ contract EarnNFT is ERC721, Ownable {
      * @param tokenId nft token id
     */ 
 
-    function claim(uint256 tokenId) external {
+    function claimGeneratedCoins(uint256 tokenId) external {
         require(ownerOf(tokenId) == msg.sender, "EarnNFT: sender is not the owner of the token");
+        _claimGeneratedCoins(tokenId);
+    }
 
+    /**
+     * @dev internal claiming GTT tokens
+     * @param tokenId nft token id
+    */ 
+
+    function _claimGeneratedCoins(uint256 tokenId) internal {
         uint256 earned = getClaimAmount(tokenId);
         nftPowerClaimed[tokenId] = nftPowerUsed[tokenId];
-
-        gttCoin.mint(msg.sender, earned);
+        gttCoin.mint(ownerOf(tokenId), earned);
     }
 
 }
