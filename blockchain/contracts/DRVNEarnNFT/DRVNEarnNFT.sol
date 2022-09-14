@@ -34,7 +34,7 @@ contract EarnNFT is ERC721, Ownable {
     /**
      * @dev Emitted when merge method is called
      */
-    event Merge(address indexed sender, uint256 indexed tokenId1, uint256 indexed tokenId2);
+    event Merge(address indexed sender, uint256 indexed tokenId1, uint256 indexed tokenId2, uint256 newToken);
 
     // token counter
     Counters.Counter private _tokenIdCounter;
@@ -206,7 +206,7 @@ contract EarnNFT is ERC721, Ownable {
         _burn(tokenId1);
         _burn(tokenId2);
 
-        emit Merge(msg.sender, tokenId1, tokenId2);
+        emit Merge(msg.sender, tokenId1, tokenId2, tokenId);
     }
 
     /**

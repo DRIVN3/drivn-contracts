@@ -19,8 +19,8 @@
 ### Earn NFT
 - change vehicle into eType for better understanding (refactor) +
 - research how can we handle logic in another library or contract (researched)
-- convert ENUMS into uint256 to add simpler way
-- Merge event does not throw new token id
+- convert ENUMS into uint256 to add simpler way +
+- Merge event does not throw new token id +
 - setAllowed change parameters (address addr, bool allowed)
 - in generate function decrease power regarding seconds.
 - merge claim and generate.
