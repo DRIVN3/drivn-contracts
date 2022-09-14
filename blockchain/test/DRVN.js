@@ -60,7 +60,7 @@ describe("DRVN", function () {
         it("Should fail while passing address zero", async function () {
             const { DRVN, firstAccount } = await loadFixture(deployDRVN);
             
-            await expect(DRVN.sendTokens("Advisors", ethers.constants.AddressZero)).to.be.revertedWith("DRVN: should not send to zero address");     
+            await expect(DRVN.sendTokens("Advisors", ethers.constants.AddressZero)).to.be.revertedWith("DRVN: contractAddress_ is not a contract");     
         });
 
         it("Should fail while passing non contract address", async function () {

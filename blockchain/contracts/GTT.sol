@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
+import "./GTTBurnWallet.sol";
+
 interface IGTT is IERC20 {
 
     /**
@@ -37,35 +39,6 @@ interface IGTT is IERC20 {
     */
 
     function mint(address account, uint256 amount_) external;
-}
-
-contract GTTBurnWallet is Ownable {
-    
-    // GTT token
-    IGTT immutable token;
-
-    /**
-        * @dev Constructing the GTTBurnWallet contract
-        * @param owner_ address of owner
-    */
-
-    constructor(
-        address GTT_,
-        address owner_
-    )
-    {
-        _transferOwnership(owner_);
-        token = IGTT(GTT_);
-    }
-
-    /**
-     * @dev burning GTT coins
-    */
-
-    function burn() external onlyOwner {
-        uint256 toBurn = token.balanceOf(address(this));
-        token.burn(toBurn);
-    }
 }
 
 contract GTT is ERC20, Ownable, Pausable {
@@ -106,7 +79,7 @@ contract GTT is ERC20, Ownable, Pausable {
      * @dev modifier to detect the caller is the burnWallet address
     */
 
-    modifier onlyBurnWallet() {
+    modifier onlyAllowedBurn() {
         require(isAllowedBurn[msg.sender], "GTT: address does not have burn access");
         _;
     }
@@ -125,35 +98,29 @@ contract GTT is ERC20, Ownable, Pausable {
      * @param count count of coins
     */
 
-    function burn(uint256 count) external onlyBurnWallet {
+    function burn(uint256 count) external onlyAllowedBurn {
         _burn(msg.sender, count);
     }
 
     /**
-     * @dev airdrop the coins to accounts
-     * @param accounts array of accounts
-     * @param counts array of counts of coins
+     * @dev distribute the coins to accounts
+     * @param account address of account
+     * @param counts counts of coins
     */
 
-    function airdrop(address[] calldata accounts, uint256[] calldata counts) external onlyOwner {
-        require(accounts.length == counts.length, "GTT: invalid Data lengths mismatch");
-
-        for (uint256 i = 0; i < accounts.length; ++i) {
-            require(accounts[i] != address(0), "GTT: zero address included");
-            _transfer(address(this), accounts[i], counts[i]);
-        }
+    function distribute(address account, uint256 counts) external onlyOwner {
+        require(account != address(0), "GTT: account should not be zero address");
+        _transfer(address(this), account, counts);
     }
 
     /**
-     * @dev setting allowed minting list
-     * @param addresses array of counts of allowed addresses
+     * @dev setting allowed minting address
+     * @param allowedAddress allowed address
      * @param allowed True/False bool for enable minting or not
     */
     
-    function setAllowedMint(address[] calldata addresses, bool allowed) external onlyOwner {
-        for (uint256 i = 0; i < addresses.length; ++i) {
-            isAllowedMinting[addresses[i]] = allowed;
-        }
+    function setAllowedMint(address allowedAddress, bool allowed) external onlyOwner {
+        isAllowedMinting[allowedAddress] = allowed;
     }
 
     /**

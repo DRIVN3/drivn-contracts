@@ -37,33 +37,26 @@ describe("GTT", function () {
         });
     });
 
-    describe("Test Airdrop", function () {
+    describe("Test distribute", function () {
         
         it("Should fail while calling not owner", async function () {
             const { GTT, owner, firstAccount } = await loadFixture(deployGTT);
-            await expect(GTT.connect(firstAccount).airdrop([owner.address], [1])).to.be.revertedWith("Ownable: caller is not the owner")
-        });
-
-        it("Should fail when array length is different", async function () {
-            const { GTT, owner, firstAccount } = await loadFixture(deployGTT);
-            await expect(GTT.airdrop([owner.address], [1, 2])).to.be.revertedWith("GTT: invalid Data lengths mismatch")
-            await expect(GTT.airdrop([owner.address, firstAccount.address], [1])).to.be.revertedWith("GTT: invalid Data lengths mismatch")
+            await expect(GTT.connect(firstAccount).distribute(owner.address, 1)).to.be.revertedWith("Ownable: caller is not the owner")
         });
 
         it("Should fail when giving zero address", async function () {
             const { GTT } = await loadFixture(deployGTT);
-            await expect(GTT.airdrop([ethers.constants.AddressZero], [1])).to.be.revertedWith("GTT: zero address included")
+            await expect(GTT.distribute(ethers.constants.AddressZero, 1)).to.be.revertedWith("GTT: account should not be zero address")
         });
 
-        it("Should address get tokens after airdrop calls", async function () {
-            const { GTT, firstAccount, secondAccount } = await loadFixture(deployGTT);
+        it("Should address get tokens after distribute calls", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
 
-            // airdroping two different accoutns
-            await GTT.airdrop([firstAccount.address, secondAccount.address], [10, 150])
+            // distributing two different accoutns
+            await GTT.distribute(firstAccount.address, 10)
 
             // checking balances
             expect(await GTT.balanceOf(firstAccount.address)).to.be.equal(10)
-            expect(await GTT.balanceOf(secondAccount.address)).to.be.equal(150)
         });
         
     });
@@ -74,7 +67,7 @@ describe("GTT", function () {
             const { GTT, firstAccount } = await loadFixture(deployGTT);
             // test pause
             await GTT.pause();
-            await expect(GTT.airdrop([firstAccount.address], [2])).to.be.revertedWith("Pausable: paused");        
+            await expect(GTT.distribute(firstAccount.address, 2)).to.be.revertedWith("Pausable: paused");        
         });
 
         it("Should fail transfer when paused", async function () {
@@ -88,7 +81,7 @@ describe("GTT", function () {
             const { GTT, firstAccount } = await loadFixture(deployGTT);
             await GTT.pause();        
             await GTT.unpause();
-            await GTT.airdrop([firstAccount.address], [2])
+            await GTT.distribute(firstAccount.address, 2)
             expect(await GTT.balanceOf(firstAccount.address)).to.equal(2);
         });
 
@@ -103,7 +96,7 @@ describe("GTT", function () {
         it("Should burn proper amount of coins", async function () {
             const { GTT, burnWallet, owner } = await loadFixture(deployGTT);
             
-            await GTT.airdrop([owner.address], [200]);
+            await GTT.distribute(owner.address, 200);
             await GTT.transfer(burnWallet.address, 150);
             await burnWallet.burn()
 
@@ -120,14 +113,14 @@ describe("GTT", function () {
         
         it("Should be true after setting", async function () {
             const { GTT, firstAccount } = await loadFixture(deployGTT);
-            await GTT.setAllowedMint([firstAccount.address], true);
+            await GTT.setAllowedMint(firstAccount.address, true);
             expect(await GTT.isAllowedMinting(firstAccount.address)).to.be.equal(true);        
         });
         
         it("Should fail if caller is not owner", async function () {
             const { GTT, firstAccount } = await loadFixture(deployGTT);
 
-            await expect(GTT.connect(firstAccount).setAllowedMint([firstAccount.address], true))
+            await expect(GTT.connect(firstAccount).setAllowedMint(firstAccount.address, true))
                 .to.be.revertedWith("Ownable: caller is not the owner");        
         });
     });
@@ -159,7 +152,7 @@ describe("GTT", function () {
 
         it("Should enable minting after setting allowed", async function () {
             const { GTT, owner, firstAccount } = await loadFixture(deployGTT);
-            await GTT.setAllowedMint([owner.address], true);
+            await GTT.setAllowedMint(owner.address, true);
 
             const toMint = 100;
             await GTT.connect(owner).mint(firstAccount.address, toMint);

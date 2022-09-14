@@ -55,7 +55,7 @@ async def earn_nft_metadata(
                     "value": level
                 }, 
                 {
-                    "trait_type": 'vehicle', 
+                    "trait_type": 'EType', 
                     "value": etype
                 }, 
                 {

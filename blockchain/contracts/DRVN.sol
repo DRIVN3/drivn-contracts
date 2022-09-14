@@ -11,7 +11,7 @@ contract DRVNCoin is ERC20, Ownable, Pausable {
     using Address for address;
 
     // start coins
-    uint256 public constant startCoins = 5000000000 * 10**18;
+    uint256 public constant startCoins = 5_000_000_000 * 10**18;
 
     // supply for (Team, Advisors, Liquidity and etc.)
     mapping(string => uint256) public supplyData;
@@ -32,14 +32,14 @@ contract DRVNCoin is ERC20, Ownable, Pausable {
 
         // initializing supplys
 
-        supplyData["Private"] = 375000000 * 10 ** decimals();
-        supplyData["PreSale"] = 825000000 * 10 ** decimals();
-        supplyData["Team"] = 675000000 * 10 ** decimals();
-        supplyData["Advisors"] = 250000000 * 10 ** decimals();
-        supplyData["Travel Sustainable & Earn"] = 1000000000 * 10 ** decimals();
-        supplyData["Ecosystem / Treasury"] = 1000000000 * 10 ** decimals();
-        supplyData["Dex Liquidity"] = 375000000 * 10 ** decimals();
-        supplyData["Holdback"] = 500000000 * 10 ** decimals();
+        supplyData["Private"] = 375_000_000 * 10 ** decimals();
+        supplyData["PreSale"] = 825_000_000 * 10 ** decimals();
+        supplyData["Team"] = 675_000_000 * 10 ** decimals();
+        supplyData["Advisors"] = 250_000_000 * 10 ** decimals();
+        supplyData["Travel Sustainable & Earn"] = 1_000_000_000 * 10 ** decimals();
+        supplyData["Ecosystem / Treasury"] = 1_000_000_000 * 10 ** decimals();
+        supplyData["Dex Liquidity"] = 375_000_000 * 10 ** decimals();
+        supplyData["Holdback"] = 500_000_000 * 10 ** decimals();
     }
 
 
@@ -50,7 +50,6 @@ contract DRVNCoin is ERC20, Ownable, Pausable {
     */
 
     function sendTokens(string memory supplyName, address contractAddress_) external onlyOwner {
-        require(contractAddress_ != address(0), "DRVN: should not send to zero address");
         require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");
 
         uint256 supply = supplyData[supplyName];

@@ -76,7 +76,7 @@ describe("BurnNFT", function () {
             await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
 
             // give the allowance to burn nft contract
-            await GTT.airdrop([firstAccount.address], [4]);
+            await GTT.distribute(firstAccount.address, 4);
             await GTT.connect(firstAccount).increaseAllowance(burnNFT.address, 4);
 
             await GTT.setAllowedBurn(burnNFT.address, true);
