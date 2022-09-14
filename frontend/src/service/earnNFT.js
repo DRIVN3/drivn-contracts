@@ -34,13 +34,15 @@ export class EarnNFTService {
         );
 
         const calls = tokens.map((tokenId) => contract.nftInfo(tokenId));
+        const powerLeftCalls = tokens.map((tokenId) => contract.calculatePower(tokenId));
 
         const ethcallProvider = new EthcallProvider();
         await ethcallProvider.init(provider);
 
         const data = await ethcallProvider.tryAll(calls);
+        const powerLeftData = await ethcallProvider.tryAll(powerLeftCalls);
 
-        return data.map((item) => {
+        return data.map((item, index) => {
             return {
                 vehicleType: {
                     type: item.vehicle,
@@ -51,7 +53,7 @@ export class EarnNFTService {
                     name: EARN_NFT_LEVELS_ARRAY[item.nftType],
                 },
                 maxPower: Number(item.maxPower.toString()),
-                powerLeft: Number(item.powerLeft.toString()),
+                powerLeft: Number(powerLeftData[index].toString()),
             };
         });
     };
