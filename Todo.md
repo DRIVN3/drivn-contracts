@@ -17,8 +17,8 @@
 
 
 ### Earn NFT
-- change vehicle into eType for better understanding (refactor)
-- research how can we handle logic in another library or contract
+- change vehicle into eType for better understanding (refactor) +
+- research how can we handle logic in another library or contract (researched)
 - convert ENUMS into uint256 to add simpler way
 - Merge event does not throw new token id
 - setAllowed change parameters (address addr, bool allowed)
@@ -27,5 +27,5 @@
 
 
 ### Burn NFT
-- remove etype from this
-- კონტრაქტი იღებს შენ GTT ტოკენებს დაწვავს და რამდენიც დაწვა დაამატებს power-ში.
+- remove etype from this + 
+- კონტრაქტი იღებს შენ GTT ტოკენებს დაწვავს და რამდენიც დაწვა დაამატებს power-ში. +

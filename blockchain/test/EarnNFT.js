@@ -83,7 +83,7 @@ describe("EarnNFt", function () {
             let multiplier = await earnNFT.powerMultiplier();
             let nftInfo = await earnNFT.nftInfo(1);
             expect(nftInfo.nftType).to.be.equal(COMMON);
-            expect(nftInfo.vehicle).to.be.equal(CAR);
+            expect(nftInfo.eType).to.be.equal(CAR);
             expect(nftInfo.lastUsage).to.be.equal(0);
             expect(nftInfo.powerLeft).to.be.equal(COMMONPOWER * multiplier);
             expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
@@ -96,7 +96,7 @@ describe("EarnNFt", function () {
             let multiplier = await earnNFT.powerMultiplier();
             let nftInfo = await earnNFT.nftInfo(1);
             expect(nftInfo.nftType).to.be.equal(COMMON);
-            expect(nftInfo.vehicle).to.be.equal(BICYCLE);
+            expect(nftInfo.eType).to.be.equal(BICYCLE);
             expect(nftInfo.lastUsage).to.be.equal(0);
             expect(nftInfo.powerLeft).to.be.equal(COMMONPOWER * multiplier);
             expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
@@ -109,7 +109,7 @@ describe("EarnNFt", function () {
             let multiplier = await earnNFT.powerMultiplier();
             let nftInfo = await earnNFT.nftInfo(1);
             expect(nftInfo.nftType).to.be.equal(COMMON);
-            expect(nftInfo.vehicle).to.be.equal(SCOOTER);
+            expect(nftInfo.eType).to.be.equal(SCOOTER);
             expect(nftInfo.lastUsage).to.be.equal(0);
             expect(nftInfo.powerLeft).to.be.equal(COMMONPOWER * multiplier);
             expect(nftInfo.maxPower).to.be.equal(COMMONPOWER * multiplier);
@@ -199,7 +199,7 @@ describe("EarnNFt", function () {
             let multiplier = await earnNFT.powerMultiplier();
             let nftInfo = await earnNFT.nftInfo(5);
             expect(nftInfo.nftType).to.be.equal(RARE);
-            expect(nftInfo.vehicle).to.be.equal(CAR);
+            expect(nftInfo.eType).to.be.equal(CAR);
             expect(nftInfo.lastUsage).to.be.equal(0);
             expect(nftInfo.powerLeft).to.be.equal(RAREPOWER * multiplier);
             expect(nftInfo.maxPower).to.be.equal(RAREPOWER * multiplier);
@@ -230,7 +230,7 @@ describe("EarnNFt", function () {
             let multiplier = await earnNFT.powerMultiplier();
             let nftInfo = await earnNFT.nftInfo(7);
             expect(nftInfo.nftType).to.be.equal(EPIC);
-            expect(nftInfo.vehicle).to.be.equal(BICYCLE);
+            expect(nftInfo.eType).to.be.equal(BICYCLE);
             expect(nftInfo.lastUsage).to.be.equal(0);
             expect(nftInfo.powerLeft).to.be.equal(EPICPOWER * multiplier);
             expect(nftInfo.maxPower).to.be.equal(EPICPOWER * multiplier);
