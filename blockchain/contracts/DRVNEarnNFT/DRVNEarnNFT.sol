@@ -257,6 +257,19 @@ contract EarnNFT is ERC721, Ownable {
         return replenishPower;
     }
     
+
+    /**
+     * @dev gets the current claim coins amount by token
+     * @param tokenId nft token id
+    */ 
+    
+    function getClaimAmount(uint256 tokenId) public view returns(uint256) {
+        uint256 earningGap = vehicleGTTGap[nftInfo[tokenId].eType];
+        uint256 earned = (nftPowerUsed[tokenId] - nftPowerClaimed[tokenId]) * earningGap / 900;
+        return earned;
+    }
+
+
     /**
      * @dev updates the vehicle traffic
      * @param tokenId nft token id
@@ -281,8 +294,7 @@ contract EarnNFT is ERC721, Ownable {
     function claim(uint256 tokenId) external {
         require(ownerOf(tokenId) == msg.sender, "EarnNFT: sender is not the owner of the token");
 
-        uint256 earningGap = vehicleGTTGap[nftInfo[tokenId].eType];
-        uint256 earned = (nftPowerUsed[tokenId] - nftPowerClaimed[tokenId]) * earningGap / 900;
+        uint256 earned = getClaimAmount(tokenId);
         nftPowerClaimed[tokenId] = nftPowerUsed[tokenId];
 
         gttCoin.mint(msg.sender, earned);
