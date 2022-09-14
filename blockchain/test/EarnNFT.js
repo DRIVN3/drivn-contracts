@@ -40,10 +40,6 @@ describe("EarnNFt", function () {
                 expect(await earnNFT.powerMultiplier()).to.be.equal(900);
             });
 
-            it("Checking getLevelByPower", async function () {
-                const { earnNFT } = await loadFixture(getContracts);
-                expect(await earnNFT.getLevelByPower(await earnNFT.powerMultiplier())).to.be.equal(COMMON);
-            });
         });
     });
 
@@ -134,6 +130,7 @@ describe("EarnNFt", function () {
             await expect(earnNFT.connect(firstAccount).mint(SCOOTER, {value: ethers.utils.parseEther('0.01')}))
                 .to.be.revertedWith("EarnNFT: can't mint, max scooter supply reached");
         });
+        
     });
 
     describe("test EarnNft merging", function () {

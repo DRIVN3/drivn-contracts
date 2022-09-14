@@ -184,8 +184,10 @@ contract EarnNFT is ERC721, Ownable {
         require(nftInfo[tokenId1].eType == nftInfo[tokenId2].eType, 
             "EarnNFT: EType of nft does not match");
 
+        // calculate new nft power and level
         uint256 newPower = nftInfo[tokenId1].maxPower + nftInfo[tokenId2].maxPower;
-        Level nftType = getLevelByPower(newPower);    
+        uint256 levelUint = uint256(nftInfo[tokenId1].nftType) + uint256(nftInfo[tokenId2].nftType) + 1;
+        require(levelUint <= uint256(Level.EPIC), "EarnNFT: Power is too high");
 
         // adding the token
         _tokenIdCounter.increment();
@@ -193,7 +195,7 @@ contract EarnNFT is ERC721, Ownable {
         _mint(msg.sender, tokenId);
 
         nftInfo[tokenId] = NFTInformation(
-            nftType, // nft type is common
+            Level(levelUint), // nft type is common
             nftInfo[tokenId1].eType, // vehicle
             0, // last usage
             newPower, // powerLeft
@@ -243,22 +245,6 @@ contract EarnNFT is ERC721, Ownable {
 
     function powerMultiplier() public pure returns (uint256) {
         return 900;
-    }
-
-    /**
-     * @dev pure function for returning type by power
-    */
-
-    function getLevelByPower(uint256 power) public pure returns (Level) {
-        require(power <= 4 * powerMultiplier(), "EarnNFT: Power is too high");
-        if (power == 1 * powerMultiplier())
-            return Level.COMMON;  
-        if (power == 2 * powerMultiplier()) 
-            return Level.UNCOMMON;
-        if (power == 3 * powerMultiplier())
-            return Level.RARE;
-        if (power == 4 * powerMultiplier())
-            return Level.EPIC;
     }
 
     /**
