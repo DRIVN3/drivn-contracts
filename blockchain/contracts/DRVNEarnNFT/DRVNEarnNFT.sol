@@ -277,7 +277,10 @@ contract EarnNFT is ERC721, Ownable {
 
     function generate(uint256 tokenId, uint256 durationSeconds) external whenAllowed {
         uint256 currentPower = calculatePower(tokenId);
-        require(currentPower >= durationSeconds, "EarnNFT: durationSeconds exceeds current power's limit");
+
+        if (currentPower < durationSeconds) {
+            durationSeconds = currentPower;
+        }
 
         currentPower = currentPower - durationSeconds;
         nftInfo[tokenId].powerLeft = currentPower;

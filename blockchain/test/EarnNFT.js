@@ -269,13 +269,15 @@ describe("EarnNFt", function () {
             await expect(earnNFT.generate(1, 100)).to.be.revertedWith("EarnNFT: address is not allowed to call this function");
         });
 
-        it("should fail when duration is not fit in power limit", async function () {
+        it("should generate whole when duration is not fit in power limit", async function () {
             const { earnNFT, firstAccount, owner } = await loadFixture(getContracts);
             await earnNFT.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
             await earnNFT.setAllowed(owner.address, true);
 
-            await expect(earnNFT.generate(1, 901))
-                .to.be.revertedWith("EarnNFT: durationSeconds exceeds current power's limit");
+            await earnNFT.generate(1, 901);
+
+            const nftInfo = await earnNFT.nftInfo(1);
+            expect(nftInfo.powerLeft).to.be.equal(0);
         });
 
         it("should change power correctly", async function () {
@@ -428,7 +430,11 @@ describe("EarnNFt", function () {
             const halfDay = 12 * 60 * 60;
             await network.provider.send("evm_increaseTime", [halfDay]);
             await network.provider.send("evm_mine");
-            await expect(earnNFT.generate(1, 451)).to.be.revertedWith("EarnNFT: durationSeconds exceeds current power's limit");
+            await earnNFT.generate(1, 451);
+
+            const nftInfo = await earnNFT.nftInfo(1);
+            expect(nftInfo.powerLeft).to.be.equal(0);
+
         });
 
     });
