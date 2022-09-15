@@ -26,7 +26,10 @@ async function deployDRVN() {
     let DRVNTeamManager = await ethers.getContractFactory("DRVNTeamManager");
     DRVNTeamManager = await DRVNTeamManager.deploy(DRVN.address);
 
-    return { DRVN, name, symbol, owner, firstAccount, secondAccount, DRVNTeamManager};
+    let DRVNLiquidity = await ethers.getContractFactory("DRVNLiquidity");
+    DRVNLiquidity = await DRVNLiquidity.deploy(DRVN.address);
+
+    return { DRVN, name, symbol, owner, firstAccount, secondAccount, DRVNTeamManager, DRVNLiquidity};
 }
 
 describe("DRVN", function () {
@@ -124,7 +127,7 @@ describe("DRVNTeamManager", function () {
 
             await DRVN.sendTokens("Team", DRVNTeamManager.address);
 
-            await network.provider.send("evm_increaseTime", [vestingStart - 1]);
+            await network.provider.send("evm_increaseTime", [vestingStart - 2]);
             await network.provider.send("evm_mine");
 
             let answer = BigInt(await DRVNTeamManager.teamSupply()) / BigInt(2);
@@ -148,7 +151,7 @@ describe("DRVNTeamManager", function () {
 
             await DRVN.sendTokens("Team", DRVNTeamManager.address);
 
-            await network.provider.send("evm_increaseTime", [vestingStart + vestingDuration / 2 - 1]);
+            await network.provider.send("evm_increaseTime", [vestingStart + vestingDuration / 2 - 2]);
             await network.provider.send("evm_mine");
 
             let answer = BigInt(3) * BigInt(await DRVNTeamManager.teamSupply()) / BigInt(4);
@@ -196,7 +199,7 @@ describe("DRVNTeamManager", function () {
             await DRVN.sendTokens("Team", DRVNTeamManager.address);
             await DRVNTeamManager.setTeamWallet(firstAccount.address);
 
-            await network.provider.send("evm_increaseTime", [vestingStart + vestingDuration / 2 - 3]);
+            await network.provider.send("evm_increaseTime", [vestingStart + vestingDuration / 2 - 4]);
             await network.provider.send("evm_mine");
             await DRVNTeamManager.release();
 
@@ -205,3 +208,35 @@ describe("DRVNTeamManager", function () {
         });
     });
 });
+
+
+describe("DRVNLiquidity", function () {
+    describe("Deployment", function () {
+        it("Checking address of DRVN coin", async function () {
+            const { DRVN, DRVNLiquidity } = await loadFixture(deployDRVN);
+
+            expect(await DRVNLiquidity.drvnCoin()).to.be.equal(DRVN.address);
+        });
+    });
+
+    describe("Distribute", function () {
+        it("should fail while calling non owner", async function () {
+            const { DRVNLiquidity, firstAccount } = await loadFixture(deployDRVN);
+            await expect(DRVNLiquidity.connect(firstAccount).distribute(firstAccount.address, 100))
+            .to.be.revertedWith("Ownable: caller is not the owner");;
+        });
+
+        it("should distribute 100 coin on first account", async function () {
+            const { DRVNLiquidity, DRVN, firstAccount } = await loadFixture(deployDRVN);
+
+            await DRVN.sendTokens("Dex Liquidity", DRVNLiquidity.address);
+
+            await DRVNLiquidity.distribute(firstAccount.address, 100);
+
+            expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(100);
+        });
+
+    });
+
+});
+
