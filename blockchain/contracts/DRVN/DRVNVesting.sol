@@ -52,7 +52,7 @@ contract VestingContract is Context {
         require(duration_ > 0, "VestingContract: duration is zero");
         _beneficiary = beneficiary_;
         _duration = duration_;
-        _start = startTimestamp;
+        _start = startTimestamp_;
         _token = token_;
     }
 
