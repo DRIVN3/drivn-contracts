@@ -63,7 +63,7 @@ function App() {
     const handleClaimToken = async (token) => {
         try {
             setLoading({claimingToken: true});
-            await new EarnNFTContract(account.signer).claim(token);
+            await new EarnNFTContract(account.signer).claimGeneratedCoins(token);
             setLoading({claimingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -72,10 +72,10 @@ function App() {
         }
     };
 
-    const handleGenerateCoin = async (token, time) => {
+    const handleGenerateCoin = async (token, time, claim) => {
         try {
             setLoading({generatingToken: true});
-            await new EarnNFTContract(account.signer).generate(token, time);
+            await new EarnNFTContract(account.signer).generate(token, time, claim);
             setLoading({generatingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {

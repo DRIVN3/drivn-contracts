@@ -95,6 +95,12 @@
         "internalType": "uint256",
         "name": "tokenId2",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newToken",
+        "type": "uint256"
       }
     ],
     "name": "Merge",
@@ -112,7 +118,7 @@
       {
         "indexed": true,
         "internalType": "enum EType",
-        "name": "vehicle",
+        "name": "eType",
         "type": "uint8"
       },
       {
@@ -233,7 +239,7 @@
         "type": "uint256"
       }
     ],
-    "name": "claim",
+    "name": "claimGeneratedCoins",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -288,6 +294,11 @@
         "internalType": "uint256",
         "name": "durationSeconds",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "claim",
+        "type": "bool"
       }
     ],
     "name": "generate",
@@ -318,19 +329,19 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "power",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
-    "name": "getLevelByPower",
+    "name": "getClaimAmount",
     "outputs": [
       {
-        "internalType": "enum Level",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint8"
+        "type": "uint256"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -450,7 +461,7 @@
     "inputs": [
       {
         "internalType": "enum EType",
-        "name": "vehicle",
+        "name": "eType",
         "type": "uint8"
       }
     ],
@@ -489,7 +500,7 @@
       },
       {
         "internalType": "enum EType",
-        "name": "vehicle",
+        "name": "eType",
         "type": "uint8"
       },
       {
@@ -674,9 +685,9 @@
   {
     "inputs": [
       {
-        "internalType": "address[]",
-        "name": "addresses",
-        "type": "address[]"
+        "internalType": "address",
+        "name": "allowedAddress",
+        "type": "address"
       },
       {
         "internalType": "bool",
@@ -756,6 +767,49 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenByIndex",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenOfOwnerByIndex",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
       }
@@ -766,6 +820,19 @@
         "internalType": "string",
         "name": "",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

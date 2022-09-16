@@ -14,6 +14,7 @@ export const GenerateCoin = ({
         const [token, setToken] = useState(allTokens[0]?.tokenId || null);
         const [maxPower, setMaxPower] = useState(allTokens[0]?.powerLeft);
         const [time, setTime] = useState('');
+        const [claim, setClaim] = useState(false);
         const [errorMessage, setErrorMessage] = useState('');
 
         const handleTokenSelection = (e) => {
@@ -32,6 +33,10 @@ export const GenerateCoin = ({
             } else {
                 setErrorMessage('Time can\'t be greater than token powerLeft.');
             }
+        }
+
+        const handleClaimChange = (e) => {
+            setClaim(e.target.checked)
         }
 
         return (<>
@@ -75,14 +80,25 @@ export const GenerateCoin = ({
                     />
                     <span className="text-danger mx-2">{errorMessage}</span>
                 </div>
-                <div className="col-6 pt-2 text-end">
+                <div className="col-12 mt-3">
+                    <label className="claim-label">
+                        Claim on generate:{' '}
+                        <input
+                            disabled={isGenerating || isClaiming}
+                            checked={claim}
+                            onChange={handleClaimChange}
+                            type="checkbox"
+                        />
+                    </label>
+                </div>
+                <div className="col-12 pt-2">
                     <Button
                         disabled={!token || isGenerating || isClaiming}
                         className="btn-success"
                         onClick={() => {
                             if (Number.isInteger(time) && time > 0) {
                                 if (onGenerate) {
-                                    onGenerate(token, time);
+                                    onGenerate(token, time, claim);
                                 }
                             } else {
                                 setErrorMessage('Please input valid time.')
@@ -92,7 +108,7 @@ export const GenerateCoin = ({
                         {isGenerating ? 'Generating...' : 'Generate'}
                     </Button>
                 </div>
-                <div className="col-6 pt-2 text-start">
+                <div className="col-12 pt-2">
                     <Button
                         disabled={!token || isGenerating || isClaiming}
                         className="btn-info"

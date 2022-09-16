@@ -28,13 +28,13 @@ export class EarnNFTContract {
         await receipt.wait();
     };
 
-    generate = async (token, time) => {
-        const receipt = await this.contract.generate(token, BigNumber.from(String(time)));
+    generate = async (token, time, claim) => {
+        const receipt = await this.contract.generate(token, BigNumber.from(String(time)), claim);
         await receipt.wait();
     };
 
-    claim = async (token) => {
-        const receipt = await this.contract.claim(token);
+    claimGeneratedCoins = async (token) => {
+        const receipt = await this.contract.claimGeneratedCoins(token);
         await receipt.wait();
     };
 }

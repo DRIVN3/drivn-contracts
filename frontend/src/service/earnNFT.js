@@ -1,6 +1,7 @@
 import {Contract as EthcallContract, Provider as EthcallProvider} from "ethcall"
 import {EARN_NFT_LEVELS_ARRAY, EARN_NFT_VEHICLE_TYPES_ARRAY} from "../constants";
 import {appConfig} from "../config";
+import {ethers} from "ethers";
 
 export class EarnNFTService {
 
@@ -35,18 +36,21 @@ export class EarnNFTService {
 
         const calls = tokens.map((tokenId) => contract.nftInfo(tokenId));
         const powerLeftCalls = tokens.map((tokenId) => contract.calculatePower(tokenId));
+        const claimAmountCalls = tokens.map((tokenId) => contract.getClaimAmount(tokenId));
 
         const ethcallProvider = new EthcallProvider();
         await ethcallProvider.init(provider);
 
         const data = await ethcallProvider.tryAll(calls);
         const powerLeftData = await ethcallProvider.tryAll(powerLeftCalls);
+        const claimAmountData = await ethcallProvider.tryAll(claimAmountCalls);
 
         return data.map((item, index) => {
             return {
+                gttCoin: Number.parseFloat(ethers.utils.formatEther(claimAmountData[index].toString())),
                 vehicleType: {
-                    type: item.vehicle,
-                    name: EARN_NFT_VEHICLE_TYPES_ARRAY[item.vehicle],
+                    type: item.eType,
+                    name: EARN_NFT_VEHICLE_TYPES_ARRAY[item.eType],
                 },
                 level: {
                     type: item.nftType,
