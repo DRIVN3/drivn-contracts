@@ -200,6 +200,32 @@ describe("Private Sales", function () {
 
         });
 
+        it("Should be released zero tokens before pass < 360 days", async function () {
+
+            const {privateSales, firstAccount, DRVN} = await loadFixture(deployPrivateSales);
+            await privateSales.setPrivateSalesEnabled(true);
+            await privateSales.setAllowed([firstAccount.address], true);
+            await privateSales.connect(firstAccount).buy({value: ethers.utils.parseEther('1')})
+
+            let contracts = await privateSales.getAccountVestingWallets(firstAccount.address);
+
+            const vestingWallet = await ethers.getContractFactory("VestingContract");
+            const contract = await vestingWallet.attach(
+                contracts[0]
+            );
+
+            // increase time and reach start date
+            await network.provider.send("evm_increaseTime", [startTime - 1])
+
+            await contract.functions['release()']();
+
+            let released = await contract.functions['released()']();
+            released = released[0]
+
+            expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(0);
+
+        });
+
     });
 });
 
