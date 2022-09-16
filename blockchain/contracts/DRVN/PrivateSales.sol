@@ -21,6 +21,8 @@ contract PrivateSales is Ownable {
     // mapping between address and it's created VestingContracts contracts
     mapping(address => address[]) public vestingWallets;
 
+    // mapping for allowed addresses
+    mapping(address=>bool) public isAllowed;
 
     constructor(address token_)  {
         token = IERC20(token_);
@@ -33,6 +35,25 @@ contract PrivateSales is Ownable {
 
     function setPrivateSalesEnabled(bool enabled) external onlyOwner {
         privateSalesEnabled = enabled;
+    }
+
+    /** 
+     * @dev setting allowed addresses
+     * @param allowed boolean True if enables, False otherwise
+    */
+
+    function setAllowed(address[] calldata addresses, bool allowed) public onlyOwner {
+        for (uint256 i = 0; i < addresses.length; ++i) {
+            isAllowed[addresses[i]] = allowed;
+        }
+    }
+
+    /**
+     * @dev modifier to detect if address is allowed for buying coins
+    */
+    modifier whenAllowed() {
+        require(isAllowed[msg.sender], "PrivateSales: address is not allowed to call this function");
+        _;
     }
 
     /**
@@ -78,7 +99,7 @@ contract PrivateSales is Ownable {
      * @dev Buy the coins in private Coins supply. Checks current prive of BNB to USD and buy the coins properly
     */
 
-    function buy() external payable {
+    function buy() external payable whenAllowed {
         require(privateSalesEnabled, "PrivateSales: sale is not enabled");
         require(msg.value > 0, "PrivateSales: should not be zero amount");
         

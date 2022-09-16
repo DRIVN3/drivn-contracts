@@ -65,17 +65,25 @@ describe("Private Sales", function () {
     });
 
     describe("Test buy functionality", function () {
-        it("Should fail when calling not turning on privateSalesEnabled", async function () {
+        it("Should fail when address not allowed to buy", async function () {
 
             const {privateSales} = await loadFixture(deployPrivateSales);
 
+            await expect(privateSales.buy()).to.be.revertedWith("PrivateSales: address is not allowed to call this function")
+        });
+
+        it("Should fail when calling not turning on privateSalesEnabled", async function () {
+
+            const { privateSales, owner } = await loadFixture(deployPrivateSales);
+            await privateSales.setAllowed([owner.address], true);
             await expect(privateSales.buy()).to.be.revertedWith("PrivateSales: sale is not enabled")
         });
 
         it("Should fail for zero amount", async function () {
 
-            const {privateSales} = await loadFixture(deployPrivateSales);
+            const { privateSales, owner } = await loadFixture(deployPrivateSales);
             await privateSales.setPrivateSalesEnabled(true);
+            await privateSales.setAllowed([owner.address], true);
 
             await expect(privateSales.buy()).to.be.revertedWith("PrivateSales: should not be zero amount")
         });
@@ -83,6 +91,7 @@ describe("Private Sales", function () {
         it("Should create 1 vesting valet after successful buy 100 coins", async function () {
             const {privateSales, firstAccount, DRVN} = await loadFixture(deployPrivateSales);
             await privateSales.setPrivateSalesEnabled(true);
+            await privateSales.setAllowed([firstAccount.address], true);
 
             await privateSales.connect(firstAccount).buy({value: ethers.utils.parseEther('1')})
 
@@ -95,7 +104,7 @@ describe("Private Sales", function () {
 
             const {privateSales, firstAccount, DRVN} = await loadFixture(deployPrivateSales);
             await privateSales.setPrivateSalesEnabled(true);
-
+            await privateSales.setAllowed([firstAccount.address], true);
             await privateSales.connect(firstAccount).buy({value: ethers.utils.parseEther('1')})
 
             let contracts = await privateSales.getAccountVestingWallets(firstAccount.address);
@@ -114,7 +123,7 @@ describe("Private Sales", function () {
 
             const {privateSales, firstAccount, DRVN} = await loadFixture(deployPrivateSales);
             await privateSales.setPrivateSalesEnabled(true);
-
+            await privateSales.setAllowed([firstAccount.address], true);
             await privateSales.connect(firstAccount).buy({value: ethers.utils.parseEther('1')})
 
             let contracts = await privateSales.getAccountVestingWallets(firstAccount.address);
@@ -141,7 +150,7 @@ describe("Private Sales", function () {
 
             const {privateSales, firstAccount, DRVN} = await loadFixture(deployPrivateSales);
             await privateSales.setPrivateSalesEnabled(true);
-
+            await privateSales.setAllowed([firstAccount.address], true);
             await privateSales.connect(firstAccount).buy({value: ethers.utils.parseEther('1')})
 
             let contracts = await privateSales.getAccountVestingWallets(firstAccount.address);
@@ -168,7 +177,7 @@ describe("Private Sales", function () {
 
             const {privateSales, firstAccount, DRVN} = await loadFixture(deployPrivateSales);
             await privateSales.setPrivateSalesEnabled(true);
-
+            await privateSales.setAllowed([firstAccount.address], true);
             await privateSales.connect(firstAccount).buy({value: ethers.utils.parseEther('1')})
 
             let contracts = await privateSales.getAccountVestingWallets(firstAccount.address);
@@ -208,6 +217,7 @@ describe("Test withdraw", function () {
         const {privateSales, firstAccount} = await loadFixture(deployPrivateSales);
 
         await privateSales.setPrivateSalesEnabled(true);
+        await privateSales.setAllowed([firstAccount.address], true);
 
         await privateSales.connect(firstAccount).buy({value: ethers.utils.parseEther('1')})
 
