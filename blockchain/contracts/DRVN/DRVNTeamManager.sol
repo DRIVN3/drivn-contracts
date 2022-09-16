@@ -50,7 +50,7 @@ contract DRVNTeamManager is Ownable {
     */
 
     function teamReleasableAmount() public view returns (uint256) {
-        return DRVNVesting.vestingSchedule(teamSupply, startDate, block.timestamp) - teamReleased;
+        return DRVNVesting.vestingSchedule(teamSupply, startDate + 360 days, 360 days, block.timestamp) - teamReleased;
     }
 
     /**
