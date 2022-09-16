@@ -44,7 +44,7 @@ contract VestingContract is Context {
      */
     constructor(
         address beneficiary_,
-        uint256 startTimestamp,
+        uint256 startTimestamp_,
         uint64 duration_,
         address token_
     ) {
