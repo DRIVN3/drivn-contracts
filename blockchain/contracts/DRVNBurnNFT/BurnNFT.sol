@@ -82,7 +82,7 @@ contract BurnNFT is ERC721Enumerable, Ownable {
      * @dev buying the token
     */
 
-    function mint(EType eType) external payable {
+    function mint(EType eType) external {
 
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
