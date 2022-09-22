@@ -6,8 +6,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-contract DRVNCoin is ERC20, Ownable, Pausable {
+contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
     using Address for address;
 
     // start coins
@@ -25,6 +27,7 @@ contract DRVNCoin is ERC20, Ownable, Pausable {
         string memory symbol_
     )
     ERC20(name_, symbol_)
+    ERC20Permit(symbol_)
     {
 
         // minting starting coins
@@ -85,4 +88,38 @@ contract DRVNCoin is ERC20, Ownable, Pausable {
     {
         super._beforeTokenTransfer(from, to, amount);
     }
+
+    /**
+     * @dev overriding after token transfer from ERC20 contract.
+    */
+
+    function _afterTokenTransfer(address from, address to, uint256 amount)
+        internal
+        override(ERC20, ERC20Votes)
+    {
+        super._afterTokenTransfer(from, to, amount);
+    }
+
+    /**
+     * @dev overriding _mint function.
+    */
+
+    function _mint(address to, uint256 amount)
+        internal
+        override(ERC20, ERC20Votes)
+    {
+        super._mint(to, amount);
+    }
+
+    /**
+     * @dev overriding _burn function.
+    */
+
+    function _burn(address account, uint256 amount)
+        internal
+        override(ERC20, ERC20Votes)
+    {
+        super._burn(account, amount);
+    }
+
 }
