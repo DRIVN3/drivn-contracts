@@ -252,7 +252,7 @@ contract EarnNFT is ERC721Enumerable, Ownable {
 
     function calculatePower(uint256 tokenId) public view returns (uint256) {
         uint256 maxPower = nftInfo[tokenId].maxPower;
-        uint256 replenishPower = nftInfo[tokenId].powerLeft + (block.timestamp - nftInfo[tokenId].lastUsage) * maxPower / 86400;
+        uint256 replenishPower = nftInfo[tokenId].powerLeft + (block.timestamp - nftInfo[tokenId].lastUsage) * maxPower / 1 days;
         replenishPower =  replenishPower <= maxPower ? replenishPower : maxPower;
         return replenishPower;
     }

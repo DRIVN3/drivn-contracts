@@ -19,7 +19,7 @@ async function getContracts() {
     let name = "test";
     let symbol = "testing";  
     let baseUri = "testing";
-    burnNFT = await burnNFT.deploy(name, symbol, baseUri, GTT.address); 
+    burnNFT = await burnNFT.deploy(name, symbol, baseUri); 
 
     return { burnNFT, owner, firstAccount, secondAccount, name, symbol, baseUri, GTT } 
 }
@@ -39,52 +39,91 @@ describe("BurnNFT", function () {
 
 
     describe("test BurnNFT minting", function () {
-        it("Should fail when not enough balance", async function () {
-            const { burnNFT, firstAccount } = await loadFixture(getContracts);
-            await expect(burnNFT.connect(firstAccount).mint()).to.be.revertedWith("BurnNFT: not enough money");
-        });
-
         it("Should mint correctly", async function () {
             const { burnNFT, firstAccount, baseUri } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
+            await burnNFT.connect(firstAccount).mint(SCOOTER);
             
             expect(await burnNFT.ownerOf(1)).to.be.equal(firstAccount.address);
             expect(await burnNFT.tokenURI(1)).to.be.equal(baseUri+'1');
+        });
+
+        it("Should get scooter NFT info correctly", async function () {
+            const { burnNFT, firstAccount, baseUri } = await loadFixture(getContracts);
+            await burnNFT.connect(firstAccount).mint(SCOOTER);
+            
+            nftInfo = await burnNFT.nftInfo(1);
+            expect(nftInfo.eType).to.be.equal(SCOOTER);
         });
 
         it("should fail after minting 1000 burn nft", async function () {
             const { burnNFT, firstAccount } = await loadFixture(getContracts);
             
             for (let k = 0; k < 1000; ++ k)
-                await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
+                await burnNFT.connect(firstAccount).mint(BICYCLE);
 
-            await expect(burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')}))
+            await expect(burnNFT.connect(firstAccount).mint(BICYCLE))
                 .to.be.revertedWith("BurnNFT: can't mint, max burn nft supply reached");
         });
     });
 
-    describe("test burning generated GTT", function () {
-        it("should fail when calling no owner", async function () {
-            const { burnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
+    describe("test generated pseudo GTT", function () {
+        it("should fail when calling not allowed user", async function () {
+            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await burnNFT.connect(firstAccount).mint(SCOOTER);
 
-            await expect(burnNFT.connect(owner).burn(1, 4)).to.be.revertedWith("BurnNFT: sender is not the owner of the token");
+            await expect(burnNFT.connect(owner).generate(1, 450))
+                .to.be.revertedWith("BurnNFT: address is not allowed to call this function");
         });
 
-        it("should be burn 4 when burn was called", async function () {
-            const { burnNFT, firstAccount, owner, GTT } = await loadFixture(getContracts);
-            await burnNFT.connect(firstAccount).mint({value: ethers.utils.parseEther('0.01')});
+        it("should be generate pseudo power of 2 GTT when generate was called", async function () {
+            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await burnNFT.connect(firstAccount).mint(CAR);
 
-            // give the allowance to burn nft contract
-            await GTT.distribute(firstAccount.address, 4);
-            await GTT.connect(firstAccount).increaseAllowance(burnNFT.address, 4);
+            await burnNFT.setAllowed(owner.address, true);
+            await burnNFT.connect(owner).generate(1, 450);
 
-            await GTT.setAllowedBurn(burnNFT.address, true);
-            await burnNFT.connect(firstAccount).burn(1, 4);
-
-
-            expect(await GTT.balanceOf(firstAccount.address)).to.be.equal(0);
-            expect(await GTT.balanceOf(burnNFT.address)).to.be.equal(0);
+            expect(await burnNFT.nftScore(1)).to.be.equal("2000000000000000000");
         });
+
+        it("should be generate pseudo power of 4 GTT when generate was called", async function () {
+            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await burnNFT.connect(firstAccount).mint(CAR);
+
+            await burnNFT.setAllowed(owner.address, true);
+            await burnNFT.connect(owner).generate(1, 900);
+
+            expect(await burnNFT.nftScore(1)).to.be.equal("4000000000000000000");
+        });
+
+        it("should be generate pseudo power of 6 GTT when generate fully and replenished half", async function () {
+            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await burnNFT.connect(firstAccount).mint(CAR);
+
+            await burnNFT.setAllowed(owner.address, true);
+            await burnNFT.connect(owner).generate(1, 900);
+            
+            const halfDay = 12 * 60 * 60;
+            await network.provider.send("evm_increaseTime", [halfDay]);
+            await network.provider.send("evm_mine");
+
+            await burnNFT.connect(owner).generate(1, 450);
+            expect(await burnNFT.nftScore(1)).to.be.equal("6000000000000000000");
+        });
+
+        it("should equal half power after half day passed when fully wasted power", async function () {
+            const { burnNFT, firstAccount, owner } = await loadFixture(getContracts);
+            await burnNFT.connect(firstAccount).mint(CAR);
+
+            await burnNFT.setAllowed(owner.address, true);
+            await burnNFT.connect(owner).generate(1, 900);
+            
+            const halfDay = 12 * 60 * 60;
+            await network.provider.send("evm_increaseTime", [halfDay]);
+            await network.provider.send("evm_mine");
+
+            expect(await burnNFT.calculatePower(1))
+                .to.be.equal(450);
+        });
+
     });
 });
