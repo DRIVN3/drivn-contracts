@@ -1,12 +1,21 @@
 import {useEffect, useState} from "react";
-import {Button} from "react-bootstrap";
 import {ethers} from "ethers";
 import Web3Modal from "web3modal";
-import {AssetService, EarnNFTService, BurnNFTService} from "./service";
-import {displayAddress, getBurnNftTokenFullName, getEarnNftTokenFullName, toHex} from "./utils";
+import {AssetService, BurnNFTService, EarnNFTService} from "./service";
+import {getBurnNftTokenFullName, getEarnNftTokenFullName, toHex} from "./utils";
 import {CHAIN, EARN_NFT_VEHICLE_TYPES} from "./constants";
 import {EarnNFTContract} from "./contracts/EarnNFTContract";
-import {Assets, GenerateCoin, MintButton, ReloadPageButton, MergeNFTs, Tokens} from "./components";
+import {
+    AccountInfo,
+    Assets,
+    ConnectButton,
+    ExternalLinks,
+    GenerateCoin,
+    MergeNFTs,
+    MintButton,
+    ReloadPageButton,
+    Tokens
+} from "./components";
 import {BurnNFTContract} from "./contracts/BurnNFTContract";
 import {BURN_NFT_PRICE} from "./constants/burnNFT";
 import {BurnNFTs} from "./components/BurnNFTs";
@@ -51,14 +60,6 @@ function App() {
             ...data
         });
     };
-
-    const handleCopyAddress = async () => {
-        try {
-            await navigator.clipboard.writeText(account.address);
-        } catch (e) {
-            setErrorMessage("Something went wrong. Couldn't copy account address.");
-        }
-    }
 
     const handleClaimToken = async (token) => {
         try {
@@ -274,49 +275,15 @@ function App() {
                     <h3>DRVN Demo App</h3>
                 </div>
             </div>
-            <div className="row">
-                {
-                    account.connected ? <>
-                        <div className="col-12">
-                            <h4>Account</h4>
-                        </div>
-                        <div className="col-6 text-end fw-bold">Network:</div>
-                        <div className="col-6 text-start">
-                            {`${account.chainId} - ${account.network}`}
-                        </div>
-                        <div className="col-6 text-end fw-bold">Address:</div>
-                        <div className="col-6 text-start">
-                            {displayAddress(account.address)}
-                            <Button
-                                title="Copy Address"
-                                onClick={handleCopyAddress}
-                                className="btn-sm btn-secondary mx-1"
-                            >
-                                Copy
-                            </Button>
-                        </div>
-                        <div className="col-6 text-end fw-bold">Balance:</div>
-                        <div className="col-6 text-start">
-                            {account.balance}{' '}<b>{CHAIN.currency}</b>
-                        </div>
-                    </> : <div className="col-12">Account not connected</div>
-                }
-            </div>
-            <div className="row">
-                {
-                    (!account.connected || loadingState.connectingWallet) && <div className="col-12 mt-3">
-                        <Button
-                            disabled={!!account.connected || loadingState.connectingWallet}
-                            className={(account.connected || loadingState.connectingWallet) ? "btn-secondary" : "btn-success"}
-                            onClick={() => {
-                                connectWallet();
-                            }}
-                        >
-                            {loadingState.connectingWallet ? 'Connecting...' : 'Connect to Wallet'}
-                        </Button>
-                    </div>
-                }
-            </div>
+            <AccountInfo
+                account={account}
+                setErrorMessage={setErrorMessage}
+            />
+            <ConnectButton
+                isConnected={account.connected}
+                loading={loadingState.connectingWallet}
+                onConnect={connectWallet}
+            />
             <div className="row my-2">
                 <div className="col-12 text-danger">
                     {errorMessage}
@@ -446,6 +413,9 @@ function App() {
                     onBurn={handleBurnNftTokensBurn}
                     loading={loadingState.burningBurnNft}
                 />
+            }
+            {
+                account.connected && <ExternalLinks />
             }
         </div>
     );
