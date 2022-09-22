@@ -169,7 +169,7 @@ contract BurnNFT is ERC721Enumerable, Ownable {
         nftInfo[tokenId].lastUsage = block.timestamp;
         
         uint256 earningGap = vehicleGTTGap[nftInfo[tokenId].eType];
-        nftScore[tokenId] += durationSeconds * earningGap / 900;
+        nftScore[tokenId] += durationSeconds * earningGap / burnPower;
     }
 
 }
