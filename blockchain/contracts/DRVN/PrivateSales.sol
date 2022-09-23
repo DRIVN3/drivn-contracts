@@ -59,17 +59,15 @@ contract PrivateSales is Ownable {
     /**
      * @dev createVestWallet function will crete the VestWallet
      * @param beneficiaryAddress is a address of the beneficiary
-     * @param durationDays duration of vesting in days after it starts
+     * @param durationSeconds duration of vesting in seconds after it starts
      * @param amount amount of coins
     */
 
     function _createVestWallet(
         address beneficiaryAddress,
-        uint64 durationDays,
+        uint64 durationSeconds,
         uint256 amount
     ) internal {
-
-        uint64 durationSeconds = durationDays;
 
         // creating vesting wallet contract
         VestingContract vestingWallet = new VestingContract(

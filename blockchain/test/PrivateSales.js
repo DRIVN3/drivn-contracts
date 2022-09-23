@@ -26,7 +26,7 @@ async function deployPrivateSales() {
     let privateSales = await ethers.getContractFactory("PrivateSales");
     privateSales = await privateSales.deploy(DRVN.address);
 
-    await DRVN.sendTokens("Private", privateSales.address);
+    await DRVN.sendTokens("Private", privateSales.address, false);
 
     return { DRVN, name, symbol, owner, firstAccount, secondAccount, privateSales};
 }
