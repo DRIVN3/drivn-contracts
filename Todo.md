@@ -1,31 +1,21 @@
 ###  Todo GTT
-- enable setting burn wallet in GTT +
-- separate BurnWallet and GTT +
-- rename airdrop --> distribute +
-- change airdrop parameters like (address addr, uint256 amount) +
-- change setAllowed parameters (address addr, bool allowed) +
+- 200_00
 
 ###  Todo DRVN
-- refactor numbers with _ example 5000000 = 5_000_000 + 
-- remove this require(contractAddress_ != address(0), "DRVN: should not send to zero address");  +
-- extend governance
-- test governance  integration with tally
 
-### DRVN Manager
-- review teamSupply
-- add other vesting contracts 
+### DRVN Manager 
+- remove this and add just deploy DRVNVesting contract with proper parameters
 
+### DRVN Governor
+- should ask parameters delay, voting period and etc.
+- remove liquidity
+- "require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");" remove this
 
 ### Earn NFT
-- change vehicle into eType for better understanding (refactor) +
-- research how can we handle logic in another library or contract (researched)
-- convert ENUMS into uint256 to add simpler way +
-- Merge event does not throw new token id +
-- setAllowed change parameters (address addr, bool allowed) +
-- in generate function decrease power regarding seconds. +
-- merge claim and generate. + 
+- make public private vars
 
 
 ### Burn NFT
-- remove etype from this + 
-- კონტრაქტი იღებს შენ GTT ტოკენებს დაწვავს და რამდენიც დაწვა დაამატებს power-ში. +
+- with no price minting burn nft will cause problems (1 account can min 1000 tokens and thats it).
+- store nftScore with nft info
+- take nft info as storage

@@ -7,6 +7,16 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../GTT.sol";
 
+// enum for electic vehicle
+enum EType { CAR, BICYCLE, SCOOTER }
+
+// struct NFT information
+struct NFTInformation {
+    EType eType;
+    uint256 lastUsage;
+    uint256 powerLeft;
+    uint256 maxPower;
+}
 
 contract BurnNFT is ERC721Enumerable, Ownable {
 
@@ -25,20 +35,26 @@ contract BurnNFT is ERC721Enumerable, Ownable {
     // base token URI
     string internal _baseTokenURI;
 
-    // price of burn nft
-    uint256 public constant burnNftPrice = 0.01 ether;
-
     // max supply 
     uint256 public constant maxBurnNftSupply = 1000;
 
     // token counter
     Counters.Counter private _tokenIdCounter;
 
-    // gtt coin
-    IGTT public gttCoin;
+    // burn power
+    uint256 public constant burnPower = 900;
 
-    // gtt coin
-    mapping(uint256 => uint256) public nftPower;
+    // nft traffic score
+    mapping(uint256 => uint256) public nftScore;
+
+    // mapping for nft information
+    mapping(uint256=>NFTInformation) public nftInfo;
+
+    // mapping for allowed addresses
+    mapping(address=>bool) public isAllowed;
+
+    // mapping for nft earning gap
+    mapping(EType=>uint256) public vehicleGTTGap;
 
     /**
      * @dev Sets main dependencies and constants
@@ -47,14 +63,18 @@ contract BurnNFT is ERC721Enumerable, Ownable {
      * @param baseURI baseUri for mint
     */
 
-    constructor(string memory name_, 
+    constructor(
+        string memory name_, 
         string memory symbol_, 
-        string memory baseURI,
-        address gttAddress_
+        string memory baseURI
     ) 
     ERC721(name_, symbol_){
         setBaseURI(baseURI);
-        gttCoin = IGTT(gttAddress_);
+
+        // define nft GTT earning gap
+        vehicleGTTGap[EType.CAR] = 4 * 10 ** 18;
+        vehicleGTTGap[EType.SCOOTER] = 9 * 10 ** 18 / 2;
+        vehicleGTTGap[EType.BICYCLE] = 5 * 10 ** 18;
     }
 
 
@@ -62,14 +82,20 @@ contract BurnNFT is ERC721Enumerable, Ownable {
      * @dev buying the token
     */
 
-    function mint() external payable {
+    function mint(EType eType) external {
 
-        require(burnNftPrice == msg.value, "BurnNFT: not enough money");
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
         require(tokenId <= maxBurnNftSupply, "BurnNFT: can't mint, max burn nft supply reached");
 
         _mint(msg.sender, tokenId);
+        
+        nftInfo[tokenId] = NFTInformation(
+            eType, // EVehile
+            0, // last usage
+            burnPower, // powerLeft
+            burnPower // max power,
+        );
 
         emit Mint(msg.sender, tokenId);
     }
@@ -92,21 +118,58 @@ contract BurnNFT is ERC721Enumerable, Ownable {
         return _baseTokenURI;
     }
     
+
     /**
-     * @dev burning GTT tokens and increases nft power
+     * @dev calculates power left for given token id
      * @param tokenId nft token id
-     * @param amount amount of tokens
+    */
+
+    function calculatePower(uint256 tokenId) public view returns (uint256) {
+        uint256 maxPower = nftInfo[tokenId].maxPower;
+        uint256 replenishPower = nftInfo[tokenId].powerLeft + (block.timestamp - nftInfo[tokenId].lastUsage) * maxPower / 1 days;
+        replenishPower =  replenishPower <= maxPower ? replenishPower : maxPower;
+        return replenishPower;
+    }
+
+    /**
+     * @dev modifier to detect if address is allowed for specific operation
+    */
+
+    modifier whenAllowed() {
+        require(isAllowed[msg.sender], "BurnNFT: address is not allowed to call this function");
+        _;
+    }
+
+    /**
+     * @dev setting allowed addresses for nft usage
+     * @param allowedAddress allowed address
+     * @param allowed True/False bool for enable certain operations
+    */
+    
+    function setAllowed(address allowedAddress, bool allowed) external onlyOwner {
+        isAllowed[allowedAddress] = allowed;
+    }
+
+
+    /**
+     * @dev updates the vehicle traffic
+     * @param tokenId nft token id
+     * @param durationSeconds movement durations in seconds
     */ 
 
-    function burn(uint256 tokenId, uint256 amount) external {
-        require(ownerOf(tokenId) == msg.sender, "BurnNFT: sender is not the owner of the token");
+    function generate(uint256 tokenId, uint256 durationSeconds) external whenAllowed {
+        uint256 currentPower = calculatePower(tokenId);
 
-        gttCoin.transferFrom(msg.sender, address(this), amount);
-        gttCoin.burn(amount);
+        if (currentPower < durationSeconds) {
+            durationSeconds = currentPower;
+        }
 
-        nftPower[tokenId] += amount;
-
-        emit Burn(msg.sender, tokenId, amount);
+        currentPower = currentPower - durationSeconds;
+        nftInfo[tokenId].powerLeft = currentPower;
+        nftInfo[tokenId].lastUsage = block.timestamp;
+        
+        uint256 earningGap = vehicleGTTGap[nftInfo[tokenId].eType];
+        nftScore[tokenId] += durationSeconds * earningGap / burnPower;
     }
 
 }

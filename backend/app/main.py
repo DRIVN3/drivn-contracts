@@ -70,7 +70,7 @@ async def earn_nft_metadata(
 async def burn_nft_metadata(
     token_id: int = Path(title="The ID of the item to get", default=0)
 ):
-    power = burn_nft.functions.nftPower(token_id).call()
+    power = burn_nft.functions.nftScore(token_id).call()
 
     return {
             "name": f'Earn BURN Example {token_id}',
@@ -78,7 +78,7 @@ async def burn_nft_metadata(
             "image": "https://ipfs.io/ipfs/QmNnjnPmYn7yFPj7mtx9cw7rQdR81rFK1Z7Fvs4Drvr8i6",
             "attributes": [
                 {
-                    "trait_type": "power", 
+                    "trait_type": "score", 
                     "value": power / 10**18
                 }
             ]
