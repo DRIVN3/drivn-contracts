@@ -16,6 +16,6 @@
 
 
 ### Burn NFT
-- with no price minting burn nft will cause problems (1 account can min 1000 tokens and thats it).
-- store nftScore with nft info
-- take nft info as storage
+- with no price minting burn nft will cause problems (1 account can min 1000 tokens and thats it). +
+- store nftScore with nft info +
+- take nft info as storage +
