@@ -14,19 +14,19 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   let burnNft = await ethers.getContractFactory("BurnNFT");
-  burnNft = await burnNft.deploy("test BurnNft", "BurnNft", "giorgi.com/", process.env.GTTADDRESS);
+  burnNft = await burnNft.deploy("test BurnNft", "BurnNft", "http://207.180.211.22:9999/burn-nft/");
   await burnNft.deployed()
   
 
   console.log("contract address", burnNft.address);
 
 
-  await sleep(120);
+  await sleep(60);
   
   try{
     await hre.run("verify:verify", {
       address: burnNft.address,
-      constructorArguments: ["test BurnNft", "BurnNft", "giorgi.com/", process.env.GTTADDRESS],
+      constructorArguments: ["test BurnNft", "BurnNft", "http://207.180.211.22:9999/burn-nft/"],
     });
     console.log("Source Verified on BurnNft");
 

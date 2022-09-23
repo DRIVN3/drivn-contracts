@@ -1,11 +1,13 @@
 # Sample Hardhat Project
 
-GTT Testnet - https://mumbai.polygonscan.com/address/0x01973aae34D5B75852EA1310e4322a2974B0f145#code
-GTT burnWallet testnet  - https://mumbai.polygonscan.com/address/0x9C27FCfFeF497A878DB02C9c883Fc55E2942a5d3#code
-DRVNCoin testnet - https://mumbai.polygonscan.com/address/0x4EB991C7D0b42b57E1187B2117Bc907ab3C1e1e9#code
-DRVN team manager testnet - https://mumbai.polygonscan.com/address/0x0535CBF379C04b41F533bB524a06f401800A0Ad6#code
-DRVN Liquidity testnet - https://mumbai.polygonscan.com/address/0xa508AbD110Ce4238741aF75E9e0DE87E7F045b53#code
-DRVN BURNNFT testnet - https://mumbai.polygonscan.com/address/0x8201C7fe60FA0002A3360C3F3EA852Dd6D441304#code
-DRVN EARNNFT testnet - https://mumbai.polygonscan.com/address/0x9bA5E7029F69Aa84400BEA52CA9d094dd7E44110#code
-DRVN TIMELOCK CONTRACT - https://mumbai.polygonscan.com/address/0x3B82310B925c80e62250FBAF6F914575E38016BA#code
-DRVN Governor Contract - https://mumbai.polygonscan.com/address/0x40E5FfF523Fd765cf8eD5B1B89DA5E963f5cd996#code
+GTT Testnet - https://mumbai.polygonscan.com/address/0x530E1AB79C92e3Ad6C25AedaFE307b4F4558eF09#code
+GTT burnWallet testnet - https://mumbai.polygonscan.com/address/0x8d35d06232072117c0AcE75c62aB503F0f91F82f#code
+DRVNCoin testnet - https://mumbai.polygonscan.com/address/0x4D1a06Ff43E74a4330565F665a46f5A5c2cc6baD#code
+DRVN BURNNFT testnet - https://mumbai.polygonscan.com/address/0x79E2941C694f01173343f36908dCDD4b54EabD26#code 
+DRVN EARNNFT testnet - https://mumbai.polygonscan.com/address/0x79A8A13c279FCb605E7410fAce6c3C9023039bAc#code
+DRVN TIMELOCK CONTRACT - https://mumbai.polygonscan.com/address/0x26443036e72F880877a6E22d63551f7f9395c46B#code
+DRVN Governor Contract - https://mumbai.polygonscan.com/address/0xB1AB66BA1da3d182BF0D3eC22e00D418f5f6bbF6#code
+DRVN liquidity pool - https://app.uniswap.org/#/pool/5079
+GTT liquidity pool -  https://app.uniswap.org/#/pool/5078
+tally link - https://www.tally.xyz/governance/eip155:80001:0xB1AB66BA1da3d182BF0D3eC22e00D418f5f6bbF6
+Team Vesting Contract - https://mumbai.polygonscan.com/address/0x26443036e72F880877a6E22d63551f7f9395c46B#code

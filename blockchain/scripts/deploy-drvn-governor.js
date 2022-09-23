@@ -13,13 +13,6 @@ async function main() {
 
     console.log("Account balance:", (await deployer.getBalance()).toString());
 
-    // let drvnToken = await ethers.getContractFactory('IVotes');
-    // drvnToken = await drvnToken.attach(process.env.DRVNCOINADDRESS);
-
-    // let timeLock = await ethers.getContractFactory('TimelockController');
-    // timeLock = await timeLock.attach(process.env.TIMELOCKADDRESS);
-
-
     let MyGovernor = await ethers.getContractFactory("MyGovernor");
     MyGovernor = await MyGovernor.deploy(process.env.DRVNCOINADDRESS, process.env.TIMELOCKADDRESS);
     await MyGovernor.deployed()
@@ -28,7 +21,7 @@ async function main() {
     console.log("contract address", MyGovernor.address);
 
 
-    await sleep(120);
+    await sleep(60);
 
     try{
     await hre.run("verify:verify", {

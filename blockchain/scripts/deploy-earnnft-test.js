@@ -14,7 +14,7 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   let earnNFT = await ethers.getContractFactory("EarnNFT");
-  earnNFT = await earnNFT.deploy("test EarnNFT", "EarnNFT", "giorgi1.com/", process.env.GTTADDRESS);
+  earnNFT = await earnNFT.deploy("test EarnNFT", "EarnNFT", "http://207.180.211.22:9999/earn-nft/", process.env.GTTADDRESS);
   await earnNFT.deployed()
   
 
@@ -26,7 +26,7 @@ async function main() {
   try{
     await hre.run("verify:verify", {
       address: earnNFT.address,
-      constructorArguments: ["test EarnNFT", "EarnNFT", "giorgi1.com/", process.env.GTTADDRESS],
+      constructorArguments: ["test EarnNFT", "EarnNFT", "http://207.180.211.22:9999/earn-nft/", process.env.GTTADDRESS],
     });
     console.log("Source Verified on EarnNFT");
 

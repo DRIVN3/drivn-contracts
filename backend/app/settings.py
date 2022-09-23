@@ -1,5 +1,5 @@
-EARNNFTADDRESS = "0x9bA5E7029F69Aa84400BEA52CA9d094dd7E44110"
-BURNNFTADDRESS = "0x8201C7fe60FA0002A3360C3F3EA852Dd6D441304"
+EARNNFTADDRESS = "0x79A8A13c279FCb605E7410fAce6c3C9023039bAc"
+BURNNFTADDRESS = "0x79E2941C694f01173343f36908dCDD4b54EabD26"
 MUMBAIURL = "https://matic-mumbai.chainstacklabs.com"
 
 BurnNftAbi = [{
@@ -10,12 +10,28 @@ BurnNftAbi = [{
                 "type": "uint256"
             }
         ], 
-        "name": "nftPower",
-        "outputs": [
-            {"internalType": "uint256", 
-            "name": "", 
-            "type": "uint256"}
-            ],
+        "name": "nftInfo",
+    "outputs": [{
+            "internalType": "enum EType",
+            "name": "vehicle",
+                "type": "uint8"
+                }, {
+            "internalType": "uint256",
+            "name": "lastUsage",
+                "type": "uint256"
+                }, {
+            "internalType": "uint256",
+            "name": "powerLeft",
+                "type": "uint256"
+                }, {
+            "internalType": "uint256",
+            "name": "maxPower",
+                "type": "uint256"
+            },
+            {
+                "name": "score",
+                "type": "uint256"
+            }],
         "stateMutability": "view",
         "type": "function"
     }]
