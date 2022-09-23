@@ -17,9 +17,6 @@ contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
     // start coins
     uint256 public constant startCoins = 5_000_000_000 * 10**18;
 
-    // team vesting contract address
-    address public teamVesting;
-
     // supply for (Team, Advisors, Liquidity and etc.)
     mapping(string => uint256) public supplyData;
 
