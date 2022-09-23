@@ -82,7 +82,8 @@ describe("BurnNFT", function () {
             await burnNFT.setAllowed(owner.address, true);
             await burnNFT.connect(owner).generate(1, 450);
 
-            expect(await burnNFT.nftScore(1)).to.be.equal("2000000000000000000");
+            let info = await burnNFT.nftInfo(1);
+            expect(info.score).to.be.equal("2000000000000000000");
         });
 
         it("should be generate pseudo power of 4 GTT when generate was called", async function () {
@@ -92,7 +93,8 @@ describe("BurnNFT", function () {
             await burnNFT.setAllowed(owner.address, true);
             await burnNFT.connect(owner).generate(1, 900);
 
-            expect(await burnNFT.nftScore(1)).to.be.equal("4000000000000000000");
+            let info = await burnNFT.nftInfo(1);
+            expect(info.score).to.be.equal("4000000000000000000");
         });
 
         it("should be generate pseudo power of 6 GTT when generate fully and replenished half", async function () {
@@ -107,7 +109,8 @@ describe("BurnNFT", function () {
             await network.provider.send("evm_mine");
 
             await burnNFT.connect(owner).generate(1, 450);
-            expect(await burnNFT.nftScore(1)).to.be.equal("6000000000000000000");
+            let info = await burnNFT.nftInfo(1);
+            expect(info.score).to.be.equal("6000000000000000000");
         });
 
         it("should equal half power after half day passed when fully wasted power", async function () {

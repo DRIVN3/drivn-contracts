@@ -16,6 +16,7 @@ struct NFTInformation {
     uint256 lastUsage;
     uint256 powerLeft;
     uint256 maxPower;
+    uint256 score;
 }
 
 contract BurnNFT is ERC721Enumerable, Ownable {
@@ -43,9 +44,6 @@ contract BurnNFT is ERC721Enumerable, Ownable {
 
     // burn power
     uint256 public constant burnPower = 900;
-
-    // nft traffic score
-    mapping(uint256 => uint256) public nftScore;
 
     // mapping for nft information
     mapping(uint256=>NFTInformation) public nftInfo;
@@ -94,7 +92,8 @@ contract BurnNFT is ERC721Enumerable, Ownable {
             eType, // EVehile
             0, // last usage
             burnPower, // powerLeft
-            burnPower // max power,
+            burnPower, // max power,
+            0 // score
         );
 
         emit Mint(msg.sender, tokenId);
@@ -164,12 +163,13 @@ contract BurnNFT is ERC721Enumerable, Ownable {
             durationSeconds = currentPower;
         }
 
+        NFTInformation storage tokenInfo = nftInfo[tokenId];
         currentPower = currentPower - durationSeconds;
-        nftInfo[tokenId].powerLeft = currentPower;
-        nftInfo[tokenId].lastUsage = block.timestamp;
+        tokenInfo.powerLeft = currentPower;
+        tokenInfo.lastUsage = block.timestamp;
         
-        uint256 earningGap = vehicleGTTGap[nftInfo[tokenId].eType];
-        nftScore[tokenId] += durationSeconds * earningGap / burnPower;
+        uint256 earningGap = vehicleGTTGap[tokenInfo.eType];
+        tokenInfo.score += durationSeconds * earningGap / burnPower;
     }
 
 }
