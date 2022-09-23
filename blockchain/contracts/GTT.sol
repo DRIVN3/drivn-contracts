@@ -47,7 +47,7 @@ contract GTT is ERC20, Ownable, Pausable {
     GTTBurnWallet public burnWallet;
 
     // start coins
-    uint256 public constant startCoins = 200000 * 10**18;
+    uint256 public constant startCoins = 200_000 * 10**18;
 
     // mapping for allowed mint addresses
     mapping(address=>bool) public isAllowedMinting;
