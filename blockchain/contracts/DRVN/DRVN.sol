@@ -50,17 +50,6 @@ contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
         supplyData["Holdback"] = 500_000_000 * 10 ** decimals();
     }
 
-
-    /**
-     * @dev checking two string if equal
-     * @param a first string
-     * @param b second string 
-    */
-
-    function compareStrings(string memory a, string memory b) public pure returns (bool) {
-        return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
-    }
-
     /**
      * @dev sending the supply proper contract like: Team, Advisors and etc.
      * @param supplyName name of the supply which should be given the contract address
