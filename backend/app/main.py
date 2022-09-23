@@ -79,7 +79,7 @@ async def burn_nft_metadata(
     return {
             "name": f'Earn BURN Example {token_id}',
             "description": f'This is an example of BURN NFT {token_id}',
-            "image": "https://ipfs.io/ipfs/QmNnjnPmYn7yFPj7mtx9cw7rQdR81rFK1Z7Fvs4Drvr8i6",
+            "image": image_etype[etype],
             "attributes": [
                 {
                     "trait_type": 'EType', 
