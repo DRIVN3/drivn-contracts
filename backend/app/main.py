@@ -72,8 +72,7 @@ async def burn_nft_metadata(
 ):
     nft_info = burn_nft.functions.nftInfo(token_id).call()
     
-    level = Level[nft_info[0]]
-    etype = EType[nft_info[1]]
+    etype = EType[nft_info[0]]
     max_power = nft_info[3]
     score = nft_info[4]
 
