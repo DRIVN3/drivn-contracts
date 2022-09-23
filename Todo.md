@@ -1,5 +1,5 @@
 ###  Todo GTT
-- 200_00
+- 200_00 +
 
 ###  Todo DRVN
 
@@ -12,7 +12,7 @@
 - "require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");" remove this
 
 ### Earn NFT
-- make public private vars
+- make public private vars +
 
 
 ### Burn NFT

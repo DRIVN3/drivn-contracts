@@ -20,33 +20,25 @@ struct NFTInformation {
     uint256 lastUsage;
     uint256 powerLeft;
     uint256 maxPower;
+    uint256 powerUsed;
+    uint256 powerClaimed;
 }
 
 contract EarnNFT is ERC721Enumerable, Ownable {
 
     using Counters for Counters.Counter;
 
-    /**
-     * @dev Emitted when mint method is called
-     */
-    event Mint(address indexed sender, EType indexed eType, uint256 indexed tokenId);
-
-    /**
-     * @dev Emitted when merge method is called
-     */
-    event Merge(address indexed sender, uint256 indexed tokenId1, uint256 indexed tokenId2, uint256 newToken);
-
     // token counter
-    Counters.Counter private _tokenIdCounter;
+    Counters.Counter public tokenIdCounter;
 
     // car token counter
-    Counters.Counter private _carCounter;
+    Counters.Counter public carCounter;
 
     // bicycle token counter
-    Counters.Counter private _bicycleCounter;
+    Counters.Counter public bicycleCounter;
 
     // scooter token counter
-    Counters.Counter private _scooterCounter;
+    Counters.Counter public scooterCounter;
 
     // mapping for nft information
     mapping(uint256=>NFTInformation) public nftInfo;
@@ -81,14 +73,18 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     // mapping for allowed addresses
     mapping(address=>bool) public isAllowed;
 
-    // mapping for nft-vehicle movement
-    mapping(uint256 => uint256) public nftPowerUsed;
-
-    // mapping for GTT claimed
-    mapping(uint256 => uint256) public nftPowerClaimed;
-
     // gtt coin
     IGTT public gttCoin;
+
+    /**
+     * @dev Emitted when mint method is called
+     */
+    event Mint(address indexed sender, EType indexed eType, uint256 indexed tokenId);
+
+    /**
+     * @dev Emitted when merge method is called
+     */
+    event Merge(address indexed sender, uint256 indexed tokenId1, uint256 indexed tokenId2, uint256 newToken);
 
     /**
      * @dev Sets main dependencies and constants
@@ -136,28 +132,28 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     function mint(EType eType) external payable {
 
         if (eType == EType.CAR) {
-            _carCounter.increment();
-            uint256 carCount = _carCounter.current();
+            carCounter.increment();
+            uint256 carCount = carCounter.current();
             require(commonTokenCarPrice == msg.value, "EarnNFT: not enough money");
             require(carCount <= maxCarSupply, "EarnNFT: can't mint, max car supply reached");
         }
         
         if (eType == EType.BICYCLE) {
-            _bicycleCounter.increment();
-            uint256 _bicycleCount = _bicycleCounter.current();
+            bicycleCounter.increment();
+            uint256 _bicycleCount = bicycleCounter.current();
             require(commonTokenBicyclePrice == msg.value, "EarnNFT: not enough money");
             require(_bicycleCount <= maxBicycleSupply, "EarnNFT: can't mint, max bicycle supply reached");
         }
 
         if (eType == EType.SCOOTER) {
-            _scooterCounter.increment();
-            uint256 _scooterCount = _scooterCounter.current();
+            scooterCounter.increment();
+            uint256 _scooterCount = scooterCounter.current();
             require(commonTokenScooterPrice == msg.value, "EarnNFT: not enough money");
             require(_scooterCount <= maxScooterSupply, "EarnNFT: can't mint, max scooter supply reached");
         }
 
-        _tokenIdCounter.increment();
-        uint256 tokenId = _tokenIdCounter.current();
+        tokenIdCounter.increment();
+        uint256 tokenId = tokenIdCounter.current();
         _mint(msg.sender, tokenId);
 
         nftInfo[tokenId] = NFTInformation(
@@ -165,7 +161,9 @@ contract EarnNFT is ERC721Enumerable, Ownable {
             eType, // EVehile
             0, // last usage
             nftTypePower[Level.COMMON], // powerLeft
-            nftTypePower[Level.COMMON] // max power,
+            nftTypePower[Level.COMMON], // max power,
+            0, // power used
+            0 // power claimed
         );
 
         emit Mint(msg.sender, eType, tokenId);
@@ -190,8 +188,8 @@ contract EarnNFT is ERC721Enumerable, Ownable {
         require(levelUint <= uint256(Level.EPIC), "EarnNFT: Power is too high");
 
         // adding the token
-        _tokenIdCounter.increment();
-        uint256 tokenId = _tokenIdCounter.current();
+        tokenIdCounter.increment();
+        uint256 tokenId = tokenIdCounter.current();
         _mint(msg.sender, tokenId);
 
         nftInfo[tokenId] = NFTInformation(
@@ -199,7 +197,9 @@ contract EarnNFT is ERC721Enumerable, Ownable {
             nftInfo[tokenId1].eType, // vehicle
             0, // last usage
             newPower, // powerLeft
-            newPower // maxPower
+            newPower, // maxPower
+            0, // power used
+            0 // power claimed
         );
 
         // burning mergin tokens
@@ -264,8 +264,9 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     */ 
     
     function getClaimAmount(uint256 tokenId) public view returns(uint256) {
-        uint256 earningGap = vehicleGTTGap[nftInfo[tokenId].eType];
-        uint256 earned = (nftPowerUsed[tokenId] - nftPowerClaimed[tokenId]) * earningGap / 900;
+        NFTInformation memory tokenInfo = nftInfo[tokenId];
+        uint256 earningGap = vehicleGTTGap[tokenInfo.eType];
+        uint256 earned = (tokenInfo.powerUsed - tokenInfo.powerClaimed) * earningGap / 900;
         return earned;
     }
 
@@ -284,11 +285,12 @@ contract EarnNFT is ERC721Enumerable, Ownable {
             durationSeconds = currentPower;
         }
 
+        NFTInformation storage tokenInfo = nftInfo[tokenId];
         currentPower = currentPower - durationSeconds;
-        nftInfo[tokenId].powerLeft = currentPower;
-        nftInfo[tokenId].lastUsage = block.timestamp;
+        tokenInfo.powerLeft = currentPower;
+        tokenInfo.lastUsage = block.timestamp;
 
-        nftPowerUsed[tokenId] += durationSeconds;
+        tokenInfo.powerUsed += durationSeconds;
 
         if (claim) {
             _claimGeneratedCoins(tokenId);
@@ -312,7 +314,7 @@ contract EarnNFT is ERC721Enumerable, Ownable {
 
     function _claimGeneratedCoins(uint256 tokenId) internal {
         uint256 earned = getClaimAmount(tokenId);
-        nftPowerClaimed[tokenId] = nftPowerUsed[tokenId];
+        nftInfo[tokenId].powerClaimed = nftInfo[tokenId].powerUsed;
         gttCoin.mint(ownerOf(tokenId), earned);
     }
 
