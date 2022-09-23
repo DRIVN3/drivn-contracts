@@ -49,15 +49,15 @@ contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
     /**
      * @dev sending the supply proper contract like: Team, Advisors and etc.
      * @param supplyName name of the supply which should be given the contract address
-     * @param contractAddress_ address of contract 
+     * @param supplyAddress address of supply 
     */
 
-    function sendTokens(string memory supplyName, address contractAddress_) external onlyOwner {
-        require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");
+    function sendTokens(string memory supplyName, address supplyAddress) external onlyOwner {
+        require(supplyAddress != address(0), "DRVN: supplyAddress should not be zero");
 
         uint256 supply = supplyData[supplyName];
         require(supply > 0, "DRVN: not eligible");
-        _transfer(address(this), contractAddress_, supply);
+        _transfer(address(this), supplyAddress, supply);
         supplyData[supplyName] = 0;
     }
 

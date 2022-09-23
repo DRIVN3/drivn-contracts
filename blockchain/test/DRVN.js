@@ -26,10 +26,7 @@ async function deployDRVN() {
     let DRVNTeamManager = await ethers.getContractFactory("DRVNTeamManager");
     DRVNTeamManager = await DRVNTeamManager.deploy(DRVN.address);
 
-    let DRVNLiquidity = await ethers.getContractFactory("DRVNLiquidity");
-    DRVNLiquidity = await DRVNLiquidity.deploy(DRVN.address);
-
-    return { DRVN, name, symbol, owner, firstAccount, secondAccount, DRVNTeamManager, DRVNLiquidity};
+    return { DRVN, name, symbol, owner, firstAccount, secondAccount, DRVNTeamManager};
 }
 
 describe("DRVN", function () {
@@ -61,15 +58,9 @@ describe("DRVN", function () {
         });
         
         it("Should fail while passing address zero", async function () {
-            const { DRVN, firstAccount } = await loadFixture(deployDRVN);
+            const { DRVN } = await loadFixture(deployDRVN);
             
-            await expect(DRVN.sendTokens("Advisors", ethers.constants.AddressZero)).to.be.revertedWith("DRVN: contractAddress_ is not a contract");     
-        });
-
-        it("Should fail while passing non contract address", async function () {
-            const { DRVN, owner } = await loadFixture(deployDRVN);
-            
-            await expect(DRVN.sendTokens("Advisors", owner.address)).to.be.revertedWith("DRVN: contractAddress_ is not a contract");     
+            await expect(DRVN.sendTokens("Advisors", ethers.constants.AddressZero)).to.be.revertedWith("DRVN: supplyAddress should not be zero");     
         });
 
         it("Should send tokens to team manager", async function () {
@@ -208,35 +199,3 @@ describe("DRVNTeamManager", function () {
         });
     });
 });
-
-
-describe("DRVNLiquidity", function () {
-    describe("Deployment", function () {
-        it("Checking address of DRVN coin", async function () {
-            const { DRVN, DRVNLiquidity } = await loadFixture(deployDRVN);
-
-            expect(await DRVNLiquidity.drvnCoin()).to.be.equal(DRVN.address);
-        });
-    });
-
-    describe("Distribute", function () {
-        it("should fail while calling non owner", async function () {
-            const { DRVNLiquidity, firstAccount } = await loadFixture(deployDRVN);
-            await expect(DRVNLiquidity.connect(firstAccount).distribute(firstAccount.address, 100))
-            .to.be.revertedWith("Ownable: caller is not the owner");;
-        });
-
-        it("should distribute 100 coin on first account", async function () {
-            const { DRVNLiquidity, DRVN, firstAccount } = await loadFixture(deployDRVN);
-
-            await DRVN.sendTokens("Dex Liquidity", DRVNLiquidity.address);
-
-            await DRVNLiquidity.distribute(firstAccount.address, 100);
-
-            expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(100);
-        });
-
-    });
-
-});
-
