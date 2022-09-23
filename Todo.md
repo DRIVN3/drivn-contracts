@@ -8,8 +8,8 @@
 
 ### DRVN Governor
 - should ask parameters delay, voting period and etc.
-- remove liquidity
-- "require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");" remove this
+- remove liquidity +
+- "require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");" remove this +
 
 ### Earn NFT
 - make public private vars +
