@@ -9,6 +9,8 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
+import "./DRVNVesting.sol";
+
 contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
     using Address for address;
 
@@ -17,6 +19,9 @@ contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
 
     // supply for (Team, Advisors, Liquidity and etc.)
     mapping(string => uint256) public supplyData;
+
+    // mapping for supplyName and vesting contract
+    mapping(string => address) public vestingContracts;
 
     /**
      * @dev Constructing the contract minting 5000000000 coin to the contract address and setting name, symbol
@@ -45,20 +50,33 @@ contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
         supplyData["Holdback"] = 500_000_000 * 10 ** decimals();
     }
 
-
     /**
      * @dev sending the supply proper contract like: Team, Advisors and etc.
      * @param supplyName name of the supply which should be given the contract address
-     * @param contractAddress_ address of contract 
+     * @param supplyAddress address of supply 
+     * @param vest switch for creating vesting wallet or not for this supply
     */
 
-    function sendTokens(string memory supplyName, address contractAddress_) external onlyOwner {
-        require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");
-
+    function sendTokens(string calldata supplyName, address supplyAddress, bool vest) external onlyOwner {
+        require(supplyAddress != address(0), "DRVN: supplyAddress should not be zero");
         uint256 supply = supplyData[supplyName];
         require(supply > 0, "DRVN: not eligible");
-        _transfer(address(this), contractAddress_, supply);
         supplyData[supplyName] = 0;
+        
+        if (vest) {
+            // creating vesting wallet contract
+            VestingContract vestingWallet = new VestingContract(
+                supplyAddress, 
+                block.timestamp + 360 days,
+                360 days, 
+                address(this)
+            );
+            vestingContracts[supplyName] = address(vestingWallet);
+            _transfer(address(this), address(vestingWallet), supply);
+            return;
+        }
+    
+        _transfer(address(this), supplyAddress, supply);
     }
 
 

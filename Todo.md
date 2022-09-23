@@ -7,9 +7,9 @@
 - remove this and add just deploy DRVNVesting contract with proper parameters
 
 ### DRVN Governor
-- should ask parameters delay, voting period and etc.
-- remove liquidity
-- "require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");" remove this
+- should ask parameters delay, voting period and etc.+
+- remove liquidity +
+- "require(contractAddress_.isContract(), "DRVN: contractAddress_ is not a contract");" remove this +
 
 ### Earn NFT
 - make public private vars +
