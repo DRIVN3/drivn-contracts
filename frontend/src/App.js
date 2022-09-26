@@ -144,7 +144,6 @@ function App() {
     const handleMintBurnNft = async (vType) => {
         try {
             setLoading({mintingBurnNft: true});
-            console.log(vType)
             await new BurnNFTContract(account.signer).mint(vType);
             setLoading({mintingBurnNft: false});
             setAccountFromProvider(account.library);
