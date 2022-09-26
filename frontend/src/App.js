@@ -18,7 +18,6 @@ import {
 } from "./components";
 import {BurnNFTContract} from "./contracts/BurnNFTContract";
 import {BurnNFTs} from "./components/BurnNFTs";
-import {GTTContract} from "./contracts/GTTContract";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
