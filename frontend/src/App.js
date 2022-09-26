@@ -76,24 +76,24 @@ function App() {
 
     const handleGenerateCoin = async (token, time, claim) => {
         try {
-            setLoading({generatingBurn: true});
+            setLoading({generatingToken: true});
             await new EarnNFTContract(account.signer).generate(token, time, claim);
-            setLoading({generatingBurn: false});
+            setLoading({generatingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
-            setLoading({generatingBurn: false});
+            setLoading({generatingToken: false});
             setErrorMessage("Something went wrong. Couldn't generate GTT coin.");
         }
     };
 
     const handleBurnNftTokensBurn = async (token, time) => {
         try {
-            setLoading({generatingToken: true});
+            setLoading({generatingBurn: true});
             await new BurnNFTContract(account.signer).generate(token, time);
-            setLoading({generatingToken: false});
+            setLoading({generatingBurn: false});
             setAccountFromProvider(account.library);
         } catch (e) {
-            setLoading({generatingToken: false});
+            setLoading({generatingBurn: false});
             setErrorMessage("Something went wrong. Couldn't generate BurnNft pseudo coin.");
         }
     };
@@ -441,7 +441,7 @@ function App() {
                 !loadingState.loadingTokens && burnNftTokens !== undefined && <BurnNFTs
                     allTokens={burnNftTokens}
                     onBurn={handleBurnNftTokensBurn}
-                    loading={loadingState.burningBurnNft}
+                    loading={loadingState.generatingBurn}
                 />
             }
             {
