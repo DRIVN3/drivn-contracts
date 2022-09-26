@@ -1,7 +1,6 @@
 import {Button} from "react-bootstrap";
 import {useState} from "react";
 import {getBurnNftTokenFullName} from "../../utils";
-import "./styles.css";
 
 export const BurnNFTs = ({
                              allTokens,
