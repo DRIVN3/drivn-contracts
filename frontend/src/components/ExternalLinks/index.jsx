@@ -7,23 +7,42 @@ export const ExternalLinks = () => {
         <div className="col-12 fw-bold">
             <a
                 target="_blank"
-                href="#"
+                href="https://testnets.opensea.io/collection/test-earnnft-v4"
                 rel="noopener"
-            >Opensea</a>
+            >Opensea earn nft testnet</a>
         </div>
+    
+        <div className="col-12 fw-bold">
+            <a
+                    target="_blank"
+                    href="https://testnets.opensea.io/collection/test-burnnft-v4"
+                    rel="noopener"
+                >Opensea burn nft testnet
+            </a>
+        </div>
+
         <div className="col-12 fw-bold">
             <a
                 target="_blank"
-                href="#"
+                href="https://www.tally.xyz/governance/eip155:80001:0xB1AB66BA1da3d182BF0D3eC22e00D418f5f6bbF6"
                 rel="noopener"
             >Tally</a>
         </div>
         <div className="col-12 fw-bold">
             <a
                 target="_blank"
-                href="#"
+                href="https://app.uniswap.org/#/pool/5079"
                 rel="noopener"
-            >Uniswap</a>
+            >Uniswap DRVN Coin</a>
         </div>
+
+        <div className="col-12 fw-bold">
+            <a
+                target="_blank"
+                href="https://app.uniswap.org/#/pool/5078"
+                rel="noopener"
+            >Uniswap GTT Coin</a>
+        </div>
+
     </div>
 };
