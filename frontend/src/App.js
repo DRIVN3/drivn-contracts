@@ -34,6 +34,7 @@ function App() {
         burningBurnNft: false,
         mergingEarnNft: false,
         generatingToken: false,
+        generatingBurn: false,
         claimingToken: false,
     });
     const [isWalletInstalled, setIsWalletInstalled] = useState(null);
@@ -45,6 +46,7 @@ function App() {
     const [earnNftTokens, setEarnNftTokens] = useState();
     const [burnNftTokens, setBurnNftTokens] = useState();
     const [vehicleType, setVehicleType] = useState(EARN_NFT_VEHICLE_TYPES[0]);
+    const [vehicleTypeBurn, setVehicleTypeBurn] = useState(EARN_NFT_VEHICLE_TYPES[0]);
 
     useEffect(() => {
         web3Modal.clearCachedProvider();
@@ -74,12 +76,12 @@ function App() {
 
     const handleGenerateCoin = async (token, time, claim) => {
         try {
-            setLoading({generatingToken: true});
+            setLoading({generatingBurn: true});
             await new EarnNFTContract(account.signer).generate(token, time, claim);
-            setLoading({generatingToken: false});
+            setLoading({generatingBurn: false});
             setAccountFromProvider(account.library);
         } catch (e) {
-            setLoading({generatingToken: false});
+            setLoading({generatingBurn: false});
             setErrorMessage("Something went wrong. Couldn't generate GTT coin.");
         }
     };
@@ -91,7 +93,6 @@ function App() {
             setLoading({generatingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
-            console.log(e);
             setLoading({generatingToken: false});
             setErrorMessage("Something went wrong. Couldn't generate BurnNft pseudo coin.");
         }
@@ -399,11 +400,11 @@ function App() {
                                     <div className="col-auto text-start">
                                         <select
                                             className="vehicle-type-dropdown"
-                                            value={vehicleType.type}
+                                            value={vehicleTypeBurn.type}
                                             onChange={(e) => {
                                                 const value = e.target.value;
                                                 const vType = EARN_NFT_VEHICLE_TYPES.find((v) => v.type === Number(value));
-                                                setVehicleType(vType);
+                                                setVehicleTypeBurn(vType);
                                             }}
                                         >
                                             {
@@ -430,7 +431,7 @@ function App() {
                             disabled={loadingState.mintingBurnNft}
                             loading={loadingState.mintingBurnNft}
                             onMint={() => {
-                                handleMintBurnNft(vehicleType.type);
+                                handleMintBurnNft(vehicleTypeBurn.type);
                             }}
                         />
                     }

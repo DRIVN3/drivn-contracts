@@ -53,7 +53,6 @@ export class BurnNFTService {
                     name: EARN_NFT_VEHICLE_TYPES_ARRAY[nftInfo.eType],
                 },
                 score: Number.parseFloat(ethers.utils.formatEther(nftInfo.score.toString())),
-                eType: nftInfo.eType.toString(),
                 maxPower: Number(nftInfo.maxPower.toString()),
                 powerLeft: Number(powerLeftData[index].toString()),
             };
