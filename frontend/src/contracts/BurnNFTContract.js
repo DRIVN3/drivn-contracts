@@ -23,8 +23,8 @@ export class BurnNFTContract {
         await receipt.wait();
     };
 
-    burn = async (tokenId, amount) => {
-        const receipt = await this.contract.burn(tokenId, BigNumber.from(String(amount * Math.pow(10, 18))));
+    generate = async (tokenId, time) => {
+        const receipt = await this.contract.generate(tokenId, time);
         await receipt.wait();
     };
 }

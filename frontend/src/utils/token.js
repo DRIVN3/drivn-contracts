@@ -4,6 +4,6 @@ export const getEarnNftTokenFullName = (token) => {
 };
 
 export const getBurnNftTokenFullName = (token) => {
-    const {tokenId, nftPower} = token;
-    return `${tokenId} - [power: ${nftPower}]`;
+    const {tokenId, vehicleType, powerLeft, maxPower, score} = token;
+    return `${tokenId} - [${vehicleType.name}, power: ${powerLeft}/${maxPower}, score: ${score}`;
 };

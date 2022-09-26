@@ -84,16 +84,16 @@ function App() {
         }
     };
 
-    const handleBurnNftTokensBurn = async (token, amount) => {
+    const handleBurnNftTokensBurn = async (token, time) => {
         try {
-            setLoading({burningBurnNft: true});
-            await new GTTContract(account.signer).approveBurn(amount);
-            await new BurnNFTContract(account.signer).burn(token, amount);
-            setLoading({burningBurnNft: false});
+            setLoading({generatingToken: true});
+            await new BurnNFTContract(account.signer).generate(token, time);
+            setLoading({generatingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
-            setLoading({burningBurnNft: false});
-            setErrorMessage("Something went wrong. Couldn't burn BurnNFT.");
+            console.log(e);
+            setLoading({generatingToken: false});
+            setErrorMessage("Something went wrong. Couldn't generate BurnNft pseudo coin.");
         }
     };
 

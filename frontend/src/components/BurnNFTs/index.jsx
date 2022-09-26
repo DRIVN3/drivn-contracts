@@ -22,7 +22,7 @@ export const BurnNFTs = ({
         } else {
             setErrorMessage('Time can\'t be greater than token powerLeft.');
         }
-}
+    }
 
     const handleToken1Selection = (e) => {
         const value = e.target.value;
@@ -30,7 +30,7 @@ export const BurnNFTs = ({
         setTokenId(newTokenId);
         const tokenObject = allTokens.find((t) => t.tokenId === newTokenId);
         setMaxPower(tokenObject.powerLeft);
-}
+    }
 
     if (allTokens.length === 0) {
         return null;
@@ -80,14 +80,7 @@ export const BurnNFTs = ({
                     className="btn-success"
                     onClick={() => {
                         setErrorMessage('');
-                        console.log("lashiko")
-                        // if (Number(amount) > 0) {
-                        //     if (onBurn) {
-                        //         onBurn(tokenId, amount);
-                        //     }
-                        // } else {
-                        //     setErrorMessage('Time must be greater than 0.');
-                        // }
+                        onBurn(tokenId, time);                
                     }}
                 >
                     {loading ? 'Burning...' : 'Burn'}
