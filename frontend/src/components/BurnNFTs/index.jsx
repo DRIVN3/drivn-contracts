@@ -10,18 +10,27 @@ export const BurnNFTs = ({
                          }) => {
     const [tokenOptions] = useState([...allTokens]);
     const [tokenId, setTokenId] = useState(allTokens[0]?.tokenId || null);
-    const [amount, setAmount] = useState('');
+    const [maxPower, setMaxPower] = useState(allTokens[0]?.powerLeft);
+    const [time, setTime] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleAmountChange = (e) => {
+    const handleTimeChange = (e) => {
         const value = e.target.value;
-        setAmount(Number(value));
-    }
+        if (Number(value) <= maxPower) {
+            setErrorMessage('');
+            setTime(Number(value));
+        } else {
+            setErrorMessage('Time can\'t be greater than token powerLeft.');
+        }
+}
 
     const handleToken1Selection = (e) => {
         const value = e.target.value;
-        setTokenId(Number(value));
-    }
+        const newTokenId = Number(value);
+        setTokenId(newTokenId);
+        const tokenObject = allTokens.find((t) => t.tokenId === newTokenId);
+        setMaxPower(tokenObject.powerLeft);
+}
 
     if (allTokens.length === 0) {
         return null;
@@ -55,11 +64,11 @@ export const BurnNFTs = ({
                 }
             </div>
             <div className="col-6 text-start fw-bold">
-                <span>Amount: </span>
+                <span>time: </span>
                 <input
-                    className="amount-input"
-                    value={amount}
-                    onChange={handleAmountChange}
+                    className="time-input"
+                    value={time}
+                    onChange={handleTimeChange}
                     type="number"
                     min={0}
                 />
@@ -71,13 +80,14 @@ export const BurnNFTs = ({
                     className="btn-success"
                     onClick={() => {
                         setErrorMessage('');
-                        if (Number(amount) > 0) {
-                            if (onBurn) {
-                                onBurn(tokenId, amount);
-                            }
-                        } else {
-                            setErrorMessage('Time must be greater than 0.');
-                        }
+                        console.log("lashiko")
+                        // if (Number(amount) > 0) {
+                        //     if (onBurn) {
+                        //         onBurn(tokenId, amount);
+                        //     }
+                        // } else {
+                        //     setErrorMessage('Time must be greater than 0.');
+                        // }
                     }}
                 >
                     {loading ? 'Burning...' : 'Burn'}

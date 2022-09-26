@@ -15,11 +15,6 @@
         "internalType": "string",
         "name": "baseURI",
         "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "gttAddress_",
-        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -201,26 +196,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "burn",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
-    "name": "burnNftPrice",
+    "name": "burnPower",
     "outputs": [
       {
         "internalType": "uint256",
@@ -229,6 +206,43 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculatePower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "durationSeconds",
+        "type": "uint256"
+      }
+    ],
+    "name": "generate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -251,13 +265,19 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "gttCoin",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "contract IGTT",
+        "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "name": "isAllowed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -301,10 +321,16 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "enum EType",
+        "name": "eType",
+        "type": "uint8"
+      }
+    ],
     "name": "mint",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -328,11 +354,31 @@
         "type": "uint256"
       }
     ],
-    "name": "nftPower",
+    "name": "nftInfo",
     "outputs": [
       {
+        "internalType": "enum EType",
+        "name": "eType",
+        "type": "uint8"
+      },
+      {
         "internalType": "uint256",
-        "name": "",
+        "name": "lastUsage",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "powerLeft",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxPower",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "score",
         "type": "uint256"
       }
     ],
@@ -425,6 +471,24 @@
       }
     ],
     "name": "safeTransferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "allowedAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "allowed",
+        "type": "bool"
+      }
+    ],
+    "name": "setAllowed",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -601,6 +665,25 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum EType",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "name": "vehicleGTTGap",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

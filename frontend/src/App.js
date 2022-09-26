@@ -17,7 +17,6 @@ import {
     Tokens
 } from "./components";
 import {BurnNFTContract} from "./contracts/BurnNFTContract";
-import {BURN_NFT_PRICE} from "./constants/burnNFT";
 import {BurnNFTs} from "./components/BurnNFTs";
 import {GTTContract} from "./contracts/GTTContract";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -142,10 +141,11 @@ function App() {
         }
     }
 
-    const handleMintBurnNft = async (amount) => {
+    const handleMintBurnNft = async (vType) => {
         try {
             setLoading({mintingBurnNft: true});
-            await new BurnNFTContract(account.signer).mint(amount);
+            console.log(vType)
+            await new BurnNFTContract(account.signer).mint(vType);
             setLoading({mintingBurnNft: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -393,15 +393,44 @@ function App() {
                         <div className="col-12">
                             <h6>Mint BurnNFT:</h6>
                         </div>
+                        {
+                            !loadingState.loadingTokens && <>
+                                    <div className="col text-end fw-bold">Vehicle Type:</div>
+                                    <div className="col-auto text-start">
+                                        <select
+                                            className="vehicle-type-dropdown"
+                                            value={vehicleType.type}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                const vType = EARN_NFT_VEHICLE_TYPES.find((v) => v.type === Number(value));
+                                                setVehicleType(vType);
+                                            }}
+                                        >
+                                            {
+                                                EARN_NFT_VEHICLE_TYPES.map((vType) => {
+                                                    return <option
+                                                        key={vType.type}
+                                                        className="vehicle-type-item"
+                                                        value={vType.type}
+                                                    >
+                                                        {vType.name}
+                                                    </option>
+                                                })
+                                            }
+                                        </select>
+                                    </div>
+                                    <div className="col text-start">
+                                    </div>
+                            </>
+                        }
                     </div>
                     {
                         !loadingState.loadingTokens && <MintButton
                             isSingleMint={true}
                             disabled={loadingState.mintingBurnNft}
                             loading={loadingState.mintingBurnNft}
-                            price={BURN_NFT_PRICE}
-                            onMint={({amount}) => {
-                                handleMintBurnNft(amount);
+                            onMint={() => {
+                                handleMintBurnNft(vehicleType.type);
                             }}
                         />
                     }
