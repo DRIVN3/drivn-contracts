@@ -8,7 +8,7 @@ export const ExternalLinks = () => {
             <a
                 target="_blank"
                 href="https://testnets.opensea.io/collection/test-earnnft-v4"
-                rel="noopener"
+                rel="noopener noreferrer"
             >Opensea earn nft testnet</a>
         </div>
     
