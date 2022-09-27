@@ -14,7 +14,7 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   let privateSales = await ethers.getContractFactory("PrivateSales");
-  privateSales = await earnNFT.deploy(process.env.DRVNCOINADDRESS);
+  privateSales = await privateSales.deploy(process.env.DRVNCOINADDRESS);
   await privateSales.deployed()
   
 
