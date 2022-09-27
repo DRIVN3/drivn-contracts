@@ -23,16 +23,6 @@ contract BurnNFT is ERC721Enumerable, Ownable {
 
     using Counters for Counters.Counter;
 
-    /**
-     * @dev Emitted when mint method is called
-     */
-    event Mint(address indexed sender, uint256 indexed tokenId);
-
-    /**
-     * @dev Emitted when mint method is called
-     */
-    event Burn(address indexed sender, uint256 indexed tokenId, uint256 indexed amount);
-
     // base token URI
     string internal _baseTokenURI;
 
@@ -53,6 +43,16 @@ contract BurnNFT is ERC721Enumerable, Ownable {
 
     // mapping for nft earning gap
     mapping(EType=>uint256) public vehicleGTTGap;
+
+    /**
+     * @dev Emitted when mint method is called
+     */
+    event Mint(address indexed sender, uint256 indexed tokenId);
+
+    /**
+     * @dev Emitted when mint method is called
+     */
+    event Burn(address indexed sender, uint256 indexed tokenId, uint256 indexed amount);
 
     /**
      * @dev Sets main dependencies and constants
