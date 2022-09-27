@@ -13,3 +13,4 @@ tally link - https://www.tally.xyz/governance/eip155:80001:0xB1AB66BA1da3d182BF0
 Team Vesting Contract - https://mumbai.polygonscan.com/address/0x2b76A3ED01Af443695Bf1965F1eF21D0Ef11f585#code
 opensea Burn NFT - https://testnets.opensea.io/assets/mumbai/0x79e2941c694f01173343f36908dcdd4b54eabd26
 opensea Earn NFT - https://testnets.opensea.io/collection/test-earnnft-v4
+private sales contract on testnet - https://mumbai.polygonscan.com/address/0x28F8FE9c8e51628Ab92b7b7F6e8D6fA05FBe1bCd#code
