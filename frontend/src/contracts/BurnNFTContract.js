@@ -1,4 +1,4 @@
-import {BigNumber, ethers} from 'ethers';
+import {ethers} from 'ethers';
 import {appConfig} from "../config";
 
 export class BurnNFTContract {
