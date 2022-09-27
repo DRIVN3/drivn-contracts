@@ -10,6 +10,6 @@ DRVN Governor Contract - https://mumbai.polygonscan.com/address/0xB1AB66BA1da3d1
 DRVN liquidity pool - https://app.uniswap.org/#/pool/5079
 GTT liquidity pool -  https://app.uniswap.org/#/pool/5078
 tally link - https://www.tally.xyz/governance/eip155:80001:0xB1AB66BA1da3d182BF0D3eC22e00D418f5f6bbF6
-Team Vesting Contract - https://mumbai.polygonscan.com/address/0x26443036e72F880877a6E22d63551f7f9395c46B#code
+Team Vesting Contract - https://mumbai.polygonscan.com/address/0x2b76A3ED01Af443695Bf1965F1eF21D0Ef11f585#code
 opensea Burn NFT - https://testnets.opensea.io/assets/mumbai/0x79e2941c694f01173343f36908dcdd4b54eabd26
 opensea Earn NFT - https://testnets.opensea.io/collection/test-earnnft-v4
