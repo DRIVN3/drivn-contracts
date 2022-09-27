@@ -94,7 +94,7 @@ contract GTT is ERC20, Ownable, Pausable {
     }
 
     /**
-     * @dev burns coins on burn wallet ballance
+     * @dev burns coins in sender address
      * @param count count of coins
     */
 
@@ -105,12 +105,12 @@ contract GTT is ERC20, Ownable, Pausable {
     /**
      * @dev distribute the coins to accounts
      * @param account address of account
-     * @param counts counts of coins
+     * @param count counts of coins
     */
 
-    function distribute(address account, uint256 counts) external onlyOwner {
+    function distribute(address account, uint256 count) external onlyOwner {
         require(account != address(0), "GTT: account should not be zero address");
-        _transfer(address(this), account, counts);
+        _transfer(address(this), account, count);
     }
 
     /**

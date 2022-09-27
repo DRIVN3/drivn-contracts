@@ -17,9 +17,7 @@ import {
     Tokens
 } from "./components";
 import {BurnNFTContract} from "./contracts/BurnNFTContract";
-import {BURN_NFT_PRICE} from "./constants/burnNFT";
 import {BurnNFTs} from "./components/BurnNFTs";
-import {GTTContract} from "./contracts/GTTContract";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -35,6 +33,7 @@ function App() {
         burningBurnNft: false,
         mergingEarnNft: false,
         generatingToken: false,
+        generatingBurn: false,
         claimingToken: false,
     });
     const [isWalletInstalled, setIsWalletInstalled] = useState(null);
@@ -46,6 +45,7 @@ function App() {
     const [earnNftTokens, setEarnNftTokens] = useState();
     const [burnNftTokens, setBurnNftTokens] = useState();
     const [vehicleType, setVehicleType] = useState(EARN_NFT_VEHICLE_TYPES[0]);
+    const [vehicleTypeBurn, setVehicleTypeBurn] = useState(EARN_NFT_VEHICLE_TYPES[0]);
 
     useEffect(() => {
         web3Modal.clearCachedProvider();
@@ -85,16 +85,15 @@ function App() {
         }
     };
 
-    const handleBurnNftTokensBurn = async (token, amount) => {
+    const handleBurnNftTokensBurn = async (token, time) => {
         try {
-            setLoading({burningBurnNft: true});
-            await new GTTContract(account.signer).approveBurn(amount);
-            await new BurnNFTContract(account.signer).burn(token, amount);
-            setLoading({burningBurnNft: false});
+            setLoading({generatingBurn: true});
+            await new BurnNFTContract(account.signer).generate(token, time);
+            setLoading({generatingBurn: false});
             setAccountFromProvider(account.library);
         } catch (e) {
-            setLoading({burningBurnNft: false});
-            setErrorMessage("Something went wrong. Couldn't burn BurnNFT.");
+            setLoading({generatingBurn: false});
+            setErrorMessage("Something went wrong. Couldn't generate BurnNft pseudo coin.");
         }
     };
 
@@ -142,10 +141,10 @@ function App() {
         }
     }
 
-    const handleMintBurnNft = async (amount) => {
+    const handleMintBurnNft = async (vType) => {
         try {
             setLoading({mintingBurnNft: true});
-            await new BurnNFTContract(account.signer).mint(amount);
+            await new BurnNFTContract(account.signer).mint(vType);
             setLoading({mintingBurnNft: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -393,15 +392,44 @@ function App() {
                         <div className="col-12">
                             <h6>Mint BurnNFT:</h6>
                         </div>
+                        {
+                            !loadingState.loadingTokens && <>
+                                    <div className="col text-end fw-bold">Vehicle Type:</div>
+                                    <div className="col-auto text-start">
+                                        <select
+                                            className="vehicle-type-dropdown"
+                                            value={vehicleTypeBurn.type}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                const vType = EARN_NFT_VEHICLE_TYPES.find((v) => v.type === Number(value));
+                                                setVehicleTypeBurn(vType);
+                                            }}
+                                        >
+                                            {
+                                                EARN_NFT_VEHICLE_TYPES.map((vType) => {
+                                                    return <option
+                                                        key={vType.type}
+                                                        className="vehicle-type-item"
+                                                        value={vType.type}
+                                                    >
+                                                        {vType.name}
+                                                    </option>
+                                                })
+                                            }
+                                        </select>
+                                    </div>
+                                    <div className="col text-start">
+                                    </div>
+                            </>
+                        }
                     </div>
                     {
                         !loadingState.loadingTokens && <MintButton
                             isSingleMint={true}
                             disabled={loadingState.mintingBurnNft}
                             loading={loadingState.mintingBurnNft}
-                            price={BURN_NFT_PRICE}
-                            onMint={({amount}) => {
-                                handleMintBurnNft(amount);
+                            onMint={() => {
+                                handleMintBurnNft(vehicleTypeBurn.type);
                             }}
                         />
                     }
@@ -411,7 +439,7 @@ function App() {
                 !loadingState.loadingTokens && burnNftTokens !== undefined && <BurnNFTs
                     allTokens={burnNftTokens}
                     onBurn={handleBurnNftTokensBurn}
-                    loading={loadingState.burningBurnNft}
+                    loading={loadingState.generatingBurn}
                 />
             }
             {

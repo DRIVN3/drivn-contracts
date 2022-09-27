@@ -1,4 +1,7 @@
 import {Contract as EthcallContract, Provider as EthcallProvider} from "ethcall"
+import {EARN_NFT_VEHICLE_TYPES_ARRAY} from "../constants";
+import {ethers} from "ethers";
+
 import {appConfig} from "../config";
 
 export class BurnNFTService {
@@ -35,15 +38,23 @@ export class BurnNFTService {
             appConfig.contracts.BurnNFT.abi
         );
 
-        const calls = tokens.map((tokenId) => contract.nftPower(tokenId));
+        const calls = tokens.map((tokenId) => contract.nftInfo(tokenId));
+        const powerLeftCalls = tokens.map((tokenId) => contract.calculatePower(tokenId));
 
         const ethcallProvider = new EthcallProvider();
         await ethcallProvider.init(provider);
 
         const data = await ethcallProvider.tryAll(calls);
-        return data.map((nftPower) => {
+        const powerLeftData = await ethcallProvider.tryAll(powerLeftCalls);
+        return data.map((nftInfo, index) => {
             return {
-                nftPower: nftPower.toString(),
+                vehicleType: {
+                    type: nftInfo.eType,
+                    name: EARN_NFT_VEHICLE_TYPES_ARRAY[nftInfo.eType],
+                },
+                score: Number.parseFloat(ethers.utils.formatEther(nftInfo.score.toString())),
+                maxPower: Number(nftInfo.maxPower.toString()),
+                powerLeft: Number(powerLeftData[index].toString()),
             };
         });
     };
