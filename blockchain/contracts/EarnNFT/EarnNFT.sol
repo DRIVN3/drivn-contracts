@@ -59,7 +59,7 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     uint256 public constant maxScooterSupply = 2000;
 
     // base token URI
-    string internal _baseTokenURI;
+    string public baseTokenURI;
 
     // commong token price
     uint256 public commonTokenCarPrice = 0.01 ether;
@@ -226,7 +226,7 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     */
 
     function setBaseURI(string memory baseURI_) public onlyOwner {
-        _baseTokenURI = baseURI_;
+        baseTokenURI = baseURI_;
     }
 
     /**
@@ -234,7 +234,7 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     */
 
     function _baseURI() internal view override returns (string memory) {
-        return _baseTokenURI;
+        return baseTokenURI;
     }
 
     /**

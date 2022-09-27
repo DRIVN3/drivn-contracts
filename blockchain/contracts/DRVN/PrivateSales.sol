@@ -94,7 +94,7 @@ contract PrivateSales is Ownable {
     }
 
     /**
-     * @dev Buy the coins in private Coins supply. Checks current prive of BNB to USD and buy the coins properly
+     * @dev Buy the coins in private Coins supply
     */
 
     function buy() external payable whenAllowed {
