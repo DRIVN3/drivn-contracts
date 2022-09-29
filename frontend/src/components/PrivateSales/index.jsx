@@ -12,6 +12,7 @@ import {
     ConnectButton,
     ReloadPageButton,
     MintPrivateSales,
+    PrivateSalesVestingWallets,
 } from "../";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {PrivateSalesService} from "../../service";
@@ -24,6 +25,7 @@ export const PrivateSales = () => {
         connectingWallet: false,
         loadingAssets: false,
         mintingPrivateSales: false,    
+        release: false,
     });
     const [isWalletInstalled, setIsWalletInstalled] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
@@ -53,11 +55,32 @@ export const PrivateSales = () => {
             setLoading({mintingPrivateSales: false});
             setAccountFromProvider(account.library);
         } catch (e) {
-            console.log(e);
             setLoading({mintingPrivateSales: false});
             setErrorMessage("Something went wrong. Couldn't mint private sales");
         }
     };
+
+    const handleOnRelease = async (contractAddress) => {
+        try {
+            setLoading({release: true});
+            await PrivateSalesService.release(account.signer, contractAddress);
+            setLoading({release: false});
+            setAccountFromProvider(account.library);
+        } catch (e) {
+            setLoading({release: false});
+            setErrorMessage("Something went wrong. Couldn't release the vest wallet");
+        }
+    };
+
+    const getVestWallets = async () => {
+        try {
+            const vestWallets = await new PrivateSalesContract(account.signer).getAccountVestingWallets(account.address);
+            return PrivateSalesService.getVestingInfo(account.library, vestWallets); 
+        } catch (e) {
+            setErrorMessage("Something went wrong. Couldn't get vest wallet info");
+        }
+    };
+
 
     const loadAllAssets = async (library, address) => {
         try {
@@ -195,6 +218,16 @@ export const PrivateSales = () => {
                     onMint={({amount}) => {
                         handleMintPrivateSales(amount);
                     }}
+                />
+            }
+            {
+                account.connected
+                &&
+                <PrivateSalesVestingWallets 
+                    onRelease={handleOnRelease}
+                    getVestWallets={getVestWallets}
+                    disabled={loadingState.release}
+                    loading={loadingState.release}
                 />
             }
         </div>
