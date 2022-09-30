@@ -81,6 +81,7 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     */
 
     function mint(EType eType) external {
+        require(burnNFT.balanceOf(msg.sender) == 0, "BurnNFTManagement: you have already minted once");
 
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();

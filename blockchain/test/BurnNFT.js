@@ -68,14 +68,11 @@ describe("BurnNFT", function () {
             expect(nftInfo.eType).to.be.equal(SCOOTER);
         });
 
-        it("should fail after minting 1000 burn nft", async function () {
-            const { burnNFT, burnNFTManagement, firstAccount } = await loadFixture(getContracts);
-            
-            for (let k = 0; k < 1000; ++ k)
-                await burnNFTManagement.connect(firstAccount).mint(BICYCLE);
-
+        it("should fail after twice", async function () {
+            const { burnNFTManagement, firstAccount } = await loadFixture(getContracts);
+            await burnNFTManagement.connect(firstAccount).mint(BICYCLE);
             await expect(burnNFTManagement.connect(firstAccount).mint(BICYCLE))
-                .to.be.revertedWith("BurnNFTManagement: can't mint, max burn nft supply reached");
+                .to.be.revertedWith("BurnNFTManagement: you have already minted once");
         });
     });
 

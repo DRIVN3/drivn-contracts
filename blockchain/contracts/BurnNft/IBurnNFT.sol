@@ -19,4 +19,9 @@ interface IBurnNFT {
     */
     function ownerOf(uint256 tokenId) external view returns(address);
 
+    /**
+     * @dev Returns the number of tokens in ``owner``'s account.
+     */
+    function balanceOf(address owner) external view returns (uint256 balance);
+
 }
