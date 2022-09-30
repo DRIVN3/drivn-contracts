@@ -38,7 +38,7 @@ export const BurnNFTs = ({
     return (<>
         <div className="row mt-3">
             <div className="col-12 my-3">
-                <h6>Burn GTT tokens using BurnNFT:</h6>
+                <h6>Increase Burn NFT score:</h6>
             </div>
             <div className="col-6 text-end fw-bold">
                 <span>Token 1: </span>

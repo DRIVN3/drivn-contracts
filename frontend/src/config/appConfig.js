@@ -3,6 +3,7 @@ import GTTBurnWalletAbi from '../contracts/abi/GTTBurnWallet.json';
 import DRVNCoinAbi from '../contracts/abi/DRVNCoin.json';
 import BurnNFTAbi from '../contracts/abi/BurnNFT.json';
 import EarnNFTAbi from '../contracts/abi/EarnNFT.json';
+import PrivateSalesAbi from '../contracts/abi/PrivateSales.json';
 
 export const appConfig = {
     contracts: {
@@ -25,6 +26,10 @@ export const appConfig = {
         EarnNFT: {
             address: process.env.REACT_APP_EARN_NFT_ADDRESS,
             abi: EarnNFTAbi
+        },
+        PrivateSales: {
+            address: process.env.REACT_APP_PRIVATE_SALES_ADDRESS,
+            abi: PrivateSalesAbi
         },
     }
 }
