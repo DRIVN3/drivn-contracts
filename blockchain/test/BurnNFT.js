@@ -45,6 +45,13 @@ describe("BurnNFT", function () {
 
 
     describe("test BurnNFT minting", function () {
+
+        it("Should fail while minting not allowed", async function () {
+            const { burnNFT, owner } = await loadFixture(getContracts);
+            await expect(burnNFT.mint(owner.address, 1))
+                .to.be.revertedWith("BurnNFT: address is not allowed to call this function");
+        });
+
         it("Should mint correctly", async function () {
             const { burnNFT, burnNFTManagement, firstAccount, baseUri } = await loadFixture(getContracts);
             await burnNFTManagement.connect(firstAccount).mint(SCOOTER);

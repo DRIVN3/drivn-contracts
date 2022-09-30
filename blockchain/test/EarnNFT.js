@@ -64,6 +64,12 @@ describe("EarnNFt", function () {
     });
 
     describe("test EarnNft minting", function () {
+        it("Should fail while minting not allowed", async function () {
+            const { earnNFT, owner } = await loadFixture(getContracts);
+            await expect(earnNFT.mint(owner.address, 1))
+                .to.be.revertedWith("EarnNFT: address is not allowed to call this function");
+        });
+
         it("Should fail when not enough balance", async function () {
             const { earnNftManagement, firstAccount } = await loadFixture(getContracts);
             await expect(earnNftManagement.connect(firstAccount).mint(CAR)).to.be.revertedWith("EarnNFTManagement: not enough money");
