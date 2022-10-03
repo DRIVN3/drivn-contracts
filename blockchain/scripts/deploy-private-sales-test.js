@@ -14,7 +14,7 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   let privateSales = await ethers.getContractFactory("PrivateSales");
-  privateSales = await privateSales.deploy(process.env.DRVNCOINADDRESS);
+  privateSales = await privateSales.deploy(process.env.DRVN_COIN_ADDRESS);
   await privateSales.deployed()
   
 
@@ -26,7 +26,7 @@ async function main() {
   try{
     await hre.run("verify:verify", {
       address: privateSales.address,
-      constructorArguments: [process.env.DRVNCOINADDRESS],
+      constructorArguments: [process.env.DRVN_COIN_ADDRESS],
     });
     console.log("Source Verified on privateSales");
 

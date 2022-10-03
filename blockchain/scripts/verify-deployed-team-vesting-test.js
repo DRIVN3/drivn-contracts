@@ -15,17 +15,17 @@ async function main() {
 
     const vestingWallet = await ethers.getContractFactory("VestingContract");
     const contract = await vestingWallet.attach(
-        "0x2b76A3ED01Af443695Bf1965F1eF21D0Ef11f585"
+        "0x963Ee4DF3e519a8076f9ca6003Fb0c557c9db4Cb"
     );
     
     let beneficiary = await contract.beneficiary();
     let startTimestamp = await contract.start();
     let duration = await contract.duration();
-    let token = process.env.DRVNCOINADDRESS;
+    let token = process.env.DRVN_COIN_ADDRESS;
 
     try{
     await hre.run("verify:verify", {
-        address: "0x2b76A3ED01Af443695Bf1965F1eF21D0Ef11f585",
+        address: "0x963Ee4DF3e519a8076f9ca6003Fb0c557c9db4Cb",
         constructorArguments: [beneficiary, startTimestamp, duration, token],
     });
     console.log("Source Verified on team vesting");

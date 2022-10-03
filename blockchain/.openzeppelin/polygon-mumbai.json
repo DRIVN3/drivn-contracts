@@ -1,0 +1,444 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xB53F44604a2f08a678F6bba1AeDc82e2cB2e494c",
+    "txHash": "0xb6127457b8fddeb4e191b5019654a13963362be363a904b11e2c862502277475"
+  },
+  "proxies": [
+    {
+      "address": "0xBaB32E3960Cbe1271654851866AAfECEd14150cF",
+      "txHash": "0x9da6c29602a52063b32a118598f9a039a3e952732692e34d35937b7ed5b9f6f0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x587aC28483970f7A2a38739b88e664dA38A4F63D",
+      "txHash": "0xd209d87d56072cf3fc89d551f5a2ab08451da7f15986bd207ca58281a680ed9f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x95939E3D624856FE08DF355426e80F440DAA1eB3",
+      "txHash": "0xc315cf4b7981f847772df268eed6e9752c0b3aa805b4f5d5e6f4b2a0024fab27",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "4b527a31d04699732b761cd803d79c333765a47c1cd25332fc9dae97e8b24577": {
+      "address": "0x7ea7b4ac2d7aE8882EeE78E302C789dF7504e46E",
+      "txHash": "0x4f670ac2fb9014827442b505dadfdc0587d781cdf82977177050c1696addd5b3",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "nftInfo",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_mapping(t_uint256,t_struct(NFTInformation)13104_storage)",
+            "contract": "BurnNFTManagement",
+            "src": "contracts\\BurnNft\\BurnNFTManagement.sol:30"
+          },
+          {
+            "label": "isAllowed",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "BurnNFTManagement",
+            "src": "contracts\\BurnNft\\BurnNFTManagement.sol:33"
+          },
+          {
+            "label": "vehicleGTTGap",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_mapping(t_enum(EType)13092,t_uint256)",
+            "contract": "BurnNFTManagement",
+            "src": "contracts\\BurnNft\\BurnNFTManagement.sol:36"
+          },
+          {
+            "label": "burnNFT",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(IBurnNFT)13426",
+            "contract": "BurnNFTManagement",
+            "src": "contracts\\BurnNft\\BurnNFTManagement.sol:39"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IBurnNFT)13426": {
+            "label": "contract IBurnNFT",
+            "numberOfBytes": "20"
+          },
+          "t_enum(EType)13092": {
+            "label": "enum EType",
+            "members": [
+              "CAR",
+              "BICYCLE",
+              "SCOOTER"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(EType)13092,t_uint256)": {
+            "label": "mapping(enum EType => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(NFTInformation)13104_storage)": {
+            "label": "mapping(uint256 => struct NFTInformation)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(NFTInformation)13104_storage": {
+            "label": "struct NFTInformation",
+            "members": [
+              {
+                "label": "eType",
+                "type": "t_enum(EType)13092",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "lastUsage",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "powerLeft",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "maxPower",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "score",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "de895e46583de5f7a16d5f10d1ae23a816c7ce10bb163ace265fe4751fc3953c": {
+      "address": "0x805D8c937b1eFa103388d53dc92313F2f2103fB9",
+      "txHash": "0xa04c21ba760ba2d783afd72d385a03567f37aa790cac24925f4d9fe55d0bfeda",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "carCounter",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_struct(Counter)9165_storage",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:33"
+          },
+          {
+            "label": "bicycleCounter",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_struct(Counter)9165_storage",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:36"
+          },
+          {
+            "label": "scooterCounter",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_struct(Counter)9165_storage",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:39"
+          },
+          {
+            "label": "gttCoin",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(IGTT)15431",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:42"
+          },
+          {
+            "label": "earnNFT",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(IEarnNFT)15388",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:45"
+          },
+          {
+            "label": "nftInfo",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_uint256,t_struct(NFTInformation)14651_storage)",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:48"
+          },
+          {
+            "label": "nftTypePower",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_mapping(t_enum(Level)14634,t_uint256)",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:51"
+          },
+          {
+            "label": "vehicleGTTGap",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_mapping(t_enum(EType)14629,t_uint256)",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:54"
+          },
+          {
+            "label": "isAllowed",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "EarnNFTManagement",
+            "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:75"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IEarnNFT)15388": {
+            "label": "contract IEarnNFT",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IGTT)15431": {
+            "label": "contract IGTT",
+            "numberOfBytes": "20"
+          },
+          "t_enum(EType)14629": {
+            "label": "enum EType",
+            "members": [
+              "CAR",
+              "BICYCLE",
+              "SCOOTER"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(Level)14634": {
+            "label": "enum Level",
+            "members": [
+              "COMMON",
+              "UNCOMMON",
+              "RARE",
+              "EPIC"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(EType)14629,t_uint256)": {
+            "label": "mapping(enum EType => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(Level)14634,t_uint256)": {
+            "label": "mapping(enum Level => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(NFTInformation)14651_storage)": {
+            "label": "mapping(uint256 => struct NFTInformation)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Counter)9165_storage": {
+            "label": "struct Counters.Counter",
+            "members": [
+              {
+                "label": "_value",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(NFTInformation)14651_storage": {
+            "label": "struct NFTInformation",
+            "members": [
+              {
+                "label": "nftType",
+                "type": "t_enum(Level)14634",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "eType",
+                "type": "t_enum(EType)14629",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "lastUsage",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "powerLeft",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "maxPower",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "powerUsed",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "powerClaimed",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}
