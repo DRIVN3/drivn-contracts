@@ -14,7 +14,7 @@ async function main() {
     console.log("Account balance:", (await deployer.getBalance()).toString());
 
     let MyGovernor = await ethers.getContractFactory("MyGovernor");
-    MyGovernor = await MyGovernor.deploy(process.env.DRVNCOINADDRESS, process.env.TIMELOCKADDRESS);
+    MyGovernor = await MyGovernor.deploy(process.env.DRVN_COIN_ADDRESS, process.env.TIME_LOCK_ADDRESS);
     await MyGovernor.deployed()
   
 
@@ -26,7 +26,7 @@ async function main() {
     try{
     await hre.run("verify:verify", {
         address: MyGovernor.address,
-        constructorArguments: [process.env.DRVNCOINADDRESS, process.env.TIMELOCKADDRESS],
+        constructorArguments: [process.env.DRVN_COIN_ADDRESS, process.env.TIME_LOCK_ADDRESS],
     });
     console.log("Source Verified on MyGovernor");
 

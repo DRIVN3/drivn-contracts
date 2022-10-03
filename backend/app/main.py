@@ -1,6 +1,6 @@
 from web3 import Web3
 from fastapi import FastAPI, Path, APIRouter
-from app.settings import EARNNFTADDRESS, BURNNFTADDRESS, BurnNftAbi, EarnNft, MUMBAIURL
+from app.settings import EARN_NFT_MANAGER, BURN_NFT_MANAGER, BurnNftAbi, EarnNft, MUMBAIURL
 
 router = APIRouter(
     prefix="",
@@ -12,8 +12,8 @@ app = FastAPI()
 
 
 W3_MAINNET = Web3(Web3.HTTPProvider(MUMBAIURL))
-earn_nft = W3_MAINNET.eth.contract(EARNNFTADDRESS, abi=EarnNft)
-burn_nft = W3_MAINNET.eth.contract(BURNNFTADDRESS, abi=BurnNftAbi)
+earn_nft = W3_MAINNET.eth.contract(EARN_NFT_MANAGER, abi=EarnNft)
+burn_nft = W3_MAINNET.eth.contract(BURN_NFT_MANAGER, abi=BurnNftAbi)
 
 Level  = {
     0: "COMMON",
