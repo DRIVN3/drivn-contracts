@@ -23,12 +23,6 @@ struct NFTInformation {
 contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradeable  {
     using Counters for Counters.Counter;
 
-    // max supply 
-    uint256 public constant maxBurnNftSupply = 1000;
-
-    // token counter
-    Counters.Counter private _tokenIdCounter;
-
     // burn power
     uint256 public constant burnPower = 900;
 
@@ -83,11 +77,7 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     function mint(EType eType) external {
         require(burnNFT.balanceOf(msg.sender) == 0, "BurnNFTManagement: you have already minted once");
 
-        _tokenIdCounter.increment();
-        uint256 tokenId = _tokenIdCounter.current();
-        require(tokenId <= maxBurnNftSupply, "BurnNFTManagement: can't mint, max burn nft supply reached");
-
-        burnNFT.mint(msg.sender, tokenId);
+        uint256 tokenId = burnNFT.mint(msg.sender);
         
         nftInfo[tokenId] = NFTInformation(
             eType, // EVehile

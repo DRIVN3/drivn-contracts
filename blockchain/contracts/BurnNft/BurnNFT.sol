@@ -4,8 +4,16 @@ pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract BurnNFT is ERC721Enumerable, Ownable {
+    using Counters for Counters.Counter;
+
+    // token counter
+    Counters.Counter public tokenIdCounter;
+
+    // max supply 
+    uint256 public constant maxBurnNftSupply = 1000;
 
     // base token URI
     string internal _baseTokenURI;
@@ -35,8 +43,14 @@ contract BurnNFT is ERC721Enumerable, Ownable {
      * @param account address of mint receiver
     */
 
-    function mint(address account, uint256 tokenId) external whenAllowed {
+    function mint(address account) external whenAllowed returns (uint256) {
+        tokenIdCounter.increment();
+        uint256 tokenId = tokenIdCounter.current();
+        
+        require(tokenId < maxBurnNftSupply, "BurnNFT: max supply reached");
+
         _mint(account, tokenId);
+        return tokenId;
     }
 
     /**
