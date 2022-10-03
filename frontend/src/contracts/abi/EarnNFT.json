@@ -15,11 +15,6 @@
         "internalType": "string",
         "name": "baseURI",
         "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "gttAddress_",
-        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -73,62 +68,6 @@
       }
     ],
     "name": "ApprovalForAll",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId1",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId2",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newToken",
-        "type": "uint256"
-      }
-    ],
-    "name": "Merge",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "enum EType",
-        "name": "eType",
-        "type": "uint8"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "Mint",
     "type": "event"
   },
   {
@@ -214,12 +153,12 @@
   },
   {
     "inputs": [],
-    "name": "bicycleCounter",
+    "name": "baseTokenURI",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "_value",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -233,101 +172,7 @@
         "type": "uint256"
       }
     ],
-    "name": "calculatePower",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "carCounter",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "claimGeneratedCoins",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "commonTokenBicyclePrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "commonTokenCarPrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "commonTokenScooterPrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "durationSeconds",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "claim",
-        "type": "bool"
-      }
-    ],
-    "name": "generate",
+    "name": "burn",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -344,38 +189,6 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getClaimAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "gttCoin",
-    "outputs": [
-      {
-        "internalType": "contract IGTT",
         "name": "",
         "type": "address"
       }
@@ -428,33 +241,7 @@
   },
   {
     "inputs": [],
-    "name": "maxBicycleSupply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxCarSupply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxScooterSupply",
+    "name": "maxSupply",
     "outputs": [
       {
         "internalType": "uint256",
@@ -468,32 +255,20 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "tokenId1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId2",
-        "type": "uint256"
-      }
-    ],
-    "name": "merge",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "enum EType",
-        "name": "eType",
-        "type": "uint8"
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
       }
     ],
     "name": "mint",
-    "outputs": [],
-    "stateMutability": "payable",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -504,74 +279,6 @@
         "internalType": "string",
         "name": "",
         "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "nftInfo",
-    "outputs": [
-      {
-        "internalType": "enum Level",
-        "name": "nftType",
-        "type": "uint8"
-      },
-      {
-        "internalType": "enum EType",
-        "name": "eType",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lastUsage",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "powerLeft",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "maxPower",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "powerUsed",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "powerClaimed",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "enum Level",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "name": "nftTypePower",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -607,19 +314,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "powerMultiplier",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -678,19 +372,6 @@
     "name": "safeTransferFrom",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "scooterCounter",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -896,25 +577,6 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "enum EType",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "name": "vehicleGTTGap",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   }
 ]

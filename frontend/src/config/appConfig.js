@@ -4,6 +4,8 @@ import DRVNCoinAbi from '../contracts/abi/DRVNCoin.json';
 import BurnNFTAbi from '../contracts/abi/BurnNFT.json';
 import EarnNFTAbi from '../contracts/abi/EarnNFT.json';
 import PrivateSalesAbi from '../contracts/abi/PrivateSales.json';
+import EarnNFTManagementAbi from '../contracts/abi/EarnNFTManagement.json';
+import BurnNFTManagementAbi from '../contracts/abi/BurnNFTManagement.json';
 
 export const appConfig = {
     contracts: {
@@ -30,6 +32,14 @@ export const appConfig = {
         PrivateSales: {
             address: process.env.REACT_APP_PRIVATE_SALES_ADDRESS,
             abi: PrivateSalesAbi
+        },
+        EarnNFTManagement: {
+            address: process.env.REACT_APP_EARN_NFT_MANAGEMENT,
+            abi: EarnNFTManagementAbi
+        },
+        BurnNFTManagement: {
+            address: process.env.REACT_APP_BURN_NFT_MANAGEMENT,
+            abi: BurnNFTManagementAbi
         },
     }
 }

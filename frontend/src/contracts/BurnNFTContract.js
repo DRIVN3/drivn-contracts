@@ -15,16 +15,5 @@ export class BurnNFTContract {
     balanceOf = async (address) => {
         return await this.contract.balanceOf(address);
     };
-
-    mint = async (vType) => {
-        const receipt = await this.contract.mint(
-            vType
-        );
-        await receipt.wait();
-    };
-
-    generate = async (tokenId, time) => {
-        const receipt = await this.contract.generate(tokenId, time);
-        await receipt.wait();
-    };
+    
 }

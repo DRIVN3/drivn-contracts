@@ -34,8 +34,8 @@ export class BurnNFTService {
         }
 
         const contract = new EthcallContract(
-            appConfig.contracts.BurnNFT.address,
-            appConfig.contracts.BurnNFT.abi
+            appConfig.contracts.BurnNFTManagement.address,
+            appConfig.contracts.BurnNFTManagement.abi
         );
 
         const calls = tokens.map((tokenId) => contract.nftInfo(tokenId));
