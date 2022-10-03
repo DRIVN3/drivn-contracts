@@ -9,7 +9,7 @@ export class PrivateSalesService {
     static getVestingInfo = async (provider, contractAddresses) => {
 
         if (contractAddresses.length === 0) {
-            return null;
+            return [];
         }
 
         let beneficiary = contractAddresses.map((contractAddress) => {
