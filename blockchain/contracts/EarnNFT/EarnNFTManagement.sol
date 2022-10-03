@@ -29,9 +29,6 @@ struct NFTInformation {
 contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradeable  {
     using Counters for Counters.Counter;
 
-    // token counter
-    Counters.Counter public tokenIdCounter;
-
     // car token counter
     Counters.Counter public carCounter;
 
@@ -148,9 +145,7 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
             require(_scooterCount <= maxScooterSupply, "EarnNFTManagement: can't mint, max scooter supply reached");
         }
 
-        tokenIdCounter.increment();
-        uint256 tokenId = tokenIdCounter.current();
-        earnNFT.mint(msg.sender, tokenId);
+        uint256 tokenId = earnNFT.mint(msg.sender);
 
         nftInfo[tokenId] = NFTInformation(
             Level.COMMON, // nft type is common
@@ -184,9 +179,7 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         require(levelUint <= uint256(Level.EPIC), "EarnNFTManagement: Power is too high");
 
         // adding the token
-        tokenIdCounter.increment();
-        uint256 tokenId = tokenIdCounter.current();
-        earnNFT.mint(msg.sender, tokenId);
+        uint256 tokenId = earnNFT.mint(msg.sender);
 
         nftInfo[tokenId] = NFTInformation(
             Level(levelUint), // nft type is common

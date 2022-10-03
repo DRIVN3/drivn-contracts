@@ -66,7 +66,7 @@ describe("EarnNFt", function () {
     describe("test EarnNft minting", function () {
         it("Should fail while minting not allowed", async function () {
             const { earnNFT, owner } = await loadFixture(getContracts);
-            await expect(earnNFT.mint(owner.address, 1))
+            await expect(earnNFT.mint(owner.address))
                 .to.be.revertedWith("EarnNFT: address is not allowed to call this function");
         });
 
