@@ -134,7 +134,7 @@ describe("Private Sales", function () {
             );
 
             // increase time and reach start date
-            await network.provider.send("evm_increaseTime", [startTime])
+            await network.provider.send("evm_increaseTime", [startTime + vestingDuration / 2])
 
             await contract.functions['release()']();
 
@@ -146,7 +146,7 @@ describe("Private Sales", function () {
 
         });
 
-        it("Should be released 50 + 50 * 1/5 tokens after pass 360 + 360 * 1/5 time", async function () {
+        it("Should be released 100 * 1/5 tokens after pass 360 + 360 * 1/5 time", async function () {
 
             const {privateSales, firstAccount, DRVN} = await loadFixture(deployPrivateSales);
             await privateSales.setPrivateSalesEnabled(true);
@@ -168,7 +168,7 @@ describe("Private Sales", function () {
             let released = await contract.functions['released()']();
             released = released[0]
 
-            let expectedTokensAmount = DECIMAL * BigInt(50) + DECIMAL * BigInt(10);
+            let expectedTokensAmount = DECIMAL * BigInt(20);
             expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(expectedTokensAmount.toString());
 
         });

@@ -109,7 +109,7 @@ describe("Team Vesting test", function () {
             expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(0);
         });
 
-        it("Should be half after 360 day", async function () {
+        it("Should be half after 360 + 180 day", async function () {
             const { DRVN, firstAccount } = await loadFixture(deployDRVN);
             let teamSupply = await DRVN.supplyData("Team");
 
@@ -122,7 +122,7 @@ describe("Team Vesting test", function () {
             );
 
             // increase time whole duration
-            await network.provider.send("evm_increaseTime", [vestingStart - 1]);
+            await network.provider.send("evm_increaseTime", [vestingStart - 1 + vestingDuration / 2]);
             await network.provider.send("evm_mine");
             await contract.functions['release()']();
 
@@ -151,7 +151,7 @@ describe("Team Vesting test", function () {
             expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(teamSupply.toString());
         });
 
-        it("Should be released 3/4 team supply after 360 + 180 days", async function () {
+        it("Should be released 3/4 team supply after 360 + 270 days", async function () {
             const { DRVN, firstAccount } = await loadFixture(deployDRVN);
 
             let teamSupply = await DRVN.supplyData("Team");
@@ -164,7 +164,7 @@ describe("Team Vesting test", function () {
             );
 
             // passed 3/4 time
-            await network.provider.send("evm_increaseTime", [vestingStart + vestingDuration / 2  - 1]);
+            await network.provider.send("evm_increaseTime", [vestingStart + 3 * vestingDuration / 4 - 1]);
             await network.provider.send("evm_mine");
             await contract.functions['release()']();
 

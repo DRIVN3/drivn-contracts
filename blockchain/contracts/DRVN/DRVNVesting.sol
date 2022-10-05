@@ -14,7 +14,7 @@ library DRVNVesting {
         } else if (_timestamp > _startDate + duration) {
             return _totalAllocation;
         } else {
-            return _totalAllocation / 2 + (_totalAllocation * (_timestamp - _startDate)) / (2 * duration);
+            return (_totalAllocation * (_timestamp - _startDate)) / (duration);
         }
     }
 }
