@@ -54,9 +54,6 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     function mint(address account) external whenAllowed returns (uint256) {
         tokenIdCounter.increment();
         uint256 tokenId = tokenIdCounter.current();
-        
-        require(tokenId < maxSupply, "EarnNFT: max supply reached");
-
         _mint(account, tokenId);
         return tokenId;
     }
