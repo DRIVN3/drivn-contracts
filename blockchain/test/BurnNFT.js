@@ -10,8 +10,6 @@ const COMMONPOWER = 1;
 const CAR = 0, BICYCLE = 1, SCOOTER = 2;
 
 async function getContracts() {
-    let GTT = await ethers.getContractFactory("GTT");
-    GTT = await GTT.deploy("test", "testing");
 
     const [owner, firstAccount, secondAccount] = await ethers.getSigners();
 
@@ -27,7 +25,7 @@ async function getContracts() {
 
     await burnNFT.setAllowed(burnNFTManagement.address, true);
 
-    return { burnNFT, burnNFTManagement, owner, firstAccount, secondAccount, name, symbol, baseUri, GTT } 
+    return { burnNFT, burnNFTManagement, owner, firstAccount, secondAccount, name, symbol, baseUri } 
 }
 
 

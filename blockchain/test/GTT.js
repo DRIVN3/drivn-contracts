@@ -17,7 +17,7 @@ async function deployGTT() {
     let GTT = await ethers.getContractFactory("GTT");
     let name = "test";
     let symbol = "testing";
-    GTT = await GTT.deploy(name, symbol);
+    GTT = await GTT.deploy(name, symbol, 50);
 
     // attach burn wallet 
     let burnWallet = await ethers.getContractFactory("GTTBurnWallet");
@@ -203,7 +203,7 @@ describe("DRVNERC20Extension GTT", function(){
 
         it("Should be 5 at start", async function () {
             const { GTT } = await loadFixture(deployGTT);
-            expect(await GTT.feePercentage()).to.be.equal(5);
+            expect(await GTT.feePercentage()).to.be.equal(50);
         });
 
         it("Should set recipient correctly", async function () {
@@ -248,6 +248,43 @@ describe("DRVNERC20Extension GTT", function(){
             await GTT.setLiquidityAddress(firstAccount.address, true);
 
             await GTT.connect(firstAccount).transfer(secondAccount.address, 100);
+
+            expect(await GTT.balanceOf(owner.address)).to.be.equal(5);
+            expect(await GTT.balanceOf(secondAccount.address)).to.be.equal(95);
+        });
+    });
+
+    describe("Test transfer from", function () {
+        it("Should transfer whole amount when the address is not in liquidity contract", async function () {
+            const { GTT, firstAccount, secondAccount } = await loadFixture(deployGTT);
+            await GTT.distribute(firstAccount.address, 100);
+
+            await GTT.connect(firstAccount).approve(secondAccount.address, 100);
+            await GTT.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 100);
+
+            expect(await GTT.balanceOf(secondAccount.address)).to.be.equal(100);
+        });
+
+        it("Should revert when passing the liquidity address, but recipient is null address", async function () {
+            const { GTT, firstAccount, secondAccount } = await loadFixture(deployGTT);
+            await GTT.distribute(firstAccount.address, 100);
+
+            await GTT.setLiquidityAddress(firstAccount.address, true);
+
+            await GTT.connect(firstAccount).approve(secondAccount.address, 100);
+            await expect(GTT.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 100))
+                .to.be.revertedWith("DRVNERC20Extension: zero recipient address");
+        });
+
+        it("Should transfer 5 percent on fee address", async function () {
+            const { GTT, firstAccount, secondAccount, owner } = await loadFixture(deployGTT);
+            await GTT.distribute(firstAccount.address, 100);
+
+            await GTT.setRecipient(owner.address);
+            await GTT.setLiquidityAddress(firstAccount.address, true);
+
+            await GTT.connect(firstAccount).approve(secondAccount.address, 100);
+            await GTT.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 100);
 
             expect(await GTT.balanceOf(owner.address)).to.be.equal(5);
             expect(await GTT.balanceOf(secondAccount.address)).to.be.equal(95);

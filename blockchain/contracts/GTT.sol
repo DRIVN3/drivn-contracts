@@ -58,9 +58,10 @@ contract GTT is DRVNERC20Extension, Pausable {
 
     constructor(
         string memory name_, 
-        string memory symbol_
+        string memory symbol_,
+        uint256 feePercentage_
     )
-    DRVNERC20Extension(name_, symbol_)
+    DRVNERC20Extension(name_, symbol_, feePercentage_)
     {
 
         // minting starting coins

@@ -21,7 +21,7 @@ async function deployPrivateSales() {
     let DRVN = await ethers.getContractFactory("DRVNCoin");
     let name = "test";
     let symbol = "testing";
-    DRVN = await DRVN.deploy(name, symbol);
+    DRVN = await DRVN.deploy(name, symbol, 35);
 
     let privateSales = await ethers.getContractFactory("PrivateSales");
     privateSales = await privateSales.deploy(DRVN.address);

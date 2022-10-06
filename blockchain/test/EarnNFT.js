@@ -11,7 +11,7 @@ const CAR = 0, BICYCLE = 1, SCOOTER = 2;
 
 async function getContracts() {
     let GTT = await ethers.getContractFactory("GTT");
-    GTT = await GTT.deploy("test", "testing");
+    GTT = await GTT.deploy("test", "testing", 5);
 
     const [owner, firstAccount, secondAccount] = await ethers.getSigners();
 
