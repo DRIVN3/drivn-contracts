@@ -23,6 +23,12 @@ struct NFTInformation {
 contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradeable  {
     using Counters for Counters.Counter;
 
+    // token counter
+    Counters.Counter public tokenIdCounter;
+
+    // max supply 
+    uint256 public maxBurnNFTSupply;
+
     // burn power
     uint256 public constant burnPower = 900;
 
@@ -67,6 +73,9 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         vehicleGTTGap[EType.CAR] = 4 * 10 ** 18;
         vehicleGTTGap[EType.SCOOTER] = 9 * 10 ** 18 / 2;
         vehicleGTTGap[EType.BICYCLE] = 5 * 10 ** 18;
+
+        // setting max burn nft supply
+        maxBurnNFTSupply = 1000;
     }
 
 
@@ -76,8 +85,13 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
 
     function mint(EType eType) external {
         require(burnNFT.balanceOf(msg.sender) == 0, "BurnNFTManagement: you have already minted once");
+        
+        tokenIdCounter.increment();
+        uint256 tokenId = tokenIdCounter.current();
+        
+        require(tokenId < maxBurnNFTSupply, "BurnNFTManagement: max supply reached");
 
-        uint256 tokenId = burnNFT.mint(msg.sender);
+        burnNFT.mint(msg.sender, tokenId);
         
         nftInfo[tokenId] = NFTInformation(
             eType, // EVehile
@@ -88,6 +102,15 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         );
 
         emit Mint(msg.sender, tokenId);
+    }
+
+    /**
+     * @dev setting maxBurnNftSupply
+     * @param maxBurnNFTSupply_ car supply
+    */
+    
+    function setMaxBurnNFTSupply(uint256 maxBurnNFTSupply_) external onlyOwner {
+        maxBurnNFTSupply = maxBurnNFTSupply_;
     }
 
     /**

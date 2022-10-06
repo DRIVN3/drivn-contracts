@@ -12,9 +12,6 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     // token counter
     Counters.Counter public tokenIdCounter;
 
-    // max token supply
-    uint256 public constant maxSupply = 10000;
-
     // mapping for allowed addresses
     mapping(address=>bool) public isAllowed;
 
@@ -54,9 +51,6 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     function mint(address account) external whenAllowed returns (uint256) {
         tokenIdCounter.increment();
         uint256 tokenId = tokenIdCounter.current();
-        
-        require(tokenId < maxSupply, "EarnNFT: max supply reached");
-
         _mint(account, tokenId);
         return tokenId;
     }

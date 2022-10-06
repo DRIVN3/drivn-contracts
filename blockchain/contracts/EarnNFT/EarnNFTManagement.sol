@@ -54,13 +54,13 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     mapping(EType=>uint256) public vehicleGTTGap;
 
     // max car possible supply
-    uint256 public constant maxCarSupply = 7000;
+    uint256 public maxCarSupply;
 
     // max bicycle possible supply
-    uint256 public constant maxBicycleSupply = 1000;
+    uint256 public maxBicycleSupply;
 
     // max scooter possible supply
-    uint256 public constant maxScooterSupply = 2000;
+    uint256 public maxScooterSupply;
 
     // commong token price
     uint256 public constant commonTokenCarPrice = 0.01 ether;
@@ -114,8 +114,38 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         vehicleGTTGap[EType.SCOOTER] = 9 * 10 ** gttCoin.decimals() / 2;
         vehicleGTTGap[EType.BICYCLE] = 5 * 10 ** gttCoin.decimals();
 
+        // define initial eType supplies
+        maxCarSupply = 7000;
+        maxBicycleSupply = 1000;
+        maxScooterSupply = 2000;
     }
 
+    /**
+     * @dev setting maxCarSupply
+     * @param maxCarSupply_ car supply
+    */
+    
+    function setMaxCarSupply(uint256 maxCarSupply_) external onlyOwner {
+        maxCarSupply = maxCarSupply_;
+    }
+
+    /**
+     * @dev setting maxBicycleSupply
+     * @param maxBicycleSupply_ car supply
+    */
+    
+    function setMaxBicycleSupply(uint256 maxBicycleSupply_) external onlyOwner {
+        maxBicycleSupply = maxBicycleSupply_;
+    }
+
+    /**
+     * @dev setting maxScooterSupply
+     * @param maxScooterSupply_ car supply
+    */
+    
+    function setMaxScooterSupply(uint256 maxScooterSupply_) external onlyOwner {
+        maxScooterSupply = maxScooterSupply_;
+    }
 
     /**
      * @dev buying the token

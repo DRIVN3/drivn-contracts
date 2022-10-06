@@ -7,19 +7,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
-library DRVNVesting {
-    function vestingSchedule(uint256 _totalAllocation, uint256 _startDate, uint256 duration, uint256 _timestamp) internal pure returns (uint256) {
-        if (_timestamp < _startDate) {
-            return 0;
-        } else if (_timestamp > _startDate + duration) {
-            return _totalAllocation;
-        } else {
-            return _totalAllocation / 2 + (_totalAllocation * (_timestamp - _startDate)) / (2 * duration);
-        }
-    }
-}
-
-
 /**
  * @title VestingWallet
  * @dev This contract handles the vesting of Eth and ERC20 tokens for a given beneficiary. Custody of multiple tokens
@@ -109,7 +96,13 @@ contract VestingContract is Context {
      * an asset given its total historical allocation.
      */
     function _vestingSchedule(uint256 totalAllocation, uint64 timestamp) internal view virtual returns (uint256) {
-        return DRVNVesting.vestingSchedule(totalAllocation, start(), duration(), timestamp);
+        if (timestamp < start()) {
+            return 0;
+        } else if (timestamp > start() + duration()) {
+            return totalAllocation;
+        } else {
+            return (totalAllocation * (timestamp - start())) / duration();
+        }
     }
 
 }

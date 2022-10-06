@@ -2,16 +2,15 @@
 
 pragma solidity 0.8.15;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
+import "../extension/DRVNERC20Extension.sol";
 import "./DRVNVesting.sol";
 
-contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
+contract DRVNCoin is DRVNERC20Extension, ERC20Permit, ERC20Votes, Pausable {
     using Address for address;
 
     // start coins
@@ -29,9 +28,10 @@ contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
 
     constructor(
         string memory name_, 
-        string memory symbol_
+        string memory symbol_,
+        uint256 feePercentage_
     )
-    ERC20(name_, symbol_)
+    DRVNERC20Extension(name_, symbol_, feePercentage_)
     ERC20Permit(symbol_)
     {
 
@@ -140,4 +140,26 @@ contract DRVNCoin is ERC20, ERC20Permit, ERC20Votes, Ownable, Pausable {
         super._burn(account, amount);
     }
 
+    /**
+     * @dev overriding transfer function.
+    */
+
+    function transfer(address to, uint256 amount) 
+    public 
+    override(ERC20, DRVNERC20Extension)
+    returns (bool)
+    {
+        return super.transfer(to, amount);
+    }
+
+    function transferFrom(
+            address from,
+            address to,
+            uint256 amount
+    ) 
+    public 
+    override(ERC20, DRVNERC20Extension) 
+    returns (bool) {
+            super.transferFrom(from, to, amount);
+    }
 }

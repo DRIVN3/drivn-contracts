@@ -10,8 +10,6 @@ const COMMONPOWER = 1;
 const CAR = 0, BICYCLE = 1, SCOOTER = 2;
 
 async function getContracts() {
-    let GTT = await ethers.getContractFactory("GTT");
-    GTT = await GTT.deploy("test", "testing");
 
     const [owner, firstAccount, secondAccount] = await ethers.getSigners();
 
@@ -27,7 +25,7 @@ async function getContracts() {
 
     await burnNFT.setAllowed(burnNFTManagement.address, true);
 
-    return { burnNFT, burnNFTManagement, owner, firstAccount, secondAccount, name, symbol, baseUri, GTT } 
+    return { burnNFT, burnNFTManagement, owner, firstAccount, secondAccount, name, symbol, baseUri } 
 }
 
 
@@ -46,21 +44,15 @@ describe("BurnNFT", function () {
 
     describe("test BurnNFT minting", function () {
         it("Should fail when minting > 1000 nft", async function () {
-            const { burnNFT, owner } = await loadFixture(getContracts);
-
-            await burnNFT.setAllowed(owner.address, true);
-
-            for (let k = 1; k < 1000; ++ k) {
-                await burnNFT.mint(owner.address);
-            }
-
-            await expect(burnNFT.mint(owner.address))
-                .to.be.revertedWith("BurnNFT: max supply reached");
+            const { burnNFTManagement } = await loadFixture(getContracts);
+            await burnNFTManagement.setMaxBurnNFTSupply(0);
+            await expect(burnNFTManagement.mint(0))
+                .to.be.revertedWith("BurnNFTManagement: max supply reached");
         });
 
         it("Should fail while minting not allowed", async function () {
             const { burnNFT, owner } = await loadFixture(getContracts);
-            await expect(burnNFT.mint(owner.address))
+            await expect(burnNFT.mint(owner.address, 1))
                 .to.be.revertedWith("BurnNFT: address is not allowed to call this function");
         });
 

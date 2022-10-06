@@ -8,7 +8,7 @@ const {
 let bigInt = require("big-integer");
 const exp = require("constants");
 
-const startGTTCoins = bigInt("5000000000000000000000000000");
+const startDRVNCoins = bigInt("5000000000000000000000000000");
   
 const vestingDuration = 360 * 24 * 60 * 60;
 const vestingStart = 360 * 24 * 60 * 60;
@@ -21,7 +21,7 @@ async function deployDRVN() {
     let DRVN = await ethers.getContractFactory("DRVNCoin");
     let name = "test";
     let symbol = "testing";
-    DRVN = await DRVN.deploy(name, symbol);
+    DRVN = await DRVN.deploy(name, symbol, 35);
 
     return { DRVN, name, symbol, owner, firstAccount, secondAccount};
 }
@@ -30,7 +30,7 @@ describe("DRVN", function () {
     describe("Deployment", function () {
         it("Checking initial balance", async function () {
             const { DRVN, name, symbol, owner } = await loadFixture(deployDRVN);
-            expect(await DRVN.balanceOf(DRVN.address)).to.equal(startGTTCoins.toString());
+            expect(await DRVN.balanceOf(DRVN.address)).to.equal(startDRVNCoins.toString());
             expect(await DRVN.name()).to.be.equal(name);
             expect(await DRVN.symbol()).to.be.equal(symbol);
             expect(await DRVN.owner()).to.be.equal(owner.address);
@@ -109,7 +109,7 @@ describe("Team Vesting test", function () {
             expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(0);
         });
 
-        it("Should be half after 360 day", async function () {
+        it("Should be half after 360 + 180 day", async function () {
             const { DRVN, firstAccount } = await loadFixture(deployDRVN);
             let teamSupply = await DRVN.supplyData("Team");
 
@@ -122,7 +122,7 @@ describe("Team Vesting test", function () {
             );
 
             // increase time whole duration
-            await network.provider.send("evm_increaseTime", [vestingStart - 1]);
+            await network.provider.send("evm_increaseTime", [vestingStart - 1 + vestingDuration / 2]);
             await network.provider.send("evm_mine");
             await contract.functions['release()']();
 
@@ -151,7 +151,7 @@ describe("Team Vesting test", function () {
             expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(teamSupply.toString());
         });
 
-        it("Should be released 3/4 team supply after 360 + 180 days", async function () {
+        it("Should be released 3/4 team supply after 360 + 270 days", async function () {
             const { DRVN, firstAccount } = await loadFixture(deployDRVN);
 
             let teamSupply = await DRVN.supplyData("Team");
@@ -164,7 +164,7 @@ describe("Team Vesting test", function () {
             );
 
             // passed 3/4 time
-            await network.provider.send("evm_increaseTime", [vestingStart + vestingDuration / 2  - 1]);
+            await network.provider.send("evm_increaseTime", [vestingStart + 3 * vestingDuration / 4 - 1]);
             await network.provider.send("evm_mine");
             await contract.functions['release()']();
 
@@ -172,4 +172,130 @@ describe("Team Vesting test", function () {
             expect(await DRVN.balanceOf(firstAccount.address)).to.be.equal(answer.toString());
         });
     });
+});
+
+
+describe("DRVNERC20Extension DRVN", function(){
+
+    describe("Test setting recipient", function () {
+
+        it("Should set recipient correctly", async function () {
+            const { DRVN, firstAccount } = await loadFixture(deployDRVN);
+
+            await DRVN.setRecipient(firstAccount.address);
+            expect(await DRVN.recipient()).to.be.equal(firstAccount.address);
+
+        });
+
+        it("Should revert while calling no owner", async function () {
+            const { DRVN, firstAccount } = await loadFixture(deployDRVN);
+            expect(DRVN.connect(firstAccount).setRecipient(firstAccount.address))
+                .to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+    });
+
+    describe("Test setting liquidity", function () {
+
+        it("Should set liquidity correctly", async function () {
+            const { DRVN, firstAccount } = await loadFixture(deployDRVN);
+
+            await DRVN.setLiquidityAddress(firstAccount.address, true);
+            expect(await DRVN.isLiquidity(firstAccount.address)).to.be.equal(true);
+
+        });
+
+        it("Should revert while calling no owner", async function () {
+            const { DRVN, firstAccount } = await loadFixture(deployDRVN);
+            expect(DRVN.connect(firstAccount).setLiquidityAddress(firstAccount.address, true))
+                .to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+    });
+
+    describe("Test transfer", function () {
+        it("Should transfer whole amount when the address is not in liquidity contract", async function () {
+            const { DRVN, firstAccount, secondAccount } = await loadFixture(deployDRVN);
+            await DRVN.sendTokens("Dex Liquidity", firstAccount.address, false);
+
+            await DRVN.connect(firstAccount).transfer(secondAccount.address, 100);
+
+            expect(await DRVN.balanceOf(secondAccount.address)).to.be.equal(100);
+        });
+
+        it("Should revert when passing the liquidity address, but recipient is null address", async function () {
+            const { DRVN, firstAccount, secondAccount } = await loadFixture(deployDRVN);
+            await DRVN.sendTokens("Dex Liquidity", firstAccount.address, false);
+
+            await DRVN.setLiquidityAddress(firstAccount.address, true);
+
+            await expect(DRVN.connect(firstAccount).transfer(secondAccount.address, 100))
+                .to.be.revertedWith("DRVNERC20Extension: zero recipient address");
+        });
+
+        it("Should transfer 5 percent on fee address", async function () {
+            const { DRVN, firstAccount, secondAccount, owner } = await loadFixture(deployDRVN);
+            await DRVN.sendTokens("Dex Liquidity", firstAccount.address, false);
+
+            await DRVN.setRecipient(owner.address);
+            await DRVN.setLiquidityAddress(firstAccount.address, true);
+
+            await DRVN.connect(firstAccount).transfer(secondAccount.address, 1000);
+
+            expect(await DRVN.balanceOf(owner.address)).to.be.equal(35);
+            expect(await DRVN.balanceOf(secondAccount.address)).to.be.equal(965);
+        });
+
+        it("Should transfer 5 percent on fee address", async function () {
+            const { DRVN, firstAccount, secondAccount, owner } = await loadFixture(deployDRVN);
+            await DRVN.sendTokens("Dex Liquidity", firstAccount.address, false);
+
+            await DRVN.setRecipient(owner.address);
+            await DRVN.setLiquidityAddress(secondAccount.address, true);
+
+            await DRVN.connect(firstAccount).transfer(secondAccount.address, 10000);
+
+            expect(await DRVN.balanceOf(owner.address)).to.be.equal(350);
+            expect(await DRVN.balanceOf(secondAccount.address)).to.be.equal(9650);
+        });
+
+    });
+
+    describe("Test transfer from", function () {
+        it("Should transfer from whole amount when the address is not in liquidity contract", async function () {
+            const { DRVN, firstAccount, secondAccount } = await loadFixture(deployDRVN);
+            await DRVN.sendTokens("Dex Liquidity", firstAccount.address, false);
+
+            await DRVN.connect(firstAccount).approve(secondAccount.address, 1000);
+            await DRVN.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 1000);
+
+            expect(await DRVN.balanceOf(secondAccount.address)).to.be.equal(1000);
+        });
+
+        it("Should revert when passing the liquidity address, but recipient is null address", async function () {
+            const { DRVN, firstAccount, secondAccount } = await loadFixture(deployDRVN);
+            await DRVN.sendTokens("Dex Liquidity", firstAccount.address, false);
+
+            await DRVN.setLiquidityAddress(firstAccount.address, true);
+
+            await DRVN.connect(firstAccount).approve(secondAccount.address, 100);
+            await expect(DRVN.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 100))
+                .to.be.revertedWith("DRVNERC20Extension: zero recipient address");
+        });
+
+        it("Should transfer from 5 percent on fee address", async function () {
+            const { DRVN, firstAccount, secondAccount, owner } = await loadFixture(deployDRVN);
+            await DRVN.sendTokens("Dex Liquidity", firstAccount.address, false);
+
+            await DRVN.setRecipient(owner.address);
+            await DRVN.setLiquidityAddress(firstAccount.address, true);
+
+            await DRVN.connect(firstAccount).approve(secondAccount.address, 1000);
+            await DRVN.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 1000);
+
+            expect(await DRVN.balanceOf(owner.address)).to.be.equal(35);
+            expect(await DRVN.balanceOf(secondAccount.address)).to.be.equal(965);
+        });
+    });
+
 });
