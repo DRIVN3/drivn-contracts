@@ -199,6 +199,27 @@ describe("DRVNERC20Extension GTT", function(){
 
     });
 
+    describe("Test setting fee percentage", function () {
+
+        it("Should be 5 at start", async function () {
+            const { GTT } = await loadFixture(deployGTT);
+            expect(await GTT.feePercentage()).to.be.equal(5);
+        });
+
+        it("Should set recipient correctly", async function () {
+            const { GTT } = await loadFixture(deployGTT);
+            await GTT.setFeePercentage(3);
+            expect(await GTT.feePercentage()).to.be.equal(3);
+        });
+
+        it("Should revert while calling no owner", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
+            expect(GTT.connect(firstAccount).setFeePercentage(2))
+                .to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+    });
+
     describe("Test transfer", function () {
         it("Should transfer whole amount when the address is not in liquidity contract", async function () {
             const { GTT, firstAccount, secondAccount } = await loadFixture(deployGTT);

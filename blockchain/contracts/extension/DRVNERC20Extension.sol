@@ -14,7 +14,10 @@ contract DRVNERC20Extension is ERC20, Ownable {
 
     // address where all fee's are transferred
     address public recipient;
-    
+
+    // transaction fee (multiplied on 100)
+    uint256 public feePercentage = 5;
+
     /**
      * @dev Constructing the contract
     */
@@ -39,12 +42,21 @@ contract DRVNERC20Extension is ERC20, Ownable {
     }
 
     /**
-     * @dev receipent address
+     * @dev setting receipent address
      * @param recipient_ receipent address
     */
     
     function setRecipient(address recipient_) external onlyOwner {
         recipient = recipient_;
+    }
+
+    /**
+     * @dev setting feePercentage
+     * @param feePercentage_ receipent address
+    */
+    
+    function setFeePercentage(uint256 feePercentage_) external onlyOwner {
+        feePercentage = feePercentage_;
     }
     
     /**
@@ -56,7 +68,7 @@ contract DRVNERC20Extension is ERC20, Ownable {
 
         if (isLiquidity[owner] || isLiquidity[to]) {
             require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
-            uint256 fee = amount * 5 / 100;
+            uint256 fee = amount * feePercentage / 100;
             amount = amount * 95 / 100;
             _transfer(owner, recipient, fee);
         }
