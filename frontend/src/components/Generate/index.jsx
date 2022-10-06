@@ -4,7 +4,8 @@ import Web3Modal from "web3modal";
 import {AssetService, BurnNFTService, EarnNFTService} from "../../service";
 import {getBurnNftTokenFullName, getEarnNftTokenFullName, toHex} from "../../utils";
 import {CHAIN, EARN_NFT_VEHICLE_TYPES} from "../../constants";
-import {EarnNFTContract} from "../../contracts/EarnNFTContract";
+import {EarnNFTManagement} from "../../contracts/EarnNFTManagement";
+
 import {
     AccountInfo,
     Assets,
@@ -16,7 +17,7 @@ import {
     ReloadPageButton,
     Tokens
 } from "../";
-import {BurnNFTContract} from "../../contracts/BurnNFTContract";
+import {BurnNFTManagement} from "../../contracts/BurnNFTManagement";
 import {BurnNFTs} from "../BurnNFTs";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
@@ -64,7 +65,7 @@ export const Generate = () => {
     const handleClaimToken = async (token) => {
         try {
             setLoading({claimingToken: true});
-            await new EarnNFTContract(account.signer).claimGeneratedCoins(token);
+            await new EarnNFTManagement(account.signer).claimGeneratedCoins(token);
             setLoading({claimingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -76,7 +77,7 @@ export const Generate = () => {
     const handleGenerateCoin = async (token, time, claim) => {
         try {
             setLoading({generatingToken: true});
-            await new EarnNFTContract(account.signer).generate(token, time, claim);
+            await new EarnNFTManagement(account.signer).generate(token, time, claim);
             setLoading({generatingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -88,7 +89,7 @@ export const Generate = () => {
     const handleBurnNftTokensBurn = async (token, time) => {
         try {
             setLoading({generatingBurn: true});
-            await new BurnNFTContract(account.signer).generate(token, time);
+            await new EarnNFTManagement(account.signer).generate(token, time);
             setLoading({generatingBurn: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -100,7 +101,7 @@ export const Generate = () => {
     const handleMergeEarnNfts = async (token1, token2) => {
         try {
             setLoading({mergingEarnNft: true});
-            await new EarnNFTContract(account.signer).merge(token1, token2);
+            await new EarnNFTManagement(account.signer).merge(token1, token2);
             setLoading({mergingEarnNft: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -112,10 +113,11 @@ export const Generate = () => {
     const handleMintEarnNft = async (amount, vType) => {
         try {
             setLoading({mintingEarnNft: true});
-            await new EarnNFTContract(account.signer).mint(amount, vType);
+            await new EarnNFTManagement(account.signer).mint(amount, vType);
             setLoading({mintingEarnNft: false});
             setAccountFromProvider(account.library);
         } catch (e) {
+            console.log(e);
             setLoading({mintingEarnNft: false});
             setErrorMessage("Something went wrong. Couldn't mint EarnNFT.");
         }
@@ -144,7 +146,7 @@ export const Generate = () => {
     const handleMintBurnNft = async (vType) => {
         try {
             setLoading({mintingBurnNft: true});
-            await new BurnNFTContract(account.signer).mint(vType);
+            await new BurnNFTManagement(account.signer).mint(vType);
             setLoading({mintingBurnNft: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -169,6 +171,7 @@ export const Generate = () => {
             setBurnNftTokens(metadata);
             setLoading({loadingTokens: false});
         } catch (e) {
+            console.log(e)
             setLoading({loadingTokens: false});
             setErrorMessage("Something went wrong. Couldn't load BurnNFT tokens.");
         }
@@ -274,6 +277,14 @@ export const Generate = () => {
                     <h3>DRVN Demo App</h3>
                 </div>
             </div>
+            
+            <div className="col-12 mt-1">
+                {
+                    account.connected && <ExternalLinks />
+                }
+            </div>
+
+
             <AccountInfo
                 account={account}
                 setErrorMessage={setErrorMessage}
@@ -441,9 +452,6 @@ export const Generate = () => {
                     onBurn={handleBurnNftTokensBurn}
                     loading={loadingState.generatingBurn}
                 />
-            }
-            {
-                account.connected && <ExternalLinks />
             }
         </div>
     );

@@ -30,8 +30,8 @@ export class EarnNFTService {
         }
 
         const contract = new EthcallContract(
-            appConfig.contracts.EarnNFT.address,
-            appConfig.contracts.EarnNFT.abi
+            appConfig.contracts.EarnNFTManagement.address,
+            appConfig.contracts.EarnNFTManagement.abi
         );
 
         const calls = tokens.map((tokenId) => contract.nftInfo(tokenId));
