@@ -2,10 +2,7 @@
 
 pragma solidity 0.8.15;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-
+import "./extension/DRVNERC20Extension.sol";
 import "./GTTBurnWallet.sol";
 
 interface IGTT is IERC20 {
@@ -41,7 +38,7 @@ interface IGTT is IERC20 {
     function mint(address account, uint256 amount_) external;
 }
 
-contract GTT is ERC20, Ownable, Pausable {
+contract GTT is DRVNERC20Extension, Pausable {
 
     // burn wallet contract
     GTTBurnWallet public burnWallet;
@@ -63,7 +60,7 @@ contract GTT is ERC20, Ownable, Pausable {
         string memory name_, 
         string memory symbol_
     )
-    ERC20(name_, symbol_)
+    DRVNERC20Extension(name_, symbol_)
     {
 
         // minting starting coins
@@ -169,4 +166,5 @@ contract GTT is ERC20, Ownable, Pausable {
     {
         super._beforeTokenTransfer(from, to, amount);
     }
+
 }

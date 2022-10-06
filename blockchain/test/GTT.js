@@ -160,3 +160,77 @@ describe("GTT", function () {
         });
     });
 });
+
+describe("DRVNERC20Extension GTT", function(){
+
+    describe("Test setting recipient", function () {
+
+        it("Should set recipient correctly", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
+
+            await GTT.setRecipient(firstAccount.address);
+            expect(await GTT.recipient()).to.be.equal(firstAccount.address);
+
+        });
+
+        it("Should revert while calling no owner", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
+            expect(GTT.connect(firstAccount).setRecipient(firstAccount.address))
+                .to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+    });
+
+    describe("Test setting liquidity", function () {
+
+        it("Should set liquidity correctly", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
+
+            await GTT.setLiquidityAddress(firstAccount.address, true);
+            expect(await GTT.isLiquidity(firstAccount.address)).to.be.equal(true);
+
+        });
+
+        it("Should revert while calling no owner", async function () {
+            const { GTT, firstAccount } = await loadFixture(deployGTT);
+            expect(GTT.connect(firstAccount).setLiquidityAddress(firstAccount.address, true))
+                .to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+    });
+
+    describe("Test transfer", function () {
+        it("Should transfer whole amount when the address is not in liquidity contract", async function () {
+            const { GTT, firstAccount, secondAccount } = await loadFixture(deployGTT);
+            await GTT.distribute(firstAccount.address, 100);
+
+            await GTT.connect(firstAccount).transfer(secondAccount.address, 100);
+
+            expect(await GTT.balanceOf(secondAccount.address)).to.be.equal(100);
+        });
+
+        it("Should revert when passing the liquidity address, but recipient is null address", async function () {
+            const { GTT, firstAccount, secondAccount } = await loadFixture(deployGTT);
+            await GTT.distribute(firstAccount.address, 100);
+
+            await GTT.setLiquidityAddress(firstAccount.address, true);
+
+            await expect(GTT.connect(firstAccount).transfer(secondAccount.address, 100))
+                .to.be.revertedWith("DRVNERC20Extension: zero recipient address");
+        });
+
+        it("Should transfer 5 percent on fee address", async function () {
+            const { GTT, firstAccount, secondAccount, owner } = await loadFixture(deployGTT);
+            await GTT.distribute(firstAccount.address, 100);
+
+            await GTT.setRecipient(owner.address);
+            await GTT.setLiquidityAddress(firstAccount.address, true);
+
+            await GTT.connect(firstAccount).transfer(secondAccount.address, 100);
+
+            expect(await GTT.balanceOf(owner.address)).to.be.equal(5);
+            expect(await GTT.balanceOf(secondAccount.address)).to.be.equal(95);
+        });
+    });
+
+});
