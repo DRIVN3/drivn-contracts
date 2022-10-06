@@ -12,9 +12,6 @@ contract EarnNFT is ERC721Enumerable, Ownable {
     // token counter
     Counters.Counter public tokenIdCounter;
 
-    // max token supply
-    uint256 public constant maxSupply = 10000;
-
     // mapping for allowed addresses
     mapping(address=>bool) public isAllowed;
 
