@@ -102,8 +102,7 @@ async def generated_token_GTT(
 ):
 
     return {
-        "GTT": token_id % 4,
-        "tokenId": token_id
+        "GTT": token_id * 10**18 + token_id % 4,
     }
 
 
