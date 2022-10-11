@@ -95,6 +95,15 @@ async def burn_nft_metadata(
                 }
             ]
         }
-    
+
+@router.get("/generated-token-gtt/{token_id}")
+async def generated_token_GTT(
+    token_id: int = Path(title="The ID of the item to get", default=0)
+):
+
+    return {
+        "GTT": token_id % 4
+    }
+
 
 app.include_router(router)
