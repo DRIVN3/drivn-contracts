@@ -1,5 +1,5 @@
-EARN_NFT_MANAGER = "0x95939E3D624856FE08DF355426e80F440DAA1eB3"
-BURN_NFT_MANAGER = "0x587aC28483970f7A2a38739b88e664dA38A4F63D"
+EARN_NFT_MANAGER = "0xC75aBb95F2d52ABf96e2743fcA9eFa4cE9c42d2e"
+BURN_NFT_MANAGER = "0x713B1Ada985D7E06439f81F048d6C4ad2140a27d"
 MUMBAIURL = "https://matic-mumbai.chainstacklabs.com"
 
 BurnNftAbi = [{
@@ -15,18 +15,6 @@ BurnNftAbi = [{
             "internalType": "enum EType",
             "name": "vehicle",
                 "type": "uint8"
-                }, {
-            "internalType": "uint256",
-            "name": "lastUsage",
-                "type": "uint256"
-                }, {
-            "internalType": "uint256",
-            "name": "powerLeft",
-                "type": "uint256"
-                }, {
-            "internalType": "uint256",
-            "name": "maxPower",
-                "type": "uint256"
             },
             {
                 "name": "score",
@@ -51,19 +39,8 @@ EarnNft = [{
             "internalType": "enum EType",
             "name": "vehicle",
                 "type": "uint8"
-                }, {
-            "internalType": "uint256",
-            "name": "lastUsage",
-                "type": "uint256"
-                }, {
-            "internalType": "uint256",
-            "name": "powerLeft",
-                "type": "uint256"
-                }, {
-            "internalType": "uint256",
-            "name": "maxPower",
-                "type": "uint256"
-                }],
+                }
+                ],
     "stateMutability": "view",
     "type": "function"
 }]
