@@ -160,6 +160,6 @@ contract DRVNCoin is DRVNERC20Extension, ERC20Permit, ERC20Votes, Pausable {
     public 
     override(ERC20, DRVNERC20Extension) 
     returns (bool) {
-            super.transferFrom(from, to, amount);
+            return super.transferFrom(from, to, amount);
     }
 }

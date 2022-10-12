@@ -296,6 +296,18 @@ describe("DRVNERC20Extension DRVN", function(){
             expect(await DRVN.balanceOf(owner.address)).to.be.equal(35);
             expect(await DRVN.balanceOf(secondAccount.address)).to.be.equal(965);
         });
+
+        it("Should transfer from whole amount correctly", async function () {
+            const { DRVN, firstAccount, secondAccount, owner } = await loadFixture(deployDRVN);
+            await DRVN.sendTokens("Dex Liquidity", firstAccount.address, false);
+
+            await DRVN.setRecipient(owner.address);
+
+            await DRVN.connect(firstAccount).approve(secondAccount.address, 1000);
+            await DRVN.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 1000);
+
+            expect(await DRVN.balanceOf(secondAccount.address)).to.be.equal(1000);
+        });
     });
 
 });
