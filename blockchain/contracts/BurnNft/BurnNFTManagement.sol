@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+import "../chainlink/ApiConsumer.sol";
 import "./IBurnNFT.sol";
 
 // enum for electic vehicle
@@ -14,9 +15,6 @@ enum EType { CAR, BICYCLE, SCOOTER }
 // struct NFT information
 struct NFTInformation {
     EType eType;
-    uint256 lastUsage;
-    uint256 powerLeft;
-    uint256 maxPower;
     uint256 score;
 }
 
@@ -24,25 +22,19 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     using Counters for Counters.Counter;
 
     // token counter
-    Counters.Counter public tokenIdCounter;
+    Counters.Counter public burnNFTCounter;
 
     // max supply 
     uint256 public maxBurnNFTSupply;
 
-    // burn power
-    uint256 public constant burnPower = 900;
-
     // mapping for nft information
     mapping(uint256=>NFTInformation) public nftInfo;
 
-    // mapping for allowed addresses
-    mapping(address=>bool) public isAllowed;
-
-    // mapping for nft earning gap
-    mapping(EType=>uint256) public vehicleGTTGap;
-
     // burn nft instance
     IBurnNFT public burnNFT;
+    
+    // api consumer
+    ApiConsumer public apiConsumer;
 
     /**
      * @dev Emitted when mint method is called
@@ -57,10 +49,12 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     /** 
      * @dev Sets main dependencies and constants
      * @param burnNFTAddress_ ERC721 contract address
+     * @param url url of backend endpoint
     */
 
     function initialize(
-        address burnNFTAddress_
+        address burnNFTAddress_,
+        string memory url
     )
     public initializer 
     {
@@ -69,13 +63,10 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
 
         burnNFT = IBurnNFT(burnNFTAddress_);
 
-        // define nft GTT earning gap
-        vehicleGTTGap[EType.CAR] = 4 * 10 ** 18;
-        vehicleGTTGap[EType.SCOOTER] = 9 * 10 ** 18 / 2;
-        vehicleGTTGap[EType.BICYCLE] = 5 * 10 ** 18;
-
         // setting max burn nft supply
         maxBurnNFTSupply = 1000;
+
+        apiConsumer = new ApiConsumer(address(this), url);
     }
 
 
@@ -86,18 +77,15 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     function mint(EType eType) external {
         require(burnNFT.balanceOf(msg.sender) == 0, "BurnNFTManagement: you have already minted once");
         
-        tokenIdCounter.increment();
-        uint256 tokenId = tokenIdCounter.current();
+        burnNFTCounter.increment();
+        uint256 burnNFTCount = burnNFTCounter.current();
         
-        require(tokenId < maxBurnNFTSupply, "BurnNFTManagement: max supply reached");
+        require(burnNFTCount < maxBurnNFTSupply, "BurnNFTManagement: max supply reached");
 
-        burnNFT.mint(msg.sender, tokenId);
+        uint256 tokenId = burnNFT.mint(msg.sender);
         
         nftInfo[tokenId] = NFTInformation(
             eType, // EVehile
-            0, // last usage
-            burnPower, // powerLeft
-            burnPower, // max power,
             0 // score
         );
 
@@ -112,57 +100,29 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     function setMaxBurnNFTSupply(uint256 maxBurnNFTSupply_) external onlyOwner {
         maxBurnNFTSupply = maxBurnNFTSupply_;
     }
-
-    /**
-     * @dev calculates power left for given token id
-     * @param tokenId nft token id
-    */
-
-    function calculatePower(uint256 tokenId) public view returns (uint256) {
-        uint256 maxPower = nftInfo[tokenId].maxPower;
-        uint256 replenishPower = nftInfo[tokenId].powerLeft + (block.timestamp - nftInfo[tokenId].lastUsage) * maxPower / 1 days;
-        replenishPower =  replenishPower <= maxPower ? replenishPower : maxPower;
-        return replenishPower;
-    }
-
-    /**
-     * @dev modifier to detect if address is allowed for specific operation
-    */
-
-    modifier whenAllowed() {
-        require(isAllowed[msg.sender], "BurnNFTManagement: address is not allowed to call this function");
-        _;
-    }
-    /**
-     * @dev setting allowed addresses for nft usage
-     * @param allowedAddress allowed address
-     * @param allowed True/False bool for enable certain operations
-    */
-    
-    function setAllowed(address allowedAddress, bool allowed) external onlyOwner {
-        isAllowed[allowedAddress] = allowed;
-    }
     
     /**
      * @dev updates the vehicle traffic
      * @param tokenId nft token id
-     * @param durationSeconds movement durations in seconds
     */ 
 
-    function generate(uint256 tokenId, uint256 durationSeconds) external whenAllowed {
-        uint256 currentPower = calculatePower(tokenId);
+    function generate(uint256 tokenId) external {
+        apiConsumer.requestData(tokenId);
+    }
 
-        if (currentPower < durationSeconds) {
-            durationSeconds = currentPower;
-        }
+    /** 
+     * @dev callback for Api Consumer
+     * @param tokenId id of token
+     * @param amount amount of coins
+    */
 
-        NFTInformation storage tokenInfo = nftInfo[tokenId];
-        currentPower = currentPower - durationSeconds;
-        tokenInfo.powerLeft = currentPower;
-        tokenInfo.lastUsage = block.timestamp;
-        
-        uint256 earningGap = vehicleGTTGap[tokenInfo.eType];
-        tokenInfo.score += durationSeconds * earningGap / burnPower;
+    function generateCallBack(uint256 tokenId, uint256 amount) external {
+        require(
+            msg.sender == address(apiConsumer) || msg.sender == owner(), 
+            "BurnNFTManagement: sender is not earn api consumer client"
+        );
+
+        nftInfo[tokenId].score = amount;
     }
 
 }

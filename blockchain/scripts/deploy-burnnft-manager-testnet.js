@@ -14,7 +14,7 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   let burnNFTManagement = await ethers.getContractFactory("BurnNFTManagement");
-  burnNFTManagement = await upgrades.deployProxy(burnNFTManagement, [process.env.BURN_NFT_ADDRESS]);
+  burnNFTManagement = await upgrades.deployProxy(burnNFTManagement, [process.env.BURN_NFT_ADDRESS, "http://207.180.211.22:9999/generated-token-gtt/"]);
   await burnNFTManagement.deployed();
 
 

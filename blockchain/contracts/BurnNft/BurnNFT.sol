@@ -4,8 +4,13 @@ pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract BurnNFT is ERC721Enumerable, Ownable {
+    using Counters for Counters.Counter;
+
+    // token counter
+    Counters.Counter public tokenIdCounter;
 
     // base token URI
     string internal _baseTokenURI;
@@ -32,12 +37,13 @@ contract BurnNFT is ERC721Enumerable, Ownable {
 
     /**
      * @dev minting the token on certain address
-     * @param account address of mint receiver
-     * @param tokenId token
     */
 
-    function mint(address account, uint256 tokenId) external whenAllowed {
+    function mint(address account) external whenAllowed returns (uint256) {
+        tokenIdCounter.increment();
+        uint256 tokenId = tokenIdCounter.current();
         _mint(account, tokenId);
+        return tokenId;
     }
 
     /**
