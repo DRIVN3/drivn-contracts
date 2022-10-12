@@ -26,8 +26,8 @@ async function main() {
   
   try{
     await hre.run("verify:verify", {
-      address: "0xf470efb80e998d25a3cbb80a8961151db82be866",
-      constructorArguments: ["0xdEb17d4A256929DA42A9E1756734754B29439dBd", "http://207.180.211.22:9999/generated-token-gtt/"],
+      address: "0x5e033c9f5a6cdb852a6a0ee03f470f36cdcd6d4e",
+      constructorArguments: ["0x713B1Ada985D7E06439f81F048d6C4ad2140a27d", "http://207.180.211.22:9999/generated-token-gtt/"],
     });
     console.log("Source Verified on APIConsumer");
 

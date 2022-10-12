@@ -14,7 +14,7 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   let DRVNCoin = await ethers.getContractFactory("DRVNCoin");
-  DRVNCoin = await DRVNCoin.deploy("test DRVNCoin", "DRVNCoin");
+  DRVNCoin = await DRVNCoin.deploy("test DRVNCoin", "DRVNCoin", 50);
   await DRVNCoin.deployed()
   
 
@@ -26,7 +26,7 @@ async function main() {
   try{
     await hre.run("verify:verify", {
       address: DRVNCoin.address,
-      constructorArguments: ["test DRVNCoin", "DRVNCoin"],
+      constructorArguments: ["test DRVNCoin", "DRVNCoin", 50],
     });
     console.log("Source Verified on DRVNCoin");
 
