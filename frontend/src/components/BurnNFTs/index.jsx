@@ -2,33 +2,20 @@ import {Button} from "react-bootstrap";
 import {useState} from "react";
 import {getBurnNftTokenFullName} from "../../utils";
 
-export const BurnNFTs = ({
+export const BurnNFT = ({
                              allTokens,
                              loading,
                              onBurn,
                          }) => {
     const [tokenOptions] = useState([...allTokens]);
     const [tokenId, setTokenId] = useState(allTokens[0]?.tokenId || null);
-    const [maxPower, setMaxPower] = useState(allTokens[0]?.powerLeft);
-    const [time, setTime] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleTimeChange = (e) => {
-        const value = e.target.value;
-        if (Number(value) <= maxPower) {
-            setErrorMessage('');
-            setTime(Number(value));
-        } else {
-            setErrorMessage('Time can\'t be greater than token powerLeft.');
-        }
-    }
 
     const handleToken1Selection = (e) => {
         const value = e.target.value;
         const newTokenId = Number(value);
         setTokenId(newTokenId);
-        const tokenObject = allTokens.find((t) => t.tokenId === newTokenId);
-        setMaxPower(tokenObject.powerLeft);
     }
 
     if (allTokens.length === 0) {
@@ -62,24 +49,13 @@ export const BurnNFTs = ({
                     </select>
                 }
             </div>
-            <div className="col-6 text-start fw-bold">
-                <span>time: </span>
-                <input
-                    className="time-input"
-                    value={time}
-                    onChange={handleTimeChange}
-                    type="number"
-                    min={0}
-                />
-                <span className="text-danger mx-2">{errorMessage}</span>
-            </div>
             <div className="col-12 mt-3">
                 <Button
                     disabled={!tokenId || loading}
                     className="btn-success"
                     onClick={() => {
                         setErrorMessage('');
-                        onBurn(tokenId, time);                
+                        onBurn(tokenId);                
                     }}
                 >
                     {loading ? 'Burning...' : 'Burn'}

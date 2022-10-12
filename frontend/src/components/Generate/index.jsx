@@ -18,7 +18,7 @@ import {
     Tokens
 } from "../";
 import {BurnNFTManagement} from "../../contracts/BurnNFTManagement";
-import {BurnNFTs} from "../BurnNFTs";
+import {BurnNFT} from "../BurnNFTs";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
@@ -62,22 +62,10 @@ export const Generate = () => {
         });
     };
 
-    const handleClaimToken = async (token) => {
-        try {
-            setLoading({claimingToken: true});
-            await new EarnNFTManagement(account.signer).claimGeneratedCoins(token);
-            setLoading({claimingToken: false});
-            setAccountFromProvider(account.library);
-        } catch (e) {
-            setLoading({claimingToken: false});
-            setErrorMessage("Something went wrong. Couldn't claiming EarnNFT token.");
-        }
-    };
-
     const handleGenerateCoin = async (token, time, claim) => {
         try {
             setLoading({generatingToken: true});
-            await new EarnNFTManagement(account.signer).generate(token, time, claim);
+            await new EarnNFTManagement(account.signer).generate(token);
             setLoading({generatingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -89,7 +77,7 @@ export const Generate = () => {
     const handleBurnNftTokensBurn = async (token, time) => {
         try {
             setLoading({generatingBurn: true});
-            await new EarnNFTManagement(account.signer).generate(token, time);
+            await new EarnNFTManagement(account.signer).generate(token);
             setLoading({generatingBurn: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -384,7 +372,6 @@ export const Generate = () => {
                 !loadingState.loadingTokens && earnNftTokens !== undefined && <GenerateCoin
                     allTokens={earnNftTokens}
                     onGenerate={handleGenerateCoin}
-                    onClaim={handleClaimToken}
                     isGenerating={loadingState.generatingToken}
                     isClaiming={loadingState.claimingToken}
                 />
@@ -447,7 +434,7 @@ export const Generate = () => {
                 </>
             }
             {
-                !loadingState.loadingTokens && burnNftTokens !== undefined && <BurnNFTs
+                !loadingState.loadingTokens && burnNftTokens !== undefined && <BurnNFT
                     allTokens={burnNftTokens}
                     onBurn={handleBurnNftTokensBurn}
                     loading={loadingState.generatingBurn}

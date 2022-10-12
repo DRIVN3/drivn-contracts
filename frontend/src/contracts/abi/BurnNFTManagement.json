@@ -77,6 +77,19 @@
     },
     {
         "inputs": [],
+        "name": "apiConsumer",
+        "outputs": [
+            {
+                "internalType": "contract ApiConsumer",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "burnNFT",
         "outputs": [
             {
@@ -90,11 +103,11 @@
     },
     {
         "inputs": [],
-        "name": "burnPower",
+        "name": "burnNFTCounter",
         "outputs": [
             {
                 "internalType": "uint256",
-                "name": "",
+                "name": "_value",
                 "type": "uint256"
             }
         ],
@@ -106,30 +119,6 @@
             {
                 "internalType": "uint256",
                 "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "calculatePower",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "durationSeconds",
                 "type": "uint256"
             }
         ],
@@ -141,12 +130,17 @@
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "burnNFTAddress_",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
             }
         ],
-        "name": "initialize",
+        "name": "generateCallBack",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -155,16 +149,28 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "",
+                "name": "burnNFTAddress_",
                 "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "url",
+                "type": "string"
             }
         ],
-        "name": "isAllowed",
+        "name": "initialize",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "maxBurnNFTSupply",
         "outputs": [
             {
-                "internalType": "bool",
+                "internalType": "uint256",
                 "name": "",
-                "type": "bool"
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -200,21 +206,6 @@
             },
             {
                 "internalType": "uint256",
-                "name": "lastUsage",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "powerLeft",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "maxPower",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
                 "name": "score",
                 "type": "uint256"
             }
@@ -245,17 +236,12 @@
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "allowedAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "bool",
-                "name": "allowed",
-                "type": "bool"
+                "internalType": "uint256",
+                "name": "maxBurnNFTSupply_",
+                "type": "uint256"
             }
         ],
-        "name": "setAllowed",
+        "name": "setMaxBurnNFTSupply",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -271,25 +257,6 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "enum EType",
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "name": "vehicleGTTGap",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     }
 ]
