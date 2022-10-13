@@ -43,7 +43,6 @@ async def earn_nft_metadata(
 
     level = Level[nft_info[0]]
     etype = EType[nft_info[1]]
-    max_power = nft_info[4]
 
     return {
             "description": f'This is an example of Earn NFT {token_id}',
@@ -58,10 +57,6 @@ async def earn_nft_metadata(
                     "trait_type": 'EType', 
                     "value": etype
                 }, 
-                {
-                    "trait_type": "power", 
-                    "value": max_power
-                }, 
             ]
         }
     
@@ -73,8 +68,7 @@ async def burn_nft_metadata(
     nft_info = burn_nft.functions.nftInfo(token_id).call()
     
     etype = EType[nft_info[0]]
-    max_power = nft_info[3]
-    score = nft_info[4]
+    score = nft_info[1]
 
     return {
             "name": f'Earn BURN Example {token_id}',
@@ -86,23 +80,18 @@ async def burn_nft_metadata(
                     "value": etype
                 }, 
                 {
-                    "trait_type": "power", 
-                    "value": max_power
-                }, 
-                {
                     "trait_type": "score", 
                     "value": score / 10**18
                 }
             ]
         }
-
 @router.get("/generated-token-gtt/{token_id}")
 async def generated_token_GTT(
     token_id: int = Path(title="The ID of the item to get", default=0)
 ):
 
     return {
-        "GTT": token_id % 4,
+        "GTT": (token_id % 4) * 10**18,
         "tokenId": token_id
     }
 

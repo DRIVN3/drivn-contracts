@@ -19,8 +19,8 @@ export class BurnNFTManagement {
         await receipt.wait();
     };
 
-    generate = async (tokenId, time) => {
-        const receipt = await this.contract.generate(tokenId, time);
+    generate = async (tokenId) => {
+        const receipt = await this.contract.generate(tokenId);
         await receipt.wait();
     };
 }

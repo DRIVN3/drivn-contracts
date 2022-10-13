@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+import "../chainlink/ApiConsumer.sol";
 import "./IEarnNFT.sol";
 import "../GTT.sol";
 
@@ -19,10 +20,6 @@ enum Level { COMMON, UNCOMMON, RARE, EPIC }
 struct NFTInformation {
     Level nftType;
     EType eType;
-    uint256 lastUsage;
-    uint256 powerLeft;
-    uint256 maxPower;
-    uint256 powerUsed;
     uint256 powerClaimed;
 }
 
@@ -47,12 +44,6 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     // mapping for nft information
     mapping(uint256=>NFTInformation) public nftInfo;
 
-    // mapping for nft information
-    mapping(Level=>uint256) public nftTypePower;
-
-    // mapping for nft earning gap
-    mapping(EType=>uint256) public vehicleGTTGap;
-
     // max car possible supply
     uint256 public maxCarSupply;
 
@@ -74,6 +65,9 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     // mapping for allowed addresses
     mapping(address=>bool) public isAllowed;
 
+    // api consumer
+    ApiConsumer public apiConsumer;
+
     /**
      * @dev Emitted when mint method is called
      */
@@ -89,11 +83,13 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
      * @dev Sets main dependencies and constants
      * @param earnNFTAddress_ ERC721 contract address
      * @param gttAddress_ GTT ERC20 address
+     * @param url url of backend endpoint
     */
 
     function initialize(
         address earnNFTAddress_,
-        address gttAddress_
+        address gttAddress_,
+        string memory url
     )
     public initializer 
     {
@@ -103,21 +99,12 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         gttCoin = IGTT(gttAddress_);
         earnNFT = IEarnNFT(earnNFTAddress_);
 
-        // define powers
-        nftTypePower[Level.COMMON] = 1 * powerMultiplier();
-        nftTypePower[Level.UNCOMMON] = 2 * powerMultiplier();
-        nftTypePower[Level.RARE] = 3 * powerMultiplier();
-        nftTypePower[Level.EPIC] = 4 * powerMultiplier();
-
-        // define nft GTT earning gap
-        vehicleGTTGap[EType.CAR] = 4 * 10 ** gttCoin.decimals();
-        vehicleGTTGap[EType.SCOOTER] = 9 * 10 ** gttCoin.decimals() / 2;
-        vehicleGTTGap[EType.BICYCLE] = 5 * 10 ** gttCoin.decimals();
-
         // define initial eType supplies
         maxCarSupply = 7000;
         maxBicycleSupply = 1000;
         maxScooterSupply = 2000;
+
+        apiConsumer = new ApiConsumer(address(this), url);
     }
 
     /**
@@ -180,10 +167,6 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         nftInfo[tokenId] = NFTInformation(
             Level.COMMON, // nft type is common
             eType, // EVehile
-            0, // last usage
-            nftTypePower[Level.COMMON], // powerLeft
-            nftTypePower[Level.COMMON], // max power,
-            0, // power used
             0 // power claimed
         );
 
@@ -204,7 +187,6 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
             "EarnNFTManagement: EType of nft does not match");
 
         // calculate new nft power and level
-        uint256 newPower = nftInfo[tokenId1].maxPower + nftInfo[tokenId2].maxPower;
         uint256 levelUint = uint256(nftInfo[tokenId1].nftType) + uint256(nftInfo[tokenId2].nftType) + 1;
         require(levelUint <= uint256(Level.EPIC), "EarnNFTManagement: Power is too high");
 
@@ -214,10 +196,6 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         nftInfo[tokenId] = NFTInformation(
             Level(levelUint), // nft type is common
             nftInfo[tokenId1].eType, // vehicle
-            0, // last usage
-            newPower, // powerLeft
-            newPower, // maxPower
-            0, // power used
             0 // power claimed
         );
 
@@ -229,103 +207,28 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     }
 
     /**
-     * @dev setting allowed addresses for nft usage
-     * @param allowedAddress allowed address
-     * @param allowed True/False bool for enable certain operations
-    */
-    
-    function setAllowed(address allowedAddress, bool allowed) external onlyOwner {
-        isAllowed[allowedAddress] = allowed;
-    }
-
-    /**
-     * @dev modifier to detect if address is allowed for specific operation
-    */
-
-    modifier whenAllowed() {
-        require(isAllowed[msg.sender], "EarnNFTManagement: address is not allowed to call this function");
-        _;
-    }
-
-    /**
-     * @dev pure function for returning decimals of power
-    */
-
-    function powerMultiplier() public pure returns (uint256) {
-        return 900;
-    }
-
-    /**
-     * @dev calculates power left for given token id
-     * @param tokenId nft token id
-    */
-
-    function calculatePower(uint256 tokenId) public view returns (uint256) {
-        uint256 maxPower = nftInfo[tokenId].maxPower;
-        uint256 replenishPower = nftInfo[tokenId].powerLeft + (block.timestamp - nftInfo[tokenId].lastUsage) * maxPower / 1 days;
-        replenishPower =  replenishPower <= maxPower ? replenishPower : maxPower;
-        return replenishPower;
-    }
-    
-
-    /**
-     * @dev gets the current claim coins amount by token
-     * @param tokenId nft token id
-    */ 
-    
-    function getClaimAmount(uint256 tokenId) public view returns(uint256) {
-        NFTInformation memory tokenInfo = nftInfo[tokenId];
-        uint256 earningGap = vehicleGTTGap[tokenInfo.eType];
-        uint256 earned = (tokenInfo.powerUsed - tokenInfo.powerClaimed) * earningGap / 900;
-        return earned;
-    }
-
-
-    /**
      * @dev updates the vehicle traffic
      * @param tokenId nft token id
-     * @param durationSeconds movement durations in seconds
-     * @param claim claims if true else not claims 
     */ 
 
-    function generate(uint256 tokenId, uint256 durationSeconds, bool claim) external whenAllowed {
-        uint256 currentPower = calculatePower(tokenId);
-
-        if (currentPower < durationSeconds) {
-            durationSeconds = currentPower;
-        }
-
-        NFTInformation storage tokenInfo = nftInfo[tokenId];
-        currentPower = currentPower - durationSeconds;
-        tokenInfo.powerLeft = currentPower;
-        tokenInfo.lastUsage = block.timestamp;
-
-        tokenInfo.powerUsed += durationSeconds;
-
-        if (claim) {
-            _claimGeneratedCoins(tokenId);
-        }
+    function generate(uint256 tokenId) external {
+        apiConsumer.requestData(tokenId);
     }
 
-    /**
-     * @dev claiming GTT tokens
-     * @param tokenId nft token id
-    */ 
+    /** 
+     * @dev callback for Api Consumer
+     * @param tokenId id of token
+     * @param amount amount of coins
+    */
 
-    function claimGeneratedCoins(uint256 tokenId) external {
-        require(earnNFT.ownerOf(tokenId) == msg.sender, "EarnNFTManagement: sender is not the owner of the token");
-        _claimGeneratedCoins(tokenId);
-    }
+    function generateCallBack(uint256 tokenId, uint256 amount) external {
+        require(
+            msg.sender == address(apiConsumer) || msg.sender == owner(), 
+            "EarnNFTManagement: sender is not earn api consumer client"
+        );
 
-    /**
-     * @dev internal claiming GTT tokens
-     * @param tokenId nft token id
-    */ 
-
-    function _claimGeneratedCoins(uint256 tokenId) internal {
-        uint256 earned = getClaimAmount(tokenId);
-        nftInfo[tokenId].powerClaimed = nftInfo[tokenId].powerUsed;
-        gttCoin.mint(earnNFT.ownerOf(tokenId), earned);
+        gttCoin.mint(earnNFT.ownerOf(tokenId), amount - nftInfo[tokenId].powerClaimed);
+        nftInfo[tokenId].powerClaimed = amount;
     }
 
 }

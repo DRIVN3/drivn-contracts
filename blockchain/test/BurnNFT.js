@@ -20,7 +20,7 @@ async function getContracts() {
     burnNFT = await burnNFT.deploy(name, symbol, baseUri); 
 
     let burnNFTManagement = await ethers.getContractFactory("BurnNFTManagement");
-    burnNFTManagement = await upgrades.deployProxy(burnNFTManagement, [burnNFT.address]);
+    burnNFTManagement = await upgrades.deployProxy(burnNFTManagement, [burnNFT.address, "testurl"]);
     await burnNFTManagement.deployed();
 
     await burnNFT.setAllowed(burnNFTManagement.address, true);
@@ -52,7 +52,7 @@ describe("BurnNFT", function () {
 
         it("Should fail while minting not allowed", async function () {
             const { burnNFT, owner } = await loadFixture(getContracts);
-            await expect(burnNFT.mint(owner.address, 1))
+            await expect(burnNFT.mint(owner.address))
                 .to.be.revertedWith("BurnNFT: address is not allowed to call this function");
         });
 
@@ -80,67 +80,36 @@ describe("BurnNFT", function () {
         });
     });
 
-    describe("test generated pseudo GTT", function () {
-        it("should fail when calling not allowed user", async function () {
-            const { burnNFTManagement, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFTManagement.connect(firstAccount).mint(SCOOTER);
+    describe("test EarnNFTManagement generating callback", function () {
 
-            await expect(burnNFTManagement.connect(owner).generate(1, 450))
-                .to.be.revertedWith("BurnNFTManagement: address is not allowed to call this function");
+        it("Should fail while calling with no api consumer", async function () {
+            const { burnNFTManagement, firstAccount } = await loadFixture(getContracts);
+            await expect(burnNFTManagement.connect(firstAccount).generateCallBack(1, 3))
+                .to.be.revertedWith("BurnNFTManagement: sender is not earn api consumer client");
         });
 
-        it("should be generate pseudo power of 2 GTT when generate was called", async function () {
-            const { burnNFTManagement, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFTManagement.connect(firstAccount).mint(CAR);
+        it("should equal 3 after call generateCallBack function", async function () {
+            const { burnNFTManagement, firstAccount, GTT } = await loadFixture(getContracts);
 
-            await burnNFTManagement.setAllowed(owner.address, true);
-            await burnNFTManagement.connect(owner).generate(1, 450);
+            await burnNFTManagement.connect(firstAccount).mint(CAR);
+            await burnNFTManagement.generateCallBack(1, 3);
 
             let info = await burnNFTManagement.nftInfo(1);
-            expect(info.score).to.be.equal("2000000000000000000");
+            expect(await info.score).to.be.equal(3);
         });
 
-        it("should be generate pseudo power of 4 GTT when generate was called", async function () {
-            const { burnNFTManagement, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFTManagement.connect(firstAccount).mint(CAR);
+        it("should not generated again when allready generated 3", async function () {
+            const { burnNFTManagement, firstAccount, GTT } = await loadFixture(getContracts);
 
-            await burnNFTManagement.setAllowed(owner.address, true);
-            await burnNFTManagement.connect(owner).generate(1, 900);
+            await burnNFTManagement.connect(firstAccount).mint(CAR);
+            await burnNFTManagement.generateCallBack(1, 3);
+            await burnNFTManagement.generateCallBack(1, 3);
+            await burnNFTManagement.generateCallBack(1, 3);
 
             let info = await burnNFTManagement.nftInfo(1);
-            expect(info.score).to.be.equal("4000000000000000000");
-        });
-
-        it("should be generate pseudo power of 6 GTT when generate fully and replenished half", async function () {
-            const { burnNFTManagement, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFTManagement.connect(firstAccount).mint(CAR);
-
-            await burnNFTManagement.setAllowed(owner.address, true);
-            await burnNFTManagement.connect(owner).generate(1, 900);
-            
-            const halfDay = 12 * 60 * 60;
-            await network.provider.send("evm_increaseTime", [halfDay]);
-            await network.provider.send("evm_mine");
-
-            await burnNFTManagement.connect(owner).generate(1, 450);
-            let info = await burnNFTManagement.nftInfo(1);
-            expect(info.score).to.be.equal("6000000000000000000");
-        });
-
-        it("should equal half power after half day passed when fully wasted power", async function () {
-            const { burnNFTManagement, firstAccount, owner } = await loadFixture(getContracts);
-            await burnNFTManagement.connect(firstAccount).mint(CAR);
-
-            await burnNFTManagement.setAllowed(owner.address, true);
-            await burnNFTManagement.connect(owner).generate(1, 900);
-            
-            const halfDay = 12 * 60 * 60;
-            await network.provider.send("evm_increaseTime", [halfDay]);
-            await network.provider.send("evm_mine");
-
-            expect(await burnNFTManagement.calculatePower(1))
-                .to.be.equal(450);
+            expect(await info.score).to.be.equal(3);
         });
 
     });
+
 });

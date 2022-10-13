@@ -14,7 +14,7 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   let earnNFTManagement = await ethers.getContractFactory("EarnNFTManagement");
-  earnNFTManagement = await upgrades.deployProxy(earnNFTManagement, [process.env.EARN_NFT_ADDRESS, process.env.GTT_ADDRESS]);
+  earnNFTManagement = await upgrades.deployProxy(earnNFTManagement, [process.env.EARN_NFT_ADDRESS, process.env.GTT_ADDRESS, "http://207.180.211.22:9999/generated-token-gtt/"]);
   await earnNFTManagement.deployed();
 
 

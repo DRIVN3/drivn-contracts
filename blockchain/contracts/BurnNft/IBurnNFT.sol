@@ -10,10 +10,9 @@ interface IBurnNFT {
     /**
      * @dev minting the token on certain address
      * @param account address of mint receiver
-     * @param tokenId token
     */
 
-    function mint(address account, uint256 tokenId) external;
+    function mint(address account) external returns (uint256);
 
     /**
      * @dev gets the ownerOf certain tokenId

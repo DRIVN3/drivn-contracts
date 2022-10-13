@@ -39,13 +39,11 @@ export class BurnNFTService {
         );
 
         const calls = tokens.map((tokenId) => contract.nftInfo(tokenId));
-        const powerLeftCalls = tokens.map((tokenId) => contract.calculatePower(tokenId));
 
         const ethcallProvider = new EthcallProvider();
         await ethcallProvider.init(provider);
 
         const data = await ethcallProvider.tryAll(calls);
-        const powerLeftData = await ethcallProvider.tryAll(powerLeftCalls);
         return data.map((nftInfo, index) => {
             return {
                 vehicleType: {
@@ -53,8 +51,6 @@ export class BurnNFTService {
                     name: EARN_NFT_VEHICLE_TYPES_ARRAY[nftInfo.eType],
                 },
                 score: Number.parseFloat(ethers.utils.formatEther(nftInfo.score.toString())),
-                maxPower: Number(nftInfo.maxPower.toString()),
-                powerLeft: Number(powerLeftData[index].toString()),
             };
         });
     };

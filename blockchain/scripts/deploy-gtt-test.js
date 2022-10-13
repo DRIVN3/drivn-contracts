@@ -14,7 +14,7 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   let gtt = await ethers.getContractFactory("GTT");
-  gtt = await gtt.deploy("test GTT", "GTT");
+  gtt = await gtt.deploy("test GTT", "GTT", 50);
   await gtt.deployed()
   
 
@@ -28,7 +28,7 @@ async function main() {
   try{
     await hre.run("verify:verify", {
       address: gtt.address,
-      constructorArguments: ["test GTT", "GTT"],
+      constructorArguments: ["test GTT", "GTT", 50],
     });
     console.log("Source Verified on gtt");
 
