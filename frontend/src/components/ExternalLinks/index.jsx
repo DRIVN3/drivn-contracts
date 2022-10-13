@@ -24,7 +24,7 @@ export const ExternalLinks = () => {
         <div className="col-12 fw-bold">
             <a
                 target="_blank"
-                href="https://www.tally.xyz/governance/eip155:80001:0x3C651e8402caCAa710bd6623e0491a8e738f91A3"
+                href="https://www.tally.xyz/governance/eip155:80001:0xa4E516AF9266F2a59E6038757E5b37421966F02C"
                 rel="noopener noreferrer"
             >Tally</a>
         </div>
