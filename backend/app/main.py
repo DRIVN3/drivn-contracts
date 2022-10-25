@@ -35,7 +35,7 @@ image_etype = {
 }
 
 
-@router.get("/earn-nft/testnets/{token_id}")
+@router.get("/testnets/earn-nft/{token_id}")
 async def earn_nft_metadata(
     token_id: int = Path(title="The ID of the item to get", default=0)
 ):
@@ -61,7 +61,7 @@ async def earn_nft_metadata(
         }
     
 
-@router.get("/burn-nft/testnets/{token_id}")
+@router.get("/testnets/burn-nft/{token_id}")
 async def burn_nft_metadata(
     token_id: int = Path(title="The ID of the item to get", default=0)
 ):
@@ -85,7 +85,7 @@ async def burn_nft_metadata(
                 }
             ]
         }
-@router.get("/generated-token-gtt/{token_id}")
+@router.get("/testnets/generated-token-gtt/{token_id}")
 async def generated_token_GTT(
     token_id: int = Path(title="The ID of the item to get", default=0)
 ):
