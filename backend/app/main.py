@@ -1,6 +1,7 @@
 from web3 import Web3
 from fastapi import FastAPI, Path, APIRouter
 from app.settings import EARN_NFT_MANAGER, BURN_NFT_MANAGER, BurnNftAbi, EarnNft, MUMBAIURL
+import random
 
 router = APIRouter(
     prefix="",
@@ -34,6 +35,12 @@ image_etype = {
     "SCOOTER": "https://ipfs.io/ipfs/QmUEXkGdnuPEAAYpVKqUswYV1U9xiiQhG2BsLhuFKbTTJs"
 }
 
+LevelPower = {
+    "COMMON": 900,
+    "UNCOMMON": 1800,
+    "RARE": 2700,
+    "EPIC": 3600
+}
 
 @router.get("/testnets/earn-nft/{token_id}")
 async def earn_nft_metadata(
@@ -57,6 +64,14 @@ async def earn_nft_metadata(
                     "trait_type": 'EType', 
                     "value": etype
                 }, 
+                {
+                    "trait_type": 'MaxPower', 
+                    "value": LevelPower[level]
+                }, 
+                {
+                    "trait_type": 'PowerLeft', 
+                    "value": random.randint(0, LevelPower[level])
+                }, 
             ]
         }
     
@@ -78,6 +93,14 @@ async def burn_nft_metadata(
                 {
                     "trait_type": 'EType', 
                     "value": etype
+                }, 
+                {
+                    "trait_type": 'MaxPower', 
+                    "value": LevelPower["COMMON"]
+                }, 
+                {
+                    "trait_type": 'PowerLeft', 
+                    "value": random.randint(0, LevelPower["COMMON"])
                 }, 
                 {
                     "trait_type": "score", 
