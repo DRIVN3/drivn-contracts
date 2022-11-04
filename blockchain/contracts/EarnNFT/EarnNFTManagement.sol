@@ -67,9 +67,6 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     // mapping for allowed addresses
     mapping(address=>bool) public isAllowed;
 
-    // api consumer
-    ApiConsumer public apiConsumer;
-
     // signer of the message
     address public messageSigner;
 
@@ -109,8 +106,6 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         maxCarSupply = 7000;
         maxBicycleSupply = 1000;
         maxScooterSupply = 2000;
-
-        apiConsumer = new ApiConsumer(address(this), url);
     }
 
     /**

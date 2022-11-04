@@ -33,9 +33,6 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
 
     // burn nft instance
     IBurnNFT public burnNFT;
-    
-    // api consumer
-    ApiConsumer public apiConsumer;
 
     // burn nft price
     uint256 public burnNFTPrice;
@@ -74,8 +71,6 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         maxBurnNFTSupply = 1000;
 
         burnNFTPrice = 0.01 ether;
-
-        apiConsumer = new ApiConsumer(address(this), url);
     }
 
 
