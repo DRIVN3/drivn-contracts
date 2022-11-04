@@ -3,11 +3,12 @@
 pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/TokenTimelock.sol";
 
 import "./DRVNVesting.sol";
 
 
-contract PublicSales is Ownable {
+contract PreSales is Ownable {
 
     // DRVN token
     IERC20 public immutable token;
@@ -16,59 +17,58 @@ contract PublicSales is Ownable {
     uint256 public constant coinPrice = 0.01 ether;
 
     // private sale enable flag
-    bool public publicSalesEnabled;
+    bool public preSalesEnabled;
 
-    // mapping between address and it's created VestingContracts contracts
-    mapping(address => address[]) public vestingWallets;
+    // mapping between address and it's created tokenTimeLock contracts
+    mapping(address => address[]) public lockContracts;
 
     constructor(address token_)  {
         token = IERC20(token_);
     }
 
     /** 
-     * @dev setting publicSalesEnabled variable
+     * @dev setting preSalesEnabled variable
      * @param enabled boolean True if enables, False otherwise
     */
 
-    function setPublicSalesEnabled(bool enabled) external onlyOwner {
-        publicSalesEnabled = enabled;
+    function setPreSalesEnabled(bool enabled) external onlyOwner {
+        preSalesEnabled = enabled;
     }
 
     /**
-     * @dev createVestWallet function will crete the VestWallet
+     * @dev _createTimeLock function will crete the time lock function
      * @param beneficiaryAddress is a address of the beneficiary
-     * @param durationSeconds duration of vesting in seconds after it starts
+     * @param releaseTime release time of coins 
      * @param amount amount of coins
     */
 
-    function _createVestWallet(
+    function _createTimeLock(
         address beneficiaryAddress,
-        uint64 durationSeconds,
+        uint256 releaseTime,
         uint256 amount
     ) internal {
 
         // creating vesting wallet contract
-        VestingContract vestingWallet = new VestingContract(
+        TokenTimelock lock = new TokenTimelock(
+            token,
             beneficiaryAddress, 
-            block.timestamp + 360 days,
-            durationSeconds, 
-            address(token)
+            releaseTime
         );
 
         // transfer vesting amount to VestingWallet contract
-        token.transfer(address(vestingWallet), amount);
+        token.transfer(address(lock), amount);
 
         // adding created contract in this mapping
-        vestingWallets[beneficiaryAddress].push(address(vestingWallet));
+        lockContracts[beneficiaryAddress].push(address(lock));
     }
 
     /**
-     * @dev function gets a created VestWallet contracts for provided account
+     * @dev function gets a created lock contracts for provided account
      * @param account is a address the account
     */
 
-    function getAccountVestingWallets(address account) external view returns (address[] memory) {
-        return vestingWallets[account];
+    function getAccountLockContracts(address account) external view returns (address[] memory) {
+        return lockContracts[account];
     }
 
     /**
@@ -76,11 +76,11 @@ contract PublicSales is Ownable {
     */
 
     function buy() external payable {
-        require(publicSalesEnabled, "PublicSales: sale is not enabled");
-        require(msg.value > 0, "PublicSales: should not be zero amount");
+        require(preSalesEnabled, "PreSales: sale is not enabled");
+        require(msg.value > 0, "PreSales: should not be zero amount");
         
         uint256 amount = msg.value * 10 ** 18 / coinPrice;
-        _createVestWallet(msg.sender, 360 days, amount);
+        _createTimeLock(msg.sender, block.timestamp + 7 days, amount);
     }
 
     /**
@@ -89,6 +89,6 @@ contract PublicSales is Ownable {
 
     function withdraw() external onlyOwner {
         (bool success,) = payable(owner()).call{value : address(this).balance}("");
-        require(success, "PublicSales: unsuccessful withdraw");
+        require(success, "PreSales: unsuccessful withdraw");
     }
 }
