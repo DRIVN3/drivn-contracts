@@ -36,6 +36,9 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     // api consumer
     ApiConsumer public apiConsumer;
 
+    // burn nft price
+    uint256 public burnNFTPrice;
+
     /**
      * @dev Emitted when mint method is called
      */
@@ -66,6 +69,8 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         // setting max burn nft supply
         maxBurnNFTSupply = 1000;
 
+        burnNFTPrice = 0.01 ether;
+
         apiConsumer = new ApiConsumer(address(this), url);
     }
 
@@ -74,9 +79,10 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
      * @dev buying the token
     */
 
-    function mint(EType eType) external {
+    function mint(EType eType) external payable {
         require(burnNFT.balanceOf(msg.sender) == 0, "BurnNFTManagement: you have already minted once");
-        
+        require(msg.value == burnNFTPrice, "BurnNFTManagement: not enough money");
+
         burnNFTCounter.increment();
         uint256 burnNFTCount = burnNFTCounter.current();
         
@@ -123,6 +129,15 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         );
 
         nftInfo[tokenId].score = amount;
+    }
+
+    /**
+     * @dev withdraw the amount of coins from contract address to owner
+    */
+
+    function withdraw() external onlyOwner {
+        (bool success,) = payable(owner()).call{value : address(this).balance}("");
+        require(success, "EarnNFTManagement: unsuccessful withdraw");
     }
 
 }

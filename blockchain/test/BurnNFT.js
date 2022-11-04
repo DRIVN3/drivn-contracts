@@ -9,6 +9,8 @@ const COMMON = 0;
 const COMMONPOWER = 1;
 const CAR = 0, BICYCLE = 1, SCOOTER = 2;
 
+const burnNFTPRice = ethers.utils.parseEther('0.01');
+
 async function getContracts() {
 
     const [owner, firstAccount, secondAccount] = await ethers.getSigners();
@@ -46,7 +48,7 @@ describe("BurnNFT", function () {
         it("Should fail when minting > 1000 nft", async function () {
             const { burnNFTManagement } = await loadFixture(getContracts);
             await burnNFTManagement.setMaxBurnNFTSupply(0);
-            await expect(burnNFTManagement.mint(0))
+            await expect(burnNFTManagement.mint(0, {value: burnNFTPRice}))
                 .to.be.revertedWith("BurnNFTManagement: max supply reached");
         });
 
@@ -58,7 +60,7 @@ describe("BurnNFT", function () {
 
         it("Should mint correctly", async function () {
             const { burnNFT, burnNFTManagement, firstAccount, baseUri } = await loadFixture(getContracts);
-            await burnNFTManagement.connect(firstAccount).mint(SCOOTER);
+            await burnNFTManagement.connect(firstAccount).mint(SCOOTER, {value: burnNFTPRice});
             
             expect(await burnNFT.ownerOf(1)).to.be.equal(firstAccount.address);
             expect(await burnNFT.tokenURI(1)).to.be.equal(baseUri+'1');
@@ -66,7 +68,7 @@ describe("BurnNFT", function () {
 
         it("Should get scooter NFT info correctly", async function () {
             const { burnNFT, burnNFTManagement, firstAccount, baseUri } = await loadFixture(getContracts);
-            await burnNFTManagement.connect(firstAccount).mint(SCOOTER);
+            await burnNFTManagement.connect(firstAccount).mint(SCOOTER, {value: burnNFTPRice});
             
             nftInfo = await burnNFTManagement.nftInfo(1);
             expect(nftInfo.eType).to.be.equal(SCOOTER);
@@ -74,8 +76,8 @@ describe("BurnNFT", function () {
 
         it("should fail after twice", async function () {
             const { burnNFTManagement, firstAccount } = await loadFixture(getContracts);
-            await burnNFTManagement.connect(firstAccount).mint(BICYCLE);
-            await expect(burnNFTManagement.connect(firstAccount).mint(BICYCLE))
+            await burnNFTManagement.connect(firstAccount).mint(BICYCLE, {value: burnNFTPRice});
+            await expect(burnNFTManagement.connect(firstAccount).mint(BICYCLE), {value: burnNFTPRice})
                 .to.be.revertedWith("BurnNFTManagement: you have already minted once");
         });
     });
@@ -91,7 +93,7 @@ describe("BurnNFT", function () {
         it("should equal 3 after call generateCallBack function", async function () {
             const { burnNFTManagement, firstAccount, GTT } = await loadFixture(getContracts);
 
-            await burnNFTManagement.connect(firstAccount).mint(CAR);
+            await burnNFTManagement.connect(firstAccount).mint(CAR, {value: burnNFTPRice});
             await burnNFTManagement.generateCallBack(1, 3);
 
             let info = await burnNFTManagement.nftInfo(1);
@@ -101,7 +103,7 @@ describe("BurnNFT", function () {
         it("should not generated again when allready generated 3", async function () {
             const { burnNFTManagement, firstAccount, GTT } = await loadFixture(getContracts);
 
-            await burnNFTManagement.connect(firstAccount).mint(CAR);
+            await burnNFTManagement.connect(firstAccount).mint(CAR, {value: burnNFTPRice});
             await burnNFTManagement.generateCallBack(1, 3);
             await burnNFTManagement.generateCallBack(1, 3);
             await burnNFTManagement.generateCallBack(1, 3);
@@ -111,5 +113,23 @@ describe("BurnNFT", function () {
         });
 
     });
+
+    describe("test BurnNFTManagement withdraw", function () {
+        it("Should fail while calling no owner", async function () {
+            const { burnNFTManagement, firstAccount } = await loadFixture(getContracts);
+            await expect(burnNFTManagement.connect(firstAccount).withdraw())
+                .to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+        it("Should withdraw correctly", async function () {
+            const { burnNFTManagement, firstAccount, owner } = await loadFixture(getContracts);
+            await burnNFTManagement.connect(firstAccount).mint(CAR, {value: burnNFTPRice});
+            
+            expect(await ethers.provider.getBalance(burnNFTManagement.address)).to.be.equal(burnNFTPRice);
+            await burnNFTManagement.withdraw();
+            expect(await ethers.provider.getBalance(burnNFTManagement.address)).to.be.equal(0);
+        });            
+    });
+
 
 });
