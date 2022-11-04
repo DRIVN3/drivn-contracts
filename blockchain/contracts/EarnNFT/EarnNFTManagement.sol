@@ -8,7 +8,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "../chainlink/ApiConsumer.sol";
 import "./IEarnNFT.sol";
 import "../GTT.sol";
 

@@ -7,7 +7,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "../chainlink/ApiConsumer.sol";
 import "./IBurnNFT.sol";
 
 // enum for electic vehicle
