@@ -30,7 +30,14 @@ async function getContracts() {
     return { earnNFT, owner, firstAccount, secondAccount, name, symbol, baseUri, GTT, earnNftManagement } 
 }
 
-
+const getSignatureData = async (tokenId, amount, ) => {
+    const finalValue = utils.solidityKeccak256(["uint256", "uint256"], [tokenId, amount]);
+    const message = ethers.utils.arrayify(finalValue);
+    const [owner] = await ethers.getSigners();
+    const signed = await owner.signMessage(message);
+    return { message: finalValue, signed: signed };
+};
+  
 describe("EarnNFt", function () { 
     describe("EarnNFT deployment", function () {
         describe("Deployment", function () {
@@ -85,31 +92,32 @@ describe("EarnNFt", function () {
 
         });
 
-        describe("test EarnNFTManagement generating callback", function () {
-            it("Should fail while calling with no api consumer", async function () {
-                const { earnNftManagement, firstAccount } = await loadFixture(getContracts);
-                await expect(earnNftManagement.connect(firstAccount).generateCallBack(1, 3))
-                    .to.be.revertedWith("EarnNFTManagement: sender is not earn api consumer client");
-            });
-
+        describe("test EarnNFTManagement generating", function () {
             it("should equal 3 after call generateCallBack function", async function () {
-                const { earnNftManagement, firstAccount, GTT } = await loadFixture(getContracts);
+                const { earnNftManagement, owner, firstAccount, GTT } = await loadFixture(getContracts);
 
                 await GTT.setAllowedMint(earnNftManagement.address, true);
                 await earnNftManagement.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-                await earnNftManagement.generateCallBack(1, 3);
+                await earnNftManagement.setMessageSigner(owner.address);
+
+
+                const signature = await getSignatureData(1, 3);                                
+                await earnNftManagement.connect(firstAccount).generate(1, 3, signature.signed);
 
                 expect(await GTT.balanceOf(firstAccount.address)).to.be.equal(3);
             });
 
             it("should not generated again when allready generated 3", async function () {
-                const { earnNftManagement, firstAccount, GTT } = await loadFixture(getContracts);
+                const { earnNftManagement, owner, firstAccount, GTT } = await loadFixture(getContracts);
 
                 await GTT.setAllowedMint(earnNftManagement.address, true);
                 await earnNftManagement.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
-                await earnNftManagement.generateCallBack(1, 3);
-                await earnNftManagement.generateCallBack(1, 3);
-                await earnNftManagement.generateCallBack(1, 3);
+                await earnNftManagement.setMessageSigner(owner.address);
+
+                const signature = await getSignatureData(1, 3);
+                await earnNftManagement.connect(firstAccount).generate(1, 3, signature.signed);
+                await earnNftManagement.connect(firstAccount).generate(1, 3, signature.signed);
+                await earnNftManagement.connect(firstAccount).generate(1, 3, signature.signed);
 
                 expect(await GTT.balanceOf(firstAccount.address)).to.be.equal(3);
             });
