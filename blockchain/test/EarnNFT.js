@@ -297,6 +297,26 @@ describe("EarnNFt", function () {
             });
 
         });
+
+        describe("test EarnNFTManagement withdraw", function () {
+            it("Should fail while calling no owner", async function () {
+                const { earnNftManagement, firstAccount } = await loadFixture(getContracts);
+                await expect(earnNftManagement.connect(firstAccount).withdraw())
+                    .to.be.revertedWith("Ownable: caller is not the owner");
+            });
+
+            it("Should withdraw correctly", async function () {
+                const { earnNftManagement, firstAccount, owner } = await loadFixture(getContracts);
+                await earnNftManagement.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+                
+                const previousBalance = await ethers.provider.getBalance(owner.address);
+
+                expect(await ethers.provider.getBalance(earnNftManagement.address)).to.be.equal(ethers.utils.parseEther('0.01'));
+                await earnNftManagement.withdraw();
+                expect(await ethers.provider.getBalance(earnNftManagement.address)).to.be.equal(0);
+            });            
+        });
+
     });
 
 

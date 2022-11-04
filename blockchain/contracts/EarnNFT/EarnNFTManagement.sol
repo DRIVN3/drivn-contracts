@@ -231,4 +231,13 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         nftInfo[tokenId].powerClaimed = amount;
     }
 
+    /**
+     * @dev withdraw the amount of coins from contract address to owner
+    */
+
+    function withdraw() external onlyOwner {
+        (bool success,) = payable(owner()).call{value : address(this).balance}("");
+        require(success, "EarnNFTManagement: unsuccessful withdraw");
+    }
+
 }
