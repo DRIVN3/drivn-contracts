@@ -30,6 +30,14 @@ async function getContracts() {
     return { burnNFT, burnNFTManagement, owner, firstAccount, secondAccount, name, symbol, baseUri } 
 }
 
+const getSignatureData = async (tokenId, amount, ) => {
+    const finalValue = utils.solidityKeccak256(["uint256", "uint256"], [tokenId, amount]);
+    const message = ethers.utils.arrayify(finalValue);
+    const [owner] = await ethers.getSigners();
+    const signed = await owner.signMessage(message);
+    return { message: finalValue, signed: signed };
+};
+
 
 describe("BurnNFT", function () { 
     describe("BurnNFT deployment", function () {
@@ -82,31 +90,32 @@ describe("BurnNFT", function () {
         });
     });
 
-    describe("test EarnNFTManagement generating callback", function () {
-
-        it("Should fail while calling with no api consumer", async function () {
-            const { burnNFTManagement, firstAccount } = await loadFixture(getContracts);
-            await expect(burnNFTManagement.connect(firstAccount).generateCallBack(1, 3))
-                .to.be.revertedWith("BurnNFTManagement: sender is not earn api consumer client");
-        });
+    describe("test BurnNFTManagement generating", function () {
 
         it("should equal 3 after call generateCallBack function", async function () {
-            const { burnNFTManagement, firstAccount, GTT } = await loadFixture(getContracts);
+            const { burnNFTManagement, firstAccount, owner } = await loadFixture(getContracts);
 
             await burnNFTManagement.connect(firstAccount).mint(CAR, {value: burnNFTPRice});
-            await burnNFTManagement.generateCallBack(1, 3);
+            await burnNFTManagement.setMessageSigner(owner.address);
+            
+            const signature = await getSignatureData(1, 3);                                
+            await burnNFTManagement.generate(1, 3, signature.signed);
 
             let info = await burnNFTManagement.nftInfo(1);
             expect(await info.score).to.be.equal(3);
         });
 
         it("should not generated again when allready generated 3", async function () {
-            const { burnNFTManagement, firstAccount, GTT } = await loadFixture(getContracts);
+            const { burnNFTManagement, firstAccount, owner } = await loadFixture(getContracts);
 
             await burnNFTManagement.connect(firstAccount).mint(CAR, {value: burnNFTPRice});
-            await burnNFTManagement.generateCallBack(1, 3);
-            await burnNFTManagement.generateCallBack(1, 3);
-            await burnNFTManagement.generateCallBack(1, 3);
+            await burnNFTManagement.setMessageSigner(owner.address);
+
+            const signature = await getSignatureData(1, 3);                                
+
+            await burnNFTManagement.generate(1, 3, signature.signed);
+            await burnNFTManagement.generate(1, 3, signature.signed);
+            await burnNFTManagement.generate(1, 3, signature.signed);
 
             let info = await burnNFTManagement.nftInfo(1);
             expect(await info.score).to.be.equal(3);

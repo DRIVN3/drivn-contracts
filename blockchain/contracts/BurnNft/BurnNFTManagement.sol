@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -20,6 +21,7 @@ struct NFTInformation {
 
 contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradeable  {
     using Counters for Counters.Counter;
+    using ECDSA for bytes32;
 
     // token counter
     Counters.Counter public burnNFTCounter;
@@ -38,6 +40,9 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
 
     // burn nft price
     uint256 public burnNFTPrice;
+
+    // signer of the message
+    address public messageSigner;
 
     /**
      * @dev Emitted when mint method is called
@@ -107,26 +112,26 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         maxBurnNFTSupply = maxBurnNFTSupply_;
     }
     
-    /**
-     * @dev updates the vehicle traffic
-     * @param tokenId nft token id
-    */ 
+    /** 
+     * @dev setting the message signer
+     * @param messageSigner_ signer of the message
+    */
 
-    function generate(uint256 tokenId) external {
-        apiConsumer.requestData(tokenId);
+    function setMessageSigner(address messageSigner_) external onlyOwner {
+        messageSigner = messageSigner_;
     }
 
     /** 
-     * @dev callback for Api Consumer
+     * @dev generating pseudo coins for burn nft
      * @param tokenId id of token
      * @param amount amount of coins
     */
 
-    function generateCallBack(uint256 tokenId, uint256 amount) external {
-        require(
-            msg.sender == address(apiConsumer) || msg.sender == owner(), 
-            "BurnNFTManagement: sender is not earn api consumer client"
-        );
+    function generate(uint256 tokenId, uint256 amount, bytes memory allowSignature) external {
+        bytes32 message = keccak256(abi.encodePacked(tokenId, amount));
+        bytes32 hash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", message));
+        address signatureAddress = hash.recover(allowSignature);
+        require(signatureAddress == messageSigner, "BurnNFTManagement: invalid signature");
 
         nftInfo[tokenId].score = amount;
     }
