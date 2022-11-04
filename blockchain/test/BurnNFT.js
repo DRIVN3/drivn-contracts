@@ -121,6 +121,17 @@ describe("BurnNFT", function () {
             expect(await info.score).to.be.equal(3);
         });
 
+        it("should not generated when signature is invalid", async function () {
+            const { burnNFTManagement, owner, firstAccount } = await loadFixture(getContracts);
+
+            await burnNFTManagement.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+            await burnNFTManagement.setMessageSigner(owner.address);
+
+            const signature = await getSignatureData(1, 4);
+            await expect(burnNFTManagement.connect(firstAccount).generate(1, 3, signature.signed))
+                .to.be.revertedWith("BurnNFTManagement: invalid signature");
+        });
+
     });
 
     describe("test BurnNFTManagement withdraw", function () {

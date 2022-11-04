@@ -122,6 +122,17 @@ describe("EarnNFt", function () {
                 expect(await GTT.balanceOf(firstAccount.address)).to.be.equal(3);
             });
 
+            it("should not generated when signature is invalid", async function () {
+                const { earnNftManagement, owner, firstAccount, GTT } = await loadFixture(getContracts);
+
+                await GTT.setAllowedMint(earnNftManagement.address, true);
+                await earnNftManagement.connect(firstAccount).mint(CAR, {value: ethers.utils.parseEther('0.01')});
+                await earnNftManagement.setMessageSigner(owner.address);
+
+                const signature = await getSignatureData(1, 4);
+                await expect(earnNftManagement.connect(firstAccount).generate(1, 3, signature.signed))
+                    .to.be.revertedWith("EarnNFTManagement: invalid signature");
+            });
         });
 
         describe("test EarnNFTManagement minting", function () {
