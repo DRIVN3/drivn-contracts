@@ -357,7 +357,7 @@
             "label": "apiConsumer",
             "offset": 0,
             "slot": "105",
-            "type": "t_contract(ApiConsumer)20335",
+            "type": "t_contract(ApiConsumer)20664",
             "contract": "BurnNFTManagement",
             "src": "contracts\\BurnNft\\BurnNFTManagement.sol:41"
           },
@@ -387,7 +387,7 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(ApiConsumer)20335": {
+          "t_contract(ApiConsumer)20664": {
             "label": "contract ApiConsumer",
             "numberOfBytes": "20"
           },
@@ -449,9 +449,9 @@
         }
       }
     },
-    "fcbe12ecd9098759695247f095090fe5ad05ae4f3a3fa0af3a414c5596dbf05b": {
+    "7a18b34fa53a3ded422150dd30a2601ef12e131d27825a58c5d97718aad5de3a": {
       "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
-      "txHash": "0x5a7d1c09bbcd26858314d800e4d42e10a8838e0c0f7a39d4657d52d3e7434fe6",
+      "txHash": "0x060dda72603450d944e348efb6dd938774a61fda7eb6da30dd94875100265696",
       "layout": {
         "storage": [
           {
@@ -523,7 +523,7 @@
             "label": "gttCoin",
             "offset": 0,
             "slot": "104",
-            "type": "t_contract(IGTT)19427",
+            "type": "t_contract(IGTT)19756",
             "contract": "EarnNFTManagement",
             "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:43"
           },
@@ -531,7 +531,7 @@
             "label": "earnNFT",
             "offset": 0,
             "slot": "105",
-            "type": "t_contract(IEarnNFT)19380",
+            "type": "t_contract(IEarnNFT)19709",
             "contract": "EarnNFTManagement",
             "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:46"
           },
@@ -539,7 +539,7 @@
             "label": "nftInfo",
             "offset": 0,
             "slot": "106",
-            "type": "t_mapping(t_uint256,t_struct(NFTInformation)18335_storage)",
+            "type": "t_mapping(t_uint256,t_struct(NFTInformation)18664_storage)",
             "contract": "EarnNFTManagement",
             "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:49"
           },
@@ -579,7 +579,7 @@
             "label": "apiConsumer",
             "offset": 0,
             "slot": "111",
-            "type": "t_contract(ApiConsumer)20335",
+            "type": "t_contract(ApiConsumer)20664",
             "contract": "EarnNFTManagement",
             "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:73"
           }
@@ -601,19 +601,19 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(ApiConsumer)20335": {
+          "t_contract(ApiConsumer)20664": {
             "label": "contract ApiConsumer",
             "numberOfBytes": "20"
           },
-          "t_contract(IEarnNFT)19380": {
+          "t_contract(IEarnNFT)19709": {
             "label": "contract IEarnNFT",
             "numberOfBytes": "20"
           },
-          "t_contract(IGTT)19427": {
+          "t_contract(IGTT)19756": {
             "label": "contract IGTT",
             "numberOfBytes": "20"
           },
-          "t_enum(EType)18321": {
+          "t_enum(EType)18650": {
             "label": "enum EType",
             "members": [
               "CAR",
@@ -622,7 +622,7 @@
             ],
             "numberOfBytes": "1"
           },
-          "t_enum(Level)18326": {
+          "t_enum(Level)18655": {
             "label": "enum Level",
             "members": [
               "COMMON",
@@ -636,7 +636,7 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(NFTInformation)18335_storage)": {
+          "t_mapping(t_uint256,t_struct(NFTInformation)18664_storage)": {
             "label": "mapping(uint256 => struct NFTInformation)",
             "numberOfBytes": "32"
           },
@@ -652,18 +652,18 @@
             ],
             "numberOfBytes": "32"
           },
-          "t_struct(NFTInformation)18335_storage": {
+          "t_struct(NFTInformation)18664_storage": {
             "label": "struct NFTInformation",
             "members": [
               {
                 "label": "nftType",
-                "type": "t_enum(Level)18326",
+                "type": "t_enum(Level)18655",
                 "offset": 0,
                 "slot": "0"
               },
               {
                 "label": "eType",
-                "type": "t_enum(EType)18321",
+                "type": "t_enum(EType)18650",
                 "offset": 1,
                 "slot": "0"
               },
