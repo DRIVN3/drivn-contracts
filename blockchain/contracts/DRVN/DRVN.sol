@@ -2,15 +2,17 @@
 
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-import "../extension/DRVNERC20Extension.sol";
 import "./DRVNVesting.sol";
 
-contract DRVNCoin is DRVNERC20Extension, ERC20Permit, ERC20Votes, Pausable {
+contract DRVNCoin is ERC20, Ownable, ERC20Permit, ERC20Votes, Pausable {
     using Address for address;
 
     // start coins
@@ -22,6 +24,18 @@ contract DRVNCoin is DRVNERC20Extension, ERC20Permit, ERC20Votes, Pausable {
     // mapping for supplyName and vesting contract
     mapping(string => address) public vestingContracts;
 
+    // mapping for allowed burn addresses
+    mapping(address=>bool) public isLiquidity;    
+
+    // address where all fee's are transferred
+    address public recipient;
+
+    // transaction fee (multiplied on 1000)
+    uint256 public feePercentage;
+
+    // fee multiplier
+    uint256 public constant feeMultiplier = 1000;
+
     /**
      * @dev Constructing the contract minting 5000000000 coin to the contract address and setting name, symbol
     */
@@ -31,7 +45,7 @@ contract DRVNCoin is DRVNERC20Extension, ERC20Permit, ERC20Votes, Pausable {
         string memory symbol_,
         uint256 feePercentage_
     )
-    DRVNERC20Extension(name_, symbol_, feePercentage_)
+    ERC20(name_, symbol_)
     ERC20Permit(symbol_)
     {
 
@@ -48,6 +62,8 @@ contract DRVNCoin is DRVNERC20Extension, ERC20Permit, ERC20Votes, Pausable {
         supplyData["Ecosystem / Treasury"] = 1_000_000_000 * 10 ** decimals();
         supplyData["Dex Liquidity"] = 375_000_000 * 10 ** decimals();
         supplyData["Holdback"] = 500_000_000 * 10 ** decimals();
+
+        feePercentage = feePercentage_;
     }
 
     /**
@@ -141,15 +157,53 @@ contract DRVNCoin is DRVNERC20Extension, ERC20Permit, ERC20Votes, Pausable {
     }
 
     /**
+     * @dev setting LP address
+     * @param liquidityAddress contract from LP 
+     * @param value True/False bool for checking LP address
+    */
+    
+    function setLiquidityAddress(address liquidityAddress, bool value) external onlyOwner {
+        isLiquidity[liquidityAddress] = value;
+    }
+
+    /**
+     * @dev setting receipent address
+     * @param recipient_ receipent address
+    */
+    
+    function setRecipient(address recipient_) external onlyOwner {
+        recipient = recipient_;
+    }
+
+    /**
+     * @dev setting feePercentage
+     * @param feePercentage_ receipent address
+    */
+    
+    function setFeePercentage(uint256 feePercentage_) external onlyOwner {
+        feePercentage = feePercentage_;
+    }
+
+    /**
      * @dev overriding transfer function.
     */
 
     function transfer(address to, uint256 amount) 
     public 
-    override(ERC20, DRVNERC20Extension)
+    override(ERC20)
     returns (bool)
     {
-        return super.transfer(to, amount);
+        address owner = _msgSender();
+
+        if (isLiquidity[owner] || isLiquidity[to]) {
+            require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
+            uint256 fee = amount * feePercentage / feeMultiplier;
+            amount = amount * (feeMultiplier-feePercentage) / feeMultiplier;
+            _transfer(owner, recipient, fee);
+        }
+
+        _transfer(owner, to, amount);
+        return true;
     }
 
     function transferFrom(
@@ -158,8 +212,19 @@ contract DRVNCoin is DRVNERC20Extension, ERC20Permit, ERC20Votes, Pausable {
             uint256 amount
     ) 
     public 
-    override(ERC20, DRVNERC20Extension) 
+    override(ERC20) 
     returns (bool) {
-            return super.transferFrom(from, to, amount);
+        address spender = _msgSender();
+        _spendAllowance(from, spender, amount);
+       
+        if (isLiquidity[from] || isLiquidity[to]) {
+            require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
+            uint256 fee = amount * feePercentage / feeMultiplier;
+            amount = amount * (feeMultiplier-feePercentage) / feeMultiplier;
+            _transfer(from, recipient, fee);
+        }
+
+        _transfer(from, to, amount);
+        return true;
     }
 }
