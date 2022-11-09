@@ -2,7 +2,10 @@
 
 pragma solidity 0.8.15;
 
-import "./extension/DRVNERC20Extension.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "./GTTBurnWallet.sol";
 
 interface IGTT is IERC20 {
@@ -38,7 +41,7 @@ interface IGTT is IERC20 {
     function mint(address account, uint256 amount_) external;
 }
 
-contract GTT is DRVNERC20Extension, Pausable {
+contract GTT is ERC20, Ownable, Pausable {
 
     // burn wallet contract
     GTTBurnWallet public burnWallet;
@@ -52,6 +55,18 @@ contract GTT is DRVNERC20Extension, Pausable {
     // mapping for allowed burn addresses
     mapping(address=>bool) public isAllowedBurn;
 
+    // mapping for allowed burn addresses
+    mapping(address=>bool) public isLiquidity;    
+
+    // address where all fee's are transferred
+    address public recipient;
+
+    // transaction fee (multiplied on 1000)
+    uint256 public feePercentage;
+
+    // fee multiplier
+    uint256 public constant feeMultiplier = 1000;
+
     /**
      * @dev Constructing the contract minting 200000 coin to the contract address and setting name, symbol
     */
@@ -61,7 +76,7 @@ contract GTT is DRVNERC20Extension, Pausable {
         string memory symbol_,
         uint256 feePercentage_
     )
-    DRVNERC20Extension(name_, symbol_, feePercentage_)
+    ERC20(name_, symbol_)
     {
 
         // minting starting coins
@@ -71,6 +86,8 @@ contract GTT is DRVNERC20Extension, Pausable {
 
         // burn allowed
         isAllowedBurn[address(burnWallet)] = true;
+
+        feePercentage = feePercentage_;
     }
 
     /**
@@ -98,6 +115,75 @@ contract GTT is DRVNERC20Extension, Pausable {
 
     function burn(uint256 count) external onlyAllowedBurn {
         _burn(msg.sender, count);
+    }
+
+    /**
+     * @dev setting LP address
+     * @param liquidityAddress contract from LP 
+     * @param value True/False bool for checking LP address
+    */
+    
+    function setLiquidityAddress(address liquidityAddress, bool value) external onlyOwner {
+        isLiquidity[liquidityAddress] = value;
+    }
+
+    /**
+     * @dev setting receipent address
+     * @param recipient_ receipent address
+    */
+    
+    function setRecipient(address recipient_) external onlyOwner {
+        recipient = recipient_;
+    }
+
+    /**
+     * @dev setting feePercentage
+     * @param feePercentage_ receipent address
+    */
+    
+    function setFeePercentage(uint256 feePercentage_) external onlyOwner {
+        feePercentage = feePercentage_;
+    }
+    
+    /**
+     * @dev ERC20 transfer override. checking if sender or to addresess are in liquidity.
+    */
+
+    function transfer(address to, uint256 amount) public virtual override returns (bool) {
+        address owner = _msgSender();
+
+        if (isLiquidity[owner] || isLiquidity[to]) {
+            require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
+            uint256 fee = amount * feePercentage / feeMultiplier;
+            amount = amount * (feeMultiplier-feePercentage) / feeMultiplier;
+            _transfer(owner, recipient, fee);
+        }
+
+        _transfer(owner, to, amount);
+        return true;
+    }
+
+    /**
+     * @dev ERC20 transferFrom override. checking if sender or to addresess are in liquidity.
+    */
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) public virtual override returns (bool) {
+        address spender = _msgSender();
+        _spendAllowance(from, spender, amount);
+       
+        if (isLiquidity[from] || isLiquidity[to]) {
+            require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
+            uint256 fee = amount * feePercentage / feeMultiplier;
+            amount = amount * (feeMultiplier-feePercentage) / feeMultiplier;
+            _transfer(from, recipient, fee);
+        }
+
+        _transfer(from, to, amount);
+        return true;
     }
 
     /**

@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "../chainlink/ApiConsumer.sol";
 import "./IEarnNFT.sol";
 import "../GTT.sol";
 
@@ -25,6 +26,7 @@ struct NFTInformation {
 
 contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradeable  {
     using Counters for Counters.Counter;
+    using ECDSA for bytes32;
 
     // car token counter
     Counters.Counter public carCounter;
@@ -65,8 +67,9 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     // mapping for allowed addresses
     mapping(address=>bool) public isAllowed;
 
-    // api consumer
-    ApiConsumer public apiConsumer;
+    // signer of the message
+    address public messageSigner;
+
 
     /**
      * @dev Emitted when mint method is called
@@ -103,8 +106,6 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
         maxCarSupply = 7000;
         maxBicycleSupply = 1000;
         maxScooterSupply = 2000;
-
-        apiConsumer = new ApiConsumer(address(this), url);
     }
 
     /**
@@ -133,6 +134,16 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     function setMaxScooterSupply(uint256 maxScooterSupply_) external onlyOwner {
         maxScooterSupply = maxScooterSupply_;
     }
+
+    /** 
+     * @dev setting the message signer
+     * @param messageSigner_ signer of the message
+    */
+
+    function setMessageSigner(address messageSigner_) external onlyOwner {
+        messageSigner = messageSigner_;
+    }
+
 
     /**
      * @dev buying the token
@@ -205,30 +216,29 @@ contract EarnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
 
         emit Merge(msg.sender, tokenId1, tokenId2, tokenId);
     }
-
-    /**
-     * @dev updates the vehicle traffic
-     * @param tokenId nft token id
-    */ 
-
-    function generate(uint256 tokenId) external {
-        apiConsumer.requestData(tokenId);
-    }
-
     /** 
      * @dev callback for Api Consumer
      * @param tokenId id of token
      * @param amount amount of coins
     */
 
-    function generateCallBack(uint256 tokenId, uint256 amount) external {
-        require(
-            msg.sender == address(apiConsumer) || msg.sender == owner(), 
-            "EarnNFTManagement: sender is not earn api consumer client"
-        );
+    function generate(uint256 tokenId, uint256 amount, bytes memory allowSignature) external {
+        bytes32 message = keccak256(abi.encodePacked(tokenId, amount));
+        bytes32 hash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", message));
+        address signatureAddress = hash.recover(allowSignature);
+        require(signatureAddress == messageSigner, "EarnNFTManagement: invalid signature");
 
         gttCoin.mint(earnNFT.ownerOf(tokenId), amount - nftInfo[tokenId].powerClaimed);
         nftInfo[tokenId].powerClaimed = amount;
+    }
+
+    /**
+     * @dev withdraw the amount of coins from contract address to owner
+    */
+
+    function withdraw() external onlyOwner {
+        (bool success,) = payable(owner()).call{value : address(this).balance}("");
+        require(success, "EarnNFTManagement: unsuccessful withdraw");
     }
 
 }
