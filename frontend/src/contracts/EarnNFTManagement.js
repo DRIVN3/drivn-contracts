@@ -32,15 +32,12 @@ export class EarnNFTManagement {
     }
 
     generate = async (token, amount) => {
-        console.log(token, amount)
-        console.log("yvelaferi kargadaa")
 
         const url = `http://207.180.211.22:9999/testnets/generate-signature/tokenId=${token}&amount=${amount}`;
         const response = await fetch(url);
         const data = await response.json();
     
         const signature = data.signature;
-        console.log(data)
         const receipt = await this.contract.generate(token, amount, this.hexToBytes(signature));
         await receipt.wait();
     };

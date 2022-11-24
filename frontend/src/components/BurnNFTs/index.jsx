@@ -1,6 +1,7 @@
 import {Button} from "react-bootstrap";
 import {useState} from "react";
 import {getBurnNftTokenFullName} from "../../utils";
+import {BigNumber} from 'ethers';
 
 export const BurnNFT = ({
                              allTokens,
@@ -10,7 +11,11 @@ export const BurnNFT = ({
     const [tokenOptions] = useState([...allTokens]);
     const [tokenId, setTokenId] = useState(allTokens[0]?.tokenId || null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [amount, setAmount] = useState(0)
 
+    const handleAmountChange = (e) => {
+        setAmount(e.target.value)
+    }
 
     const handleToken1Selection = (e) => {
         const value = e.target.value;
@@ -49,13 +54,22 @@ export const BurnNFT = ({
                     </select>
                 }
             </div>
+
+            <div className="col-6 text-start fw-bold">
+                    <span>Total Claim Amount: </span>
+                    <input
+                        value={amount}
+                        onChange={handleAmountChange}
+                    />
+            </div>
+
             <div className="col-12 mt-3">
                 <Button
                     disabled={!tokenId || loading}
                     className="btn-success"
                     onClick={() => {
                         setErrorMessage('');
-                        onBurn(tokenId);                
+                        onBurn(tokenId, BigNumber.from(String(amount * Math.pow(10, 18))));                
                     }}
                 >
                     {loading ? 'Burning...' : 'Burn'}

@@ -75,10 +75,10 @@ export const Generate = () => {
         }
     };
 
-    const handleBurnNftTokensBurn = async (token, time) => {
+    const handleBurnNftTokensBurn = async (token, amount) => {
         try {
             setLoading({generatingBurn: true});
-            await new EarnNFTManagement(account.signer).generate(token);
+            await new BurnNFTManagement(account.signer).generate(token, amount);
             setLoading({generatingBurn: false});
             setAccountFromProvider(account.library);
         } catch (e) {
