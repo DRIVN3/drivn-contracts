@@ -457,9 +457,9 @@
         }
       }
     },
-    "12a9866967585ed2edbcab37e118abd9fc2c4c53e08115a40fd4777ab9424ef8": {
+    "3044d9ac3a7a705872ddc2c953d5bd5998159a62a0ab95e9517a79a90f8334e7": {
       "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
-      "txHash": "0xb34027be49007095c949bba8c779ceb6b2f125bca3b5af311040bf45f7cd855d",
+      "txHash": "0xbf5f22fadef52e9b126673866526e9b0360e9cd4d2e8a2b07e6c6172184d60e4",
       "layout": {
         "storage": [
           {
@@ -531,7 +531,7 @@
             "label": "gttCoin",
             "offset": 0,
             "slot": "104",
-            "type": "t_contract(IGTT)17941",
+            "type": "t_contract(IGTT)17942",
             "contract": "EarnNFTManagement",
             "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:45"
           },
@@ -539,7 +539,7 @@
             "label": "earnNFT",
             "offset": 0,
             "slot": "105",
-            "type": "t_contract(IEarnNFT)17892",
+            "type": "t_contract(IEarnNFT)17893",
             "contract": "EarnNFTManagement",
             "src": "contracts\\EarnNFT\\EarnNFTManagement.sol:48"
           },
@@ -609,11 +609,11 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(IEarnNFT)17892": {
+          "t_contract(IEarnNFT)17893": {
             "label": "contract IEarnNFT",
             "numberOfBytes": "20"
           },
-          "t_contract(IGTT)17941": {
+          "t_contract(IGTT)17942": {
             "label": "contract IGTT",
             "numberOfBytes": "20"
           },

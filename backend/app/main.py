@@ -134,16 +134,17 @@ async def generated_token_GTT(
         "tokenId": token_id
     }
 
-@router.get("/testnets/generate-signature/tokenId={token_id}&amount={amount}")
+@router.get("/testnets/generate-signature/tokenId={token_id}&amount={amount}&nft_type={nft_type}")
 async def sign_message(
     token_id: int = Path(title="The ID of the item to get", default=0),
-    amount: int = Path(title="The ID of the item to get", default=0)
+    amount: int = Path(title="The ID of the item to get", default=0),
+    nft_type: str = Path(title="the type of nft: burn, earn", default="burnNFT"),
 ):
-    message = W3_MAINNET.solidityKeccak(["uint256", "uint256"], [token_id, amount])
+
+    message = W3_MAINNET.solidityKeccak(["uint256", "uint256", "string"], [token_id, amount, nft_type])
     message = encode_defunct(message)
     signed_message =  W3_MAINNET.eth.account.sign_message(message, private_key=private_key)
 
-    print((signed_message.signature))
 
     return {
         "signature": signed_message.signature.hex(),

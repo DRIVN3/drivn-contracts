@@ -31,7 +31,7 @@ async function getContracts() {
 }
 
 const getSignatureData = async (tokenId, amount, ) => {
-    const finalValue = utils.solidityKeccak256(["uint256", "uint256"], [tokenId, amount]);
+    const finalValue = utils.solidityKeccak256(["uint256", "uint256", "string"], [tokenId, amount, "burnNFT"]);
     const message = ethers.utils.arrayify(finalValue);
     const [owner] = await ethers.getSigners();
     const signed = await owner.signMessage(message);
