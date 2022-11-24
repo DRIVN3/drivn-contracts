@@ -149,7 +149,7 @@ async def sign_message(
     return {
         "signature": signed_message.signature.hex(),
         "amount": amount,
-        "token_id": token_id
+        "token_id": token_id,
     }
 
 app.include_router(router)

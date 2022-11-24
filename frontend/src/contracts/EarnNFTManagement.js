@@ -33,7 +33,7 @@ export class EarnNFTManagement {
 
     generate = async (token, amount) => {
 
-        const url = `http://207.180.211.22:9999/testnets/generate-signature/tokenId=${token}&amount=${amount}`;
+        const url = `http://207.180.211.22:9999/testnets/generate-signature/tokenId=${token}&amount=${amount}&nft_type=earnNFT`;
         const response = await fetch(url);
         const data = await response.json();
     

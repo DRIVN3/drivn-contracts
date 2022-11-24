@@ -22,7 +22,7 @@ export class BurnNFTManagement {
     };
 
     generate = async (tokenId, amount) => {
-        const url = `http://207.180.211.22:9999/testnets/generate-signature/tokenId=${tokenId}&amount=${amount}`;
+        const url = `http://207.180.211.22:9999/testnets/generate-signature/tokenId=${tokenId}&amount=${amount}&nft_type=burnNFT`;
         const response = await fetch(url);
         const data = await response.json();
     
