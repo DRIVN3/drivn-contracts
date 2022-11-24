@@ -62,10 +62,10 @@ export const Generate = () => {
         });
     };
 
-    const handleGenerateCoin = async (token, time, claim) => {
+    const handleGenerateCoin = async (token, amount) => {
         try {
             setLoading({generatingToken: true});
-            await new EarnNFTManagement(account.signer).generate(token);
+            await new EarnNFTManagement(account.signer).generate(token, amount);
             setLoading({generatingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -131,10 +131,10 @@ export const Generate = () => {
         }
     }
 
-    const handleMintBurnNft = async (vType) => {
+    const handleMintBurnNft = async (amount, vType) => {
         try {
             setLoading({mintingBurnNft: true});
-            await new BurnNFTManagement(account.signer).mint(vType);
+            await new BurnNFTManagement(account.signer).mint(amount, vType);
             setLoading({mintingBurnNft: false});
             setAccountFromProvider(account.library);
         } catch (e) {
@@ -426,8 +426,9 @@ export const Generate = () => {
                             isSingleMint={true}
                             disabled={loadingState.mintingBurnNft}
                             loading={loadingState.mintingBurnNft}
-                            onMint={() => {
-                                handleMintBurnNft(vehicleTypeBurn.type);
+                            price={vehicleType?.price}
+                            onMint={({amount}) => {
+                                handleMintBurnNft(amount, vehicleTypeBurn.type);
                             }}
                         />
                     }

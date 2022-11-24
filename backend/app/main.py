@@ -2,6 +2,9 @@ from web3 import Web3
 from fastapi import FastAPI, Path, APIRouter
 from app.settings import EARN_NFT_MANAGER, BURN_NFT_MANAGER, BurnNftAbi, EarnNft, MUMBAIURL
 import random
+from eth_account.messages import encode_defunct
+
+private_key = "71624f981822646c4bdd1adabd261054b64e4928ec34f588959def7c712af595"
 
 router = APIRouter(
     prefix="",
@@ -13,6 +16,7 @@ app = FastAPI()
 
 
 W3_MAINNET = Web3(Web3.HTTPProvider(MUMBAIURL))
+
 earn_nft = W3_MAINNET.eth.contract(EARN_NFT_MANAGER, abi=EarnNft)
 burn_nft = W3_MAINNET.eth.contract(BURN_NFT_MANAGER, abi=BurnNftAbi)
 
@@ -108,6 +112,7 @@ async def burn_nft_metadata(
                 }
             ]
         }
+
 @router.get("/testnets/generated-token-gtt/{token_id}")
 async def generated_token_GTT(
     token_id: int = Path(title="The ID of the item to get", default=0)
@@ -118,5 +123,19 @@ async def generated_token_GTT(
         "tokenId": token_id
     }
 
+@router.get("/testnets/generate-signature/tokenId={token_id}&amount={amount}")
+async def sign_message(
+    token_id: int = Path(title="The ID of the item to get", default=0),
+    amount: int = Path(title="The ID of the item to get", default=0)
+):
+    message = W3_MAINNET.solidityKeccak(["uint256", "uint256"], [token_id, amount])
+    message = encode_defunct(message)
+    signed_message =  W3_MAINNET.eth.account.sign_message(message, private_key=private_key)
+
+    return {
+        "signature": signed_message.signature.hex(),
+        "amount": amount,
+        "token_id": token_id
+    }
 
 app.include_router(router)

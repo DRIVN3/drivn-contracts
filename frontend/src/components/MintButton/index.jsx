@@ -76,8 +76,8 @@ export const MintButton = ({
                         onClick={() => {
                             if (onMint) {
                                 onMint({
-                                    count,
                                     amount: count * price,
+                                    count,
                                 });
                             }
                         }}

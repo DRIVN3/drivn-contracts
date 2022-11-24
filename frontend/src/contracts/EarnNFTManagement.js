@@ -24,8 +24,14 @@ export class EarnNFTManagement {
         await receipt.wait();
     };
 
-    generate = async (token) => {
-        const receipt = await this.contract.generate(token);
+    
+    generate = async (token, amount) => {
+        console.log(token, amount)
+        console.log("yvelaferi kargadaa")
+
+        // console.log(await this.getSignatureData(token, amount))
+        return;
+        const receipt = await this.contract.generate(token, amount);
         await receipt.wait();
     };
 }

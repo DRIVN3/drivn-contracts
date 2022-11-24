@@ -12,9 +12,11 @@ export class BurnNFTManagement {
         );
     }
 
-    mint = async (vType) => {
+    mint = async (amount, vType) => {
         const receipt = await this.contract.mint(
-            vType
+            vType, {
+                value: ethers.utils.parseEther(amount.toString()).toString()
+            }
         );
         await receipt.wait();
     };
