@@ -230,7 +230,7 @@ describe("DRVNERC20Extension DRVN", function(){
             await DRVN.setLiquidityAddress(firstAccount.address, true);
 
             await expect(DRVN.connect(firstAccount).transfer(secondAccount.address, 100))
-                .to.be.revertedWith("DRVNERC20Extension: zero recipient address");
+                .to.be.revertedWith("DRVNCoin: zero recipient address");
         });
 
         it("Should transfer 5 percent on fee address", async function () {
@@ -280,7 +280,7 @@ describe("DRVNERC20Extension DRVN", function(){
 
             await DRVN.connect(firstAccount).approve(secondAccount.address, 100);
             await expect(DRVN.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 100))
-                .to.be.revertedWith("DRVNERC20Extension: zero recipient address");
+                .to.be.revertedWith("DRVNCoin: zero recipient address");
         });
 
         it("Should transfer from 5 percent on fee address", async function () {

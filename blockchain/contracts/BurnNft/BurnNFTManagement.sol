@@ -40,6 +40,9 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     // signer of the message
     address public messageSigner;
 
+    // mapping to save if user has already minted
+    mapping(address=>bool) public hasMinted;
+
     /**
      * @dev Emitted when mint method is called
      */
@@ -79,9 +82,10 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     */
 
     function mint(EType eType) external payable {
-        require(burnNFT.balanceOf(msg.sender) == 0, "BurnNFTManagement: you have already minted once");
+        require(!hasMinted[msg.sender], "BurnNFTManagement: you have already minted once");
         require(msg.value == burnNFTPrice, "BurnNFTManagement: not enough money");
 
+        hasMinted[msg.sender] = true;
         burnNFTCounter.increment();
         uint256 burnNFTCount = burnNFTCounter.current();
         

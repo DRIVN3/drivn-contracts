@@ -36,6 +36,9 @@ contract DRVNCoin is ERC20, Ownable, ERC20Permit, ERC20Votes, Pausable {
     // fee multiplier
     uint256 public constant feeMultiplier = 1000;
 
+    // max fee percentage
+    uint256 public constant maxFeePercentage = 30;
+
     /**
      * @dev Constructing the contract minting 5000000000 coin to the contract address and setting name, symbol
     */
@@ -181,6 +184,7 @@ contract DRVNCoin is ERC20, Ownable, ERC20Permit, ERC20Votes, Pausable {
     */
     
     function setFeePercentage(uint256 feePercentage_) external onlyOwner {
+        require(feePercentage_ <= maxFeePercentage, "DRVNCoin: feePercentage_ limit exceed");
         feePercentage = feePercentage_;
     }
 
@@ -196,9 +200,9 @@ contract DRVNCoin is ERC20, Ownable, ERC20Permit, ERC20Votes, Pausable {
         address owner = _msgSender();
 
         if (isLiquidity[owner] || isLiquidity[to]) {
-            require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
+            require(recipient != address(0), "DRVNCoin: zero recipient address");
             uint256 fee = amount * feePercentage / feeMultiplier;
-            amount = amount * (feeMultiplier-feePercentage) / feeMultiplier;
+            amount -= fee;
             _transfer(owner, recipient, fee);
         }
 
@@ -218,9 +222,9 @@ contract DRVNCoin is ERC20, Ownable, ERC20Permit, ERC20Votes, Pausable {
         _spendAllowance(from, spender, amount);
        
         if (isLiquidity[from] || isLiquidity[to]) {
-            require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
+            require(recipient != address(0), "DRVNCoin: zero recipient address");
             uint256 fee = amount * feePercentage / feeMultiplier;
-            amount = amount * (feeMultiplier-feePercentage) / feeMultiplier;
+            amount -= fee;
             _transfer(from, recipient, fee);
         }
 
