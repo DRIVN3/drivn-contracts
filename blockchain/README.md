@@ -1,4 +1,3 @@
-# Sample Hardhat Project
 
 - GTT Testnet -  https://mumbai.polygonscan.com/address/0x8b2eD8ACFec1aa744C49821285564D4D95B7f9F1#code
 - GTT burnWallet testnet -  https://mumbai.polygonscan.com/address/0x59Cef35A4fC244bc12D02e421A2bBB42D3fc3570#code
