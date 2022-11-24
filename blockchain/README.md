@@ -10,6 +10,7 @@
 - DRVN TIMELOCK CONTRACT - https://mumbai.polygonscan.com/address/0xfD20cdE7C42F33d96362Be222a778d4524A492d7#code
 - DRVN Governor Contract - https://mumbai.polygonscan.com/address/0x451D5Db5CdF0B4DA5B19DCd0Cf50369eEAdcADF9#code
 - private sales contract on testnet - https://mumbai.polygonscan.com/address/0x361a5A2211B95030ed300d9D3CF0046F396778dB#code
+- presales contract on testnet - https://mumbai.polygonscan.com/address/0x3eB590786Ae65EF3725039d2F55B6b8B854cF7e5
 - Team Vesting Contract -  
 - DRVN liquidity pool - https://app.uniswap.org/#/pool/6738
 - GTT liquidity pool -  https://app.uniswap.org/#/pool/6737
