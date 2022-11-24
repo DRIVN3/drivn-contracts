@@ -14,5 +14,5 @@
 - DRVN liquidity pool - https://app.uniswap.org/#/pool/6738
 - GTT liquidity pool -  https://app.uniswap.org/#/pool/6737
 - tally link - https://www.tally.xyz/gov/eip155:80001:0x451D5Db5CdF0B4DA5B19DCd0Cf50369eEAdcADF9
-- opensea Burn NFT - 
-- opensea Earn NFT - 
+- opensea Burn NFT - https://testnets.opensea.io/collection/test-burnnft-fvxyzd2fqm
+- opensea Earn NFT - https://testnets.opensea.io/collection/test-earnnft-3rvbuj837e
