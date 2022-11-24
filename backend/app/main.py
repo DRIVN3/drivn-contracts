@@ -143,6 +143,8 @@ async def sign_message(
     message = encode_defunct(message)
     signed_message =  W3_MAINNET.eth.account.sign_message(message, private_key=private_key)
 
+    print((signed_message.signature))
+
     return {
         "signature": signed_message.signature.hex(),
         "amount": amount,

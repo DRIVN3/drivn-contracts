@@ -69,6 +69,7 @@ export const Generate = () => {
             setLoading({generatingToken: false});
             setAccountFromProvider(account.library);
         } catch (e) {
+            console.log(e)
             setLoading({generatingToken: false});
             setErrorMessage("Something went wrong. Couldn't generate GTT coin.");
         }

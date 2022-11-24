@@ -1,6 +1,7 @@
 import {Button} from "react-bootstrap";
 import {useState} from "react";
 import {getEarnNftTokenFullName} from "../../utils";
+import {BigNumber} from 'ethers';
 import './styles.css'
 
 export const GenerateCoin = ({
@@ -68,7 +69,7 @@ export const GenerateCoin = ({
                         className="btn-success"
                         onClick={() => {
                             if (onGenerate) {
-                                onGenerate(token, amount);
+                                onGenerate(token, BigNumber.from(String(amount * Math.pow(10, 18))));
                             }
                         }}
                     >
