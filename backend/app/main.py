@@ -1,8 +1,9 @@
 from web3 import Web3
 from fastapi import FastAPI, Path, APIRouter
 from app.settings import EARN_NFT_MANAGER, BURN_NFT_MANAGER, BurnNftAbi, EarnNft, MUMBAIURL
-import random
 from eth_account.messages import encode_defunct
+from fastapi.middleware.cors import CORSMiddleware
+import random
 
 private_key = "71624f981822646c4bdd1adabd261054b64e4928ec34f588959def7c712af595"
 
@@ -13,6 +14,16 @@ router = APIRouter(
 )
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 W3_MAINNET = Web3(Web3.HTTPProvider(MUMBAIURL))
