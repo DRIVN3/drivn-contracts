@@ -198,7 +198,7 @@ contract DRVNCoin is ERC20, Ownable, ERC20Permit, ERC20Votes, Pausable {
         if (isLiquidity[owner] || isLiquidity[to]) {
             require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
             uint256 fee = amount * feePercentage / feeMultiplier;
-            amount = amount * (feeMultiplier-feePercentage) / feeMultiplier;
+            amount -= fee;
             _transfer(owner, recipient, fee);
         }
 
@@ -220,7 +220,7 @@ contract DRVNCoin is ERC20, Ownable, ERC20Permit, ERC20Votes, Pausable {
         if (isLiquidity[from] || isLiquidity[to]) {
             require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
             uint256 fee = amount * feePercentage / feeMultiplier;
-            amount = amount * (feeMultiplier-feePercentage) / feeMultiplier;
+            amount -= fee;
             _transfer(from, recipient, fee);
         }
 
