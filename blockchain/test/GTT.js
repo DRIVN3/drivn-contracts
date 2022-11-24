@@ -237,7 +237,7 @@ describe("DRVNERC20Extension GTT", function(){
             await GTT.setLiquidityAddress(firstAccount.address, true);
 
             await expect(GTT.connect(firstAccount).transfer(secondAccount.address, 100))
-                .to.be.revertedWith("DRVNERC20Extension: zero recipient address");
+                .to.be.revertedWith("GTT: zero recipient address");
         });
 
         it("Should transfer 5 percent on fee address", async function () {
@@ -273,7 +273,7 @@ describe("DRVNERC20Extension GTT", function(){
 
             await GTT.connect(firstAccount).approve(secondAccount.address, 100);
             await expect(GTT.connect(secondAccount).transferFrom(firstAccount.address, secondAccount.address, 100))
-                .to.be.revertedWith("DRVNERC20Extension: zero recipient address");
+                .to.be.revertedWith("GTT: zero recipient address");
         });
 
         it("Should transfer 5 percent on fee address", async function () {

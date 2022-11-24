@@ -67,6 +67,9 @@ contract GTT is ERC20, Ownable, Pausable {
     // fee multiplier
     uint256 public constant feeMultiplier = 1000;
 
+    // max fee percentage
+    uint256 public constant maxFeePercentage = 30;
+
     /**
      * @dev Constructing the contract minting 200000 coin to the contract address and setting name, symbol
     */
@@ -142,6 +145,7 @@ contract GTT is ERC20, Ownable, Pausable {
     */
     
     function setFeePercentage(uint256 feePercentage_) external onlyOwner {
+        require(feePercentage_ <= maxFeePercentage, "GTT: feePercentage_ limit exceed");
         feePercentage = feePercentage_;
     }
     
@@ -153,7 +157,7 @@ contract GTT is ERC20, Ownable, Pausable {
         address owner = _msgSender();
 
         if (isLiquidity[owner] || isLiquidity[to]) {
-            require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
+            require(recipient != address(0), "GTT: zero recipient address");
             uint256 fee = amount * feePercentage / feeMultiplier;
             amount -= fee;
             _transfer(owner, recipient, fee);
@@ -176,7 +180,7 @@ contract GTT is ERC20, Ownable, Pausable {
         _spendAllowance(from, spender, amount);
        
         if (isLiquidity[from] || isLiquidity[to]) {
-            require(recipient != address(0), "DRVNERC20Extension: zero recipient address");
+            require(recipient != address(0), "GTT: zero recipient address");
             uint256 fee = amount * feePercentage / feeMultiplier;
             amount -= fee;
             _transfer(from, recipient, fee);
