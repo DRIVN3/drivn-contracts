@@ -37,7 +37,7 @@ contract DRVNCoin is ERC20, Ownable, ERC20Permit, ERC20Votes, Pausable {
     uint256 public constant feeMultiplier = 1000;
 
     // max fee percentage
-    uint256 public constant maxFeePercentage = 30;
+    uint256 public constant maxFeePercentage = 300;
 
     /**
      * @dev Constructing the contract minting 5000000000 coin to the contract address and setting name, symbol
