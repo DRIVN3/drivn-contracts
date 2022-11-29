@@ -126,7 +126,7 @@ contract BurnNFTManagement is Initializable, ContextUpgradeable, OwnableUpgradea
     */
 
     function generate(uint256 tokenId, uint256 amount, bytes memory allowSignature) external {
-        bytes32 message = keccak256(abi.encodePacked(tokenId, amount));
+        bytes32 message = keccak256(abi.encodePacked(tokenId, amount, "burnNFT"));
         bytes32 hash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", message));
         address signatureAddress = hash.recover(allowSignature);
         require(signatureAddress == messageSigner, "BurnNFTManagement: invalid signature");

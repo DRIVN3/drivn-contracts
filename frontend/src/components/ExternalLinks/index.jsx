@@ -7,7 +7,7 @@ export const ExternalLinks = () => {
         <div className="col-12 fw-bold">
             <a
                 target="_blank"
-                href="https://testnets.opensea.io/collection/test-earnnft-jg8agokxzv"
+                href="https://testnets.opensea.io/collection/test-earnnft-3rvbuj837e"
                 rel="noopener noreferrer"
             >Opensea earn nft testnet</a>
         </div>
@@ -15,7 +15,7 @@ export const ExternalLinks = () => {
         <div className="col-12 fw-bold">
             <a
                     target="_blank"
-                    href="https://testnets.opensea.io/collection/test-burnnft-4ufn4yfsvu"
+                    href="https://testnets.opensea.io/collection/test-burnnft-fvxyzd2fqm"
                     rel="noopener noreferrer"
                 >Opensea burn nft testnet
             </a>
@@ -24,14 +24,14 @@ export const ExternalLinks = () => {
         <div className="col-12 fw-bold">
             <a
                 target="_blank"
-                href="https://www.tally.xyz/governance/eip155:80001:0xa4E516AF9266F2a59E6038757E5b37421966F02C"
+                href="https://www.tally.xyz/gov/eip155:80001:0x451D5Db5CdF0B4DA5B19DCd0Cf50369eEAdcADF9"
                 rel="noopener noreferrer"
             >Tally</a>
         </div>
         <div className="col-12 fw-bold">
             <a
                 target="_blank"
-                href="https://app.uniswap.org/#/pool/5652"
+                href="https://app.uniswap.org/#/pool/6738"
                 rel="noopener noreferrer"
             >Uniswap DRVN Coin</a>
         </div>
@@ -39,7 +39,7 @@ export const ExternalLinks = () => {
         <div className="col-12 fw-bold">
             <a
                 target="_blank"
-                href="https://app.uniswap.org/#/pool/5644"
+                href="https://app.uniswap.org/#/pool/6737"
                 rel="noopener noreferrer"
             >Uniswap GTT Coin</a>
         </div>

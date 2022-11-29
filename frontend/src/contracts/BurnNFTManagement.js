@@ -12,15 +12,22 @@ export class BurnNFTManagement {
         );
     }
 
-    mint = async (vType) => {
+    mint = async (amount, vType) => {
         const receipt = await this.contract.mint(
-            vType
+            vType, {
+                value: ethers.utils.parseEther(amount.toString()).toString()
+            }
         );
         await receipt.wait();
     };
 
-    generate = async (tokenId) => {
-        const receipt = await this.contract.generate(tokenId);
+    generate = async (tokenId, amount) => {
+        const url = `http://207.180.211.22:9999/testnets/generate-signature/tokenId=${tokenId}&amount=${amount}&nft_type=burnNFT`;
+        const response = await fetch(url);
+        const data = await response.json();
+    
+        const signature = data.signature;
+        const receipt = await this.contract.generate(tokenId, amount, signature);
         await receipt.wait();
     };
 }

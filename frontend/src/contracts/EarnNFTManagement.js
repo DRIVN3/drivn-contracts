@@ -24,8 +24,21 @@ export class EarnNFTManagement {
         await receipt.wait();
     };
 
-    generate = async (token) => {
-        const receipt = await this.contract.generate(token);
+    // Convert a hex string to a byte array
+    hexToBytes = async (hex) => {
+        for (var bytes = [], c = 2; c < hex.length; c += 2)
+            bytes.push(parseInt(hex.substr(c, 2), 16));
+        return bytes;
+    }
+
+    generate = async (token, amount) => {
+
+        const url = `http://207.180.211.22:9999/testnets/generate-signature/tokenId=${token}&amount=${amount}&nft_type=earnNFT`;
+        const response = await fetch(url);
+        const data = await response.json();
+    
+        const signature = data.signature;
+        const receipt = await this.contract.generate(token, amount, this.hexToBytes(signature));
         await receipt.wait();
     };
 }

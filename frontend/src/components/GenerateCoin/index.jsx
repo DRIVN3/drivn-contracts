@@ -1,6 +1,7 @@
 import {Button} from "react-bootstrap";
 import {useState} from "react";
 import {getEarnNftTokenFullName} from "../../utils";
+import {BigNumber} from 'ethers';
 import './styles.css'
 
 export const GenerateCoin = ({
@@ -11,12 +12,17 @@ export const GenerateCoin = ({
                              }) => {
         const [tokenOptions] = useState([...allTokens]);
         const [token, setToken] = useState(allTokens[0]?.tokenId || null);
+        const [amount, setAmount] = useState(0);
 
         const handleTokenSelection = (e) => {
             const value = e.target.value;
             const newTokenId = Number(value);
             const tokenObject = allTokens.find((t) => t.tokenId === newTokenId);
             setToken(newTokenId);
+        }
+
+        const handleAmountChange = (e) => {
+            setAmount(e.target.value)
         }
 
         return (<>
@@ -48,13 +54,22 @@ export const GenerateCoin = ({
                         </select>
                     }
                 </div>
+               
+                <div className="col-6 text-start fw-bold">
+                    <span>Total Claim Amount: </span>
+                    <input
+                        value={amount}
+                        onChange={handleAmountChange}
+                    />
+                </div>
+
                 <div className="col-12 pt-2">
                     <Button
                         disabled={!token || isGenerating || isClaiming}
                         className="btn-success"
                         onClick={() => {
                             if (onGenerate) {
-                                onGenerate(token);
+                                onGenerate(token, BigNumber.from(String(amount * Math.pow(10, 18))));
                             }
                         }}
                     >

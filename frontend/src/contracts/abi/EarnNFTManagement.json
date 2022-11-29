@@ -89,19 +89,6 @@
     },
     {
         "inputs": [],
-        "name": "apiConsumer",
-        "outputs": [
-            {
-                "internalType": "contract ApiConsumer",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
         "name": "bicycleCounter",
         "outputs": [
             {
@@ -184,27 +171,19 @@
                 "internalType": "uint256",
                 "name": "tokenId",
                 "type": "uint256"
-            }
-        ],
-        "name": "generate",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
             },
             {
                 "internalType": "uint256",
                 "name": "amount",
                 "type": "uint256"
+            },
+            {
+                "internalType": "bytes",
+                "name": "allowSignature",
+                "type": "bytes"
             }
         ],
-        "name": "generateCallBack",
+        "name": "generate",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -319,6 +298,19 @@
         "name": "merge",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "messageSigner",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -439,11 +431,31 @@
         "inputs": [
             {
                 "internalType": "address",
+                "name": "messageSigner_",
+                "type": "address"
+            }
+        ],
+        "name": "setMessageSigner",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
                 "name": "newOwner",
                 "type": "address"
             }
         ],
         "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "withdraw",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
